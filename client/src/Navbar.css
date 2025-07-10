@@ -1,0 +1,36 @@
+/* src/index.css or global.css */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.nav-link::before,
+.nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background: #A6A6A6;
+  transition: all 0.5s;
+}
+
+.nav-link::before {
+  top: 0;
+  left: 0;
+}
+
+.nav-link::after {
+  bottom: 0;
+  right: 0;
+}
+
+.nav-link:hover::before {
+  width: 100%;
+  transition: width 0.25s ease-in-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+  transition: width 0.25s ease-in-out 0.25s;
+}
