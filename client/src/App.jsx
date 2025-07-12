@@ -7,6 +7,7 @@ import ProductList from './pages/ProductList'
 import RootLayout from './RootLayout'
 import Login from './pages/Login'
 import Cart from './pages/Cart'
+import Signup from './pages/Signup'
 function App() {
   const [count, setCount] = useState(0)
   const router = createBrowserRouter(
@@ -17,6 +18,7 @@ function App() {
         <Route path="contact" element={<Contact />} />
         <Route path="products" element={<ProductList />} />
         <Route path="login" element={<Login />} />
+        <Route path="signin" element={<Signup />} />
         <Route path="cart" element={<Cart />} />
       </Route>
     )
