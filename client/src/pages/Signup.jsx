@@ -1,6 +1,7 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form"
+import axios from "axios";
 
 const Signup = () => {
   const {
@@ -9,7 +10,23 @@ const Signup = () => {
     watch,
     formState: { errors },
   } = useForm()
-    const onSubmit = (data) => console.log(data)
+  const navigate = useNavigate()
+  const password = watch('password');
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/v1/auth/signup', data)
+      const token = response.data.result.token;
+      localStorage.setItem('token', token)
+      navigate('/')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      navigate('/')
+    }
+  }, [])
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-8 py-12 mt-10">
       <div className="max-w-xl w-full bg-white p-8 rounded-2xl  border border-gray-200">
@@ -29,8 +46,9 @@ const Signup = () => {
               type="text"
               placeholder="John Doe"
               className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-black focus:border-black transition"
-               {...register("fullName", { required: { message: "Full Name is requierd" }})}
+              {...register("name", { required: "Name is requierd" })}
             />
+            {errors?.fullName ? <p className="font-semibold text-sm text-red-600 mt-2">{errors?.fullName.message}</p> : null}
           </div>
 
           <div>
@@ -38,7 +56,7 @@ const Signup = () => {
               Email Address
             </label>
             <input
-              id="email"
+              // id="email"
               name="email"
               type="email"
               placeholder="you@example.com"
@@ -50,6 +68,7 @@ const Signup = () => {
                 }
               })}
             />
+            {errors?.email ? <p className="font-semibold text-sm text-red-600 mt-2">{errors?.email.message}</p> : null}
           </div>
 
           <div>
@@ -62,8 +81,14 @@ const Signup = () => {
               type="password"
               placeholder="••••••••"
               className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-black focus:border-black transition"
-              {...register("password", { required: { message: "Password is requierd" }, pattern: { message: "Password must be 8+ chars with letters & numbers", value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i } })}
+              {...register("password", {
+                required: "Password is requierd", pattern: {
+                  message: "Password must be 8+ chars with letters & numbers",
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/
+                }
+              })}
             />
+            {errors?.password ? <p className="font-semibold text-sm text-red-600 mt-2">{errors?.password.message}</p> : null}
           </div>
 
           <div>
@@ -77,10 +102,10 @@ const Signup = () => {
               required
               placeholder="••••••••"
               className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-black focus:border-black transition"
-              {...register("confirm-password", { required: { message: "Confirm password is requierd" }, pattern: { message: "Password must be 8+ chars with letters & numbers", value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i } })}
+              {...register("confirmPassword", { required: "Confirm Password is requierd", validate: (value) => value == password || "Password do not match" })}
             />
+            {errors?.confirmPassword ? <p className="font-semibold text-sm text-red-600 mt-2">{errors?.confirmPassword.message}</p> : null}
           </div>
-
           <button
             type="submit"
             className="w-full py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 transition"

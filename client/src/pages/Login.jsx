@@ -1,6 +1,7 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const {
@@ -10,10 +11,22 @@ const Login = () => {
     formState: { errors },
   } = useForm()
   // const [error, setError] = useState(true);
-  const onSubmit = (data) => { console.log(data) }
-  useEffect(() => {
-    console.log(errors, "Hello")
-  }, [errors])
+  const navigate = useNavigate()
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/v1/auth/login', data)
+      const token = response.data.result.token
+      localStorage.setItem('token',token)
+      navigate('/')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(()=>{
+    if(localStorage.getItem('token')){
+      navigate('/')
+    }
+  },[])
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12" >
       <div className="max-w-xl w-full bg-white p-8 rounded-2xl  border border-gray-200">
@@ -40,7 +53,7 @@ const Login = () => {
                 }
               })}
             />
-            {errors ? <p className="font-semibold text-sm text-red-600 mt-2">Eamil is Invalid</p> : null}
+            {errors?.email ? <p className="font-semibold text-sm text-red-600 mt-2">{errors?.email.message}</p> : null}
           </div>
 
           <div>
@@ -60,6 +73,7 @@ const Login = () => {
                 }
               })}
             />
+            {errors?.password ? <p className="font-semibold text-sm text-red-600 mt-2">{errors?.password.message}</p> : null}
           </div>
 
           <div className="flex items-center justify-between text-sm">

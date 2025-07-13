@@ -151,29 +151,28 @@ function Home() {
   return (
     <div className="min-h-screen px-6 md:px-12 bg-white">
       <div className='flex items-center justify-center'>
-        <div className="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between gap-10">
+        <div className="max-w-7xl w-full flex  flex-col-reverse sm:flex-row items-center justify-between gap-x-10 gap-y-3">
           {/* Left Content */}
-          <div className="max-w-xl mt-14">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold  text-gray-900 leading-20 mb-4">
+          <div className="max-w-xl sm:mt-19 lg:mt-14">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold  text-gray-900 mb-4">
               Customized <br />
               <span className="text-gray-500 ">Printed Tees</span>
             </h1>
             <p className="text-gray-400 text-base md:text-lg mb-6">
-              Nam at congue diam etiam erat lectus, finibus eget commodo quis, congue diam etiam erat lectus.
+              We offer personalized printed t-shirts. Choose your style, add your design, and wear your creativity.
             </p>
             <button
               class="relative cursor-pointer py-2 px-8 text-black text-base font-bold nded-full overflow-hidden bg-white rounded-full transition-all duration-400 ease-in-out  hover:scale-105 hover:text-white  active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-black before:to-black before:transition-all flex justify-center items-center gap-x-3 before:duration-500 before:ease-in-out before:z-[-1] before:rounded-full hover:before:left-0"
             >
               Explore More <MoveRight />
             </button>
-
           </div>
           {/* Right Image */}
-          <div className="w-full md:w-[50%] flex justify-center mt-40">
+          <div className="w-full  flex justify-center mt-24 lg:mt-40">
             <img
               src={myImage}
               alt="Boy in customized tee"
-              className="w-full max-w-[1000px]  h-auto object-contain"
+              className="w-full max-w-[1000px] h-auto object-cover "
             />
           </div>
         </div>
@@ -204,7 +203,7 @@ function Home() {
       </section>
       {/* Feature Section */}
       <section>
-      <FeatureSection />
+        <FeatureSection />
       </section>
     </div>
   )
