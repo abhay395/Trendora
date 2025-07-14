@@ -3,6 +3,7 @@ import myImage from '../assets/HeroSectionImage.png';
 import { MoveRight } from 'lucide-react';
 import Card from '../componente/Card';
 import FeatureSection from '../componente/FeatureSection';
+import { Link } from 'react-router-dom';
 const products1 = [
   {
     id: 1,
@@ -185,7 +186,7 @@ function Home() {
         </div>
         <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-8 gap-x-3 gap-y-2 lg:gap-x-4  lg:gap-y-5'>
           {
-            products1.map((item) => <Card product={item} />)
+            products1.map((item) => <Link to={`product/${item.id}`}><Card product={item}  /></Link>)
           }
         </section>
       </section>

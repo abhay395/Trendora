@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Cart from './pages/Cart'
 import Signup from './pages/Signup'
 import Logout from './pages/Logout'
+import ProductDetaile from './pages/ProductDetaile'
 function App() {
   const [count, setCount] = useState(0)
   const router = createBrowserRouter(
@@ -22,6 +23,7 @@ function App() {
         <Route path="signin" element={<Signup />} />
         <Route path="cart" element={<Cart />} />
         <Route path="logout" element={<Logout />} />
+        <Route path="product/:id" element={<ProductDetaile />} />
       </Route>
     )
   )
