@@ -4,7 +4,10 @@ import { RxCross2 } from "react-icons/rx";
 import { GoPlus } from "react-icons/go";
 import { LuDot } from "react-icons/lu";
 import { TiMinus, TiPlus } from "react-icons/ti";
-
+import { MdDiscount } from "react-icons/md";
+import { FaGift } from "react-icons/fa6";
+import { Link, useNavigate } from 'react-router-dom'
+import Stepper from '../componente/Stepper';
 const products = [
   {
     id: 1,
@@ -52,15 +55,19 @@ export default function Cart() {
   const discount = 2.5;
   const delivery = 0;
   const total = 45;
+  const navigate = useNavigate();
   console.log(selectedItemId)
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen mt-8 pt-30">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-x-24  min-w-7xl ">
+    <div className=" bg-white min-h-screen my-8 pt-17">
+      <div className='mb-7'>
+        <Stepper currentStep={1} />
+      </div>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-x-16  min-w-[77rem] ">
         {/* Left Section */}
-        <div className="md:col-span-2 w-full ">
+        <div className="md:col-span-2 w-full">
           {/* <h2 className="text-xl font-semibold mb-7">Cart</h2> */}
-          <div className='flex space-x-2 mb-2'>
+          <div className='flex space-x-2 mb-3'>
             <label
               htmlFor="item-all"
               className="flex cursor-pointer flex-row items-center gap-2.5 text-white light:text-black"
@@ -99,9 +106,9 @@ export default function Cart() {
                 </svg>
               </div>
             </label>
-            <span className='font-bold text-lg  text-gray-900'>1/4 items selected</span>
+            <span className='font-semibold text-lg  text-gray-700'>1/4 items selected</span>
           </div>
-          <div className="bg-white px-4 pt-2 rounded-xl shadow">
+          <div className="bg-white px-4 pt-2 rounded-xl border border-gray-200">
             {products.map((item) => (
               <div
                 key={item.id}
@@ -165,10 +172,10 @@ export default function Cart() {
                     </span>{<TbTruckDelivery className='text-xl' />
                       }
                       <span>Express delivery in <span className='text-gray-700 font-bold'> 3 days</span></span></p>
-                    <p className="mt-6 text-lg font-semibold text-gray-800">${item.price.toFixed(2)}</p>
+                    <p className="mt-9 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>$</span>{item.price.toFixed(2)}</p>
                   </div>
                 </div>
-                <RxCross2 className='absolute top-6 right-0 text-xl text-gray-500 cursor-pointer' />
+                <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' />
                 <div className="absolute right-0 bottom-5 flex items-center gap-2 ">
                   <button className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
                   <span className='text-gray-600 font-bold'>1</span>
@@ -181,51 +188,72 @@ export default function Cart() {
         </div>
 
         {/* Right Section */}
-        <div className="space-y-6">
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h3 className="font-semibold mb-2">Coupons</h3>
-            <div className="flex items-center justify-between border p-2 rounded">
-              <span className="text-sm">{coupon}</span>
-              <RxCross2 />
+        <div className="w-[100%]">
+          <div className="p-0 rounded-xl">
+            <h3 className="font-semibold text-gray-600 mb-3 text-[1.3rem]">Coupons</h3>
+            <div className="flex items-center justify-between border-gray-300 border p-3 rounded-xl">
+              <p className='font-semibold text-gray-700 flex  items-center w-[40%] space-x-2 text-lg'><MdDiscount className='text-lg mt-1' /> <span>Coupans</span>
+              </p>
+              <div className='flex justify-center items-center gap-x-2'>
+                <span className="text-md font-semibold text-green-600">{coupon}</span>
+                <RxCross2 className='text-lg cursor-pointer text-gray-500' />
+              </div>
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h3 className="font-semibold mb-2">Gifting</h3>
-            <p className="text-sm text-gray-500 mb-1">
-              Buying for a loved one?
-            </p>
-            <a href="#" className="text-indigo-600 text-sm font-medium">
-              Add gift wrap
-            </a>
+          <div className="mt-4 space-y-3 relative">
+            <h3 className="font-semibold text-gray-700 text-[1.2rem]">Gifting</h3>
+            <div className='space-y-4 bg-[#f5f2fe] py-4 rounded-xl flex gap-x-4 items-center justify-center flex-row-reverse'>
+              <div>
+                <FaGift className="text-[84px] text-indigo-500 " />
+              </div>
+              <div className='space-y-5'>
+                <p className="text-lg font-semibold text-gray-800 mb-1">
+                  Buying for a loved one?
+                </p>
+                <p className="text-sm text-gray-600 mt-2 mb-1">
+                  Send Persnalized message in 20$
+                </p>
+                <Link to={'/'} className="text-indigo-600 text-md font-semibold mt-6">
+                  Add gift wrap
+                </Link>
+              </div>
+            </div>
           </div>
 
           {
-            selectedItemId.length ? (<div className='space-y-4'>
-              <div className="bg-white p-4 rounded-xl shadow">
-                <h3 className="font-semibold mb-4">Price Details</h3>
-                <div className="text-sm space-y-2">
-                  <div className="flex justify-between">
+            selectedItemId.length ? (<div className='space-y-4 mt-4'>
+              <h3 className="font-semibold text-gray-700 text-[1.2rem]">Price Details</h3>
+              <div className="bg-[#f5f2fe] p-4 rounded-xl ">
+                <div className="text-sm space-y-4 text-gray-500">
+                  <div className="flex justify-between text-[1rem] font-semibold text-gray-700">
                     <span>1 item</span>
-                    <span>${selectedItemId[0]?.price?.toFixed(2)}</span>
+                    {/* <span>${selectedItemId[0]?.price?.toFixed(2)}</span> */}
                   </div>
-                  <div className="flex justify-between">
-                    <span>Coupon discount</span>
-                    <span className="text-green-600">-${discount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Delivery Charges</span>
-                    <span className="text-green-600">Free Delivery</span>
-                  </div>
-                  <hr className="my-2" />
-                  <div className="flex justify-between font-semibold">
-                    <span>Total Amount</span>
-                    <span>${(total + delivery).toFixed(2)}</span>
+                  <div className='space-y-3 font-medium'>
+                    <div className="flex justify-between">
+                      <span>1 X Classic t-shirt</span>
+                      <span>${selectedItemId[0]?.price?.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Coupon discount</span>
+                      <span className="text-green-600">-${discount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Delivery Charges</span>
+                      <span className="text-gray-700">Free Delivery</span>
+                    </div>
+                    {/* <hr className="my-4" /> */}
+                    <div className='border border-gray-300 my-5'></div>
+                    <div className="flex justify-between text-[1rem] text-gray-700 font-semibold">
+                      <span>Total Amount</span>
+                      <span>${(total + delivery).toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <button className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
+              <button onClick={()=>navigate('/checkout')} className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
                 Place order →
               </button>
             </div>) : null

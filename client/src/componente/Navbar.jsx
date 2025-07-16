@@ -3,8 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, ShoppingCart, X } from 'lucide-react';
 import { CgProfile } from 'react-icons/cg';
 import { FiSettings, FiLogOut } from 'react-icons/fi';
-import { BsCart } from 'react-icons/bs';
+// import { FaGift } from 'react-icons/bs';
 import { FaBoxOpen, FaUserCircle } from 'react-icons/fa';
+import { FaCartShopping } from "react-icons/fa6";
 import '../Navbar.css'
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,12 +20,12 @@ function Navbar() {
     }
   },[location])
   return (
-    <nav className="bg-white fixed w-full top-0 font-poppins z-50 opacity-95 backdrop-blur-md">
-      <div className="max-w-7xl relative mx-auto px-4 sm:px-6 lg:px-8 py-8 flex justify-center md:justify-between items-center">
+    <nav className="bg-white drop-shadow-md fixed w-full top-0 font-poppins z-50 opacity-95 backdrop-blur-md ">
+      <div className="max-w-7xl relative mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-center md:justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="text-xl font-bold font-poppins md:text-3xl text-black font-extrabold">TRENDORA</Link>
+        <Link to="/" className="text-lg font-bold font-poppins md:text-3xl text-black font-extrabold">TRENDORA</Link>
         {/* Desktop Menu */}
-        <div className="hidden text-lg  md:flex md:text-md font-semibold gap-6">
+        <div className="hidden text-lg md:flex md:text-md font-semibold gap-6">
           <Link to="/" className="nav-link text-gray-700">Home</Link>
           <Link to="/about" className="nav-link text-gray-700">About</Link>
           <Link to="/products" className="nav-link text-gray-700">Products</Link>
@@ -86,7 +87,7 @@ function Navbar() {
 
           {/* Cart Button */}
           <button className='cursor-pointer hidden lg:block lg:inline' onClick={() => navigate('/cart')}>
-            <BsCart className='text-2xl text-gray-800' />
+            <FaCartShopping className='text-2xl text-gray-800' />
           </button>
         </div>
         {/* Mobile Button */}
