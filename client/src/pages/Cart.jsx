@@ -116,13 +116,6 @@ export default function Cart() {
               >
                 <div className="flex  items-stretch gap-4 justify-center ">
                   <div className='relative  rounded-lg overflow-hidden'>
-                    {/* <input
-                      type="checkbox"
-                      className='absolute left-5 bottom-0'
-                      checked={selectedItemId.includes(item.id)}
-                      onChange={() => setSelectedItemId(...selectedItem, item.id)}
-                    /> */}
-                    {/* <!-- From Uiverse.io by gamerlord295 --> */}
                     <label
                       htmlFor={`item-${item.id}`}
                       className="flex flex-row cursor-pointer items-center gap-2.5 text-white light:text-black absolute top-2 left-2"
