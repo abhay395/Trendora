@@ -14,11 +14,11 @@ function Navbar() {
   const toggleDropdown = () => setIsDropdown(!isDropdown);
   const navigate = useNavigate()
   const location = useLocation()
-  useEffect(()=>{
-    if(!isDropdown){
+  useEffect(() => {
+    if (!isDropdown) {
       setIsDropdown(!isDropdown)
     }
-  },[location])
+  }, [location])
   return (
     <nav className="bg-white drop-shadow-md fixed w-full top-0 font-poppins z-50 opacity-95 backdrop-blur-md ">
       <div className="max-w-7xl relative mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-center md:justify-between items-center">
@@ -27,7 +27,6 @@ function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden text-lg md:flex md:text-md font-semibold gap-6">
           <Link to="/" className="nav-link text-gray-700">Home</Link>
-          <Link to="/about" className="nav-link text-gray-700">About</Link>
           <Link to="/products" className="nav-link text-gray-700">Products</Link>
           <Link to="/contact" className=" nav-link text-gray-700">Contact</Link>
         </div>
@@ -86,7 +85,7 @@ function Navbar() {
           )}
 
           {/* Cart Button */}
-          <button className='cursor-pointer hidden lg:block lg:inline' onClick={() => navigate('/cart')}>
+          <button className='cursor-pointer hidden lg:block' onClick={() => navigate('/cart')}>
             <FaCartShopping className='text-2xl text-gray-800' />
           </button>
         </div>
@@ -102,7 +101,6 @@ function Navbar() {
       {isOpen && (
         <div className="md:hidden px-4 pb-4">
           <Link to="/" className="block py-2 text-gray-700 hover:text-blue-600" onClick={toggleMenu}>Home</Link>
-          <Link to="/about" className="block py-2 text-gray-700 hover:text-blue-600" onClick={toggleMenu}>About</Link>
           <Link to="/products" className="block py-2 text-gray-700 hover:text-blue-600" onClick={toggleMenu}>Products</Link>
           <Link to="/contact" className="block py-2 text-gray-700 hover:text-blue-600" onClick={toggleMenu}>Contact</Link>
         </div>
