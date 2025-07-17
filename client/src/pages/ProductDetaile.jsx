@@ -19,7 +19,7 @@ const ProductDetaile = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 mt-40">
             {/* Left: Images */}
             <div className="flex flex-col w-full md:w-1/2">
-                <div className="w-full relative bg-amber-200">
+                <div className="w-full relative">
                     <button disabled={selectedImage == 0} className="absolute disabled:opacity-70 left-1 top-1/2 bg-white p-1 rounded-sm text-xl cursor-pointer" onClick={() => {
                         setSelecteImage(selectedImage - 1)
                     }}><IoIosArrowBack /></button>

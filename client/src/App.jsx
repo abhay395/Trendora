@@ -11,6 +11,7 @@ import Signup from './pages/Signup'
 import Logout from './pages/Logout'
 import ProductDetaile from './pages/ProductDetaile'
 import Checkout from './pages/Checkout'
+import PaymentSuccess from './pages/PaymentSuccess'
 function App() {
   const [count, setCount] = useState(0)
   const router = createBrowserRouter(
@@ -26,6 +27,7 @@ function App() {
         <Route path="checkout" element={<Checkout />} />
         <Route path="logout" element={<Logout />} />
         <Route path="product/:id" element={<ProductDetaile />} />
+        <Route path="payment-done" element={<PaymentSuccess />} />
       </Route>
     )
   )
