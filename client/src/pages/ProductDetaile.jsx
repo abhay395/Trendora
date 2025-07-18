@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaMinus, FaPlus, FaStar } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useParams } from "react-router-dom";
+import useProductStore from "../store/productStore";
 
 const ProductDetaile = () => {
+    const { id } = useParams()
+    // console.log(id)
+    const { selectedProduct, isLoading, error, fetchProductById } = useProductStore()
     const [selectedSize, setSelectedSize] = useState("S");
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelecteImage] = useState(0)
     const sizes = ["S", "M", "L"];
-    const images = [
-        "https://assets.ajio.com/medias/sys_master/root/20250616/Q6AN/684fe9be7a6cd4182fb36dff/-473Wx593H-443082538-olive-MODEL.jpg",
-        "https://assets.ajio.com/medias/sys_master/root/20250616/ejCM/684fe9777a6cd4182fb36bca/-473Wx593H-443082538-olive-MODEL7.jpg",
-        "https://assets.ajio.com/medias/sys_master/root/20250616/p3aj/684fe9ef7a6cd4182fb370ff/-473Wx593H-443082538-olive-MODEL2.jpg",
-        "https://assets.ajio.com/medias/sys_master/root/20250616/3Awk/684fe60f7a6cd4182fb35277/-473Wx593H-443082538-olive-MODEL6.jpg",
-        "https://assets.ajio.com/medias/sys_master/root/20250616/O8Ca/684fe54c7a6cd4182fb34f43/-473Wx593H-443082538-olive-MODEL5.jpg",
-    ];
-
+    console.log(selectedProduct)
+    useEffect(() => {
+        fetchProductById(id);
+    }, [id])
+    if (isLoading) return <h1>Loading....</h1>
+    const {title,images,} = selectedProduct;
     return (
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 mt-40">
             {/* Left: Images */}
@@ -27,16 +30,16 @@ const ProductDetaile = () => {
                         setSelecteImage(selectedImage + 1)
                     }}><IoIosArrowForward /></button>
                     <img
-                        src={images[selectedImage]}
+                        src={images[selectedImage].url}
                         alt="Blazer"
                         className=" w-full h-[470px] object-top object-cover rounded-md"
                     />
                 </div>
                 <div className="w-full h-[150px] mt-2 overflow-hidden grid grid-cols-4 gap-2">
-                    {images.map((img, index) => {
+                    {selectedProduct?.images.map((item, index) => {
                         if (index > 0) return <img
                             key={index}
-                            src={img}
+                            src={item.url}
                             alt={`Preview ${index}`}
                             className="w-full object-cover object-top rounded-md cursor-pointer"
                             onClick={() => { setSelecteImage(index) }}
@@ -47,7 +50,7 @@ const ProductDetaile = () => {
 
             {/* Right: Product Info */}
             <div className="w-full md:w-1/2 space-y-4 h-[470px] ">
-                <h1 className="text-4xl text-gray-700 font-bold">Blazer Jacket</h1>
+                <h1 className="text-4xl text-gray-700 font-bold">{title}</h1>
                 {/* Rating */}
                 <div className="flex items-center gap-1 text-yellow-500 text-xl">
                     {[...Array(5)].map((_, i) => (
