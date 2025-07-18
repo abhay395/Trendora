@@ -1,4 +1,4 @@
-import AuthServer from "../service/Auth.server.js"
+import AuthServer from "../service/Auth.service.js"
 import { sendSuccessMessage } from "../utils/helper.js";
 export default {
     signUpUser: async (req, res) => {
