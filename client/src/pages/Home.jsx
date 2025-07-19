@@ -5,6 +5,8 @@ import Card from '../componente/Card';
 import FeatureSection from '../componente/FeatureSection';
 import { Link } from 'react-router-dom';
 import useProductStore from '../store/productStore';
+import { motion } from 'framer-motion'
+import { MoonLoader } from 'react-spinners'
 const products3 = [
   {
     "title": "Western Doodles Casual Shirt",
@@ -159,13 +161,19 @@ const products3 = [
 ]
 
 function Home() {
-  const {fetchProducts,products,isLoading} = useProductStore();
-  useEffect(()=>{
+  const { fetchProducts, products, isLoading } = useProductStore();
+  useEffect(() => {
     fetchProducts();
-  },[])
-  if(isLoading)return <h1>Loaing....</h1>
+  }, [])
+  if (isLoading || products?.length<0) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
   return (
-    <div className="min-h-screen px-6 md:px-12 bg-white">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+
+      className="min-h-screen px-6 md:px-12 bg-white">
       <div className='flex items-center justify-center'>
         <div className="max-w-7xl w-full flex  flex-col-reverse sm:flex-row items-center justify-between gap-x-10 gap-y-3">
           {/* Left Content */}
@@ -221,7 +229,7 @@ function Home() {
       <section>
         <FeatureSection />
       </section>
-    </div>
+    </motion.div>
   )
 }
 
