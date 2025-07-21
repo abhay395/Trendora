@@ -12,7 +12,19 @@ export default {
     },
     getCartProduct: async (userId) => {
         try {
-            const result = await Cart.find({ userId: userId }).populate("productId").populate("userId")
+            const product = await Cart.find({ userId: userId }).populate({ path: "productId", select: "_id title images price gender" }).select('productId quantity ')
+            let result;
+            result = product.map((item) => {
+                let obj = item.toObject()
+                let price = item.productId.price;
+                let quantity = item.quantity
+                let totalPrice = price * quantity
+                return {
+                    totalPrice,
+                    ...obj
+                }
+            });
+            // result.totalPrice = product
             return result
         } catch (error) {
             throw error

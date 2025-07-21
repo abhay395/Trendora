@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TbTruckDelivery } from "react-icons/tb";
 import { RxCross2 } from "react-icons/rx";
 import { GoPlus } from "react-icons/go";
@@ -8,6 +8,7 @@ import { MdDiscount } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
+import useCartStore from '../store/cartStore';
 const products = [
   {
     id: 1,
@@ -49,6 +50,7 @@ const products = [
 
 export default function Cart() {
   const [selectedItemId, setSelectedItemId] = useState([])
+  const { fetchCart ,isLoading,cart} = useCartStore()
   const [coupon, setCoupon] = useState('MAX500');
   const [allSelected, setAllSelected] = useState(false);
   // const selectedItem = products.find((item) => item.id === 0);
@@ -56,8 +58,11 @@ export default function Cart() {
   const delivery = 0;
   const total = 45;
   const navigate = useNavigate();
-  console.log(selectedItemId)
-
+  useEffect(() => {
+    fetchCart()
+  }, [])
+  if(isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
+  console.log(cart)
   return (
     <div className=" bg-white min-h-screen my-8 pt-17">
       <div className='mb-7'>
@@ -109,23 +114,23 @@ export default function Cart() {
             <span className='font-semibold text-lg  text-gray-700'>1/4 items selected</span>
           </div>
           <div className="bg-white px-4 pt-2 rounded-xl border border-gray-200">
-            {products.map((item) => (
+            {cart.map((item) => (
               <div
-                key={item.id}
+                key={item._id}
                 className="flex items-center justify-between py-4 relative border-b-gray-100 border-b"
               >
                 <div className="flex  items-stretch gap-4 justify-center ">
                   <div className='relative  rounded-lg overflow-hidden'>
                     <label
-                      htmlFor={`item-${item.id}`}
+                      htmlFor={`item-${item._id}`}
                       className="flex flex-row cursor-pointer items-center gap-2.5 text-white light:text-black absolute top-2 left-2"
                     >
                       <input
-                        checked={selectedItemId.some(el => el.id == item.id)}
+                        checked={selectedItemId.some(el => el._id == item._id)}
                         onChange={() => {
                           let updatedid = [];
-                          if (selectedItemId.some(el => el.id == item.id)) {
-                            updatedid = selectedItemId.filter((el) => el.id != item.id)
+                          if (selectedItemId.some(el => el._id == item._id)) {
+                            updatedid = selectedItemId.filter((el) => el._id != item._id)
                             setSelectedItemId(updatedid)
                             setAllSelected(false);
                           } else {
@@ -135,7 +140,7 @@ export default function Cart() {
                             setAllSelected(updatedid.length === products.length)
                           }
                         }}
-                        id={`item-${item.id}`}
+                        id={`item-${item._id}`}
                         type="checkbox"
                         className="peer hidden"
                       />
@@ -157,15 +162,15 @@ export default function Cart() {
                         </svg>
                       </div>
                     </label>
-                    <img src={item.image} alt={item.title} className="w-45 h-30 object-cover object-top" />
+                    <img src={item.productId.images[0].url} alt={item.productId.title} className="w-45 h-30 object-cover object-top" />
                   </div>
                   <div className='h-full space-y-1'>
-                    <h4 className="font-semibold text-lg text-gray-800">{item.title}</h4>
+                    <h4 className="font-semibold text-lg text-gray-800">{item.productId.title}</h4>
                     <p className="text-md font-semibold text-gray-500 flex items-center space-x-1"><span>Girl </span> <span><LuDot />
                     </span>{<TbTruckDelivery className='text-xl' />
                       }
                       <span>Express delivery in <span className='text-gray-700 font-bold'> 3 days</span></span></p>
-                    <p className="mt-9 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>$</span>{item.price.toFixed(2)}</p>
+                    <p className="mt-9 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
                   </div>
                 </div>
                 <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' />
@@ -246,7 +251,7 @@ export default function Cart() {
                 </div>
               </div>
 
-              <button onClick={()=>navigate('/checkout')} className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
+              <button onClick={() => navigate('/checkout')} className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
                 Place order →
               </button>
             </div>) : null
