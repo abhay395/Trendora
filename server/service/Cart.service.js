@@ -1,10 +1,13 @@
 import Cart from '../models/Cart.mdoel.js'
 import ApiError from '../utils/ApiError.js'
-
+import Product from '../models/Product.model.js'
 export default {
-    createCart: async (userId, productId, quantity) => {
+    createCart: async (userId, productId, quantity, size) => {
         try {
-            const result = await Cart.create({ productId: productId, userId: userId, quantity: quantity });
+            if (!await Product.findById(productId)) {
+                throw new ApiError(404, "Product not found")
+            }
+            const result = await Cart.create({ productId: productId, userId: userId, quantity: quantity, size: size });
             return result;
         } catch (error) {
             throw error
@@ -12,13 +15,13 @@ export default {
     },
     getCartProduct: async (userId) => {
         try {
-            const product = await Cart.find({ userId: userId }).populate({ path: "productId", select: "_id title images price gender" }).select('productId quantity ')
+            const product = await Cart.find({ userId: userId }).populate({ path: "productId", select: "_id title images price gender" }).select('productId quantity size')
             let result;
             result = product.map((item) => {
                 let obj = item.toObject()
                 let price = item.productId.price;
                 let quantity = item.quantity
-                let totalPrice = price * quantity
+                let totalPrice = Math.floor(price * quantity)
                 return {
                     totalPrice,
                     ...obj
@@ -35,7 +38,9 @@ export default {
             if (!await Cart.findById(cartId)) {
                 throw new ApiError(404, "Cart Not Found", null);
             }
-            const result = await Cart.updateOne({ _id: cartId }, { $set: { quantity: quantity } })
+            let result = await Cart.findByIdAndUpdate(cartId, { $set: { quantity: quantity } }, { new: true }).populate({ path: 'productId', select: "_id title images price gender" }).select('productId quantity size')
+            result = result.toObject();
+            result.totalPrice = Math.floor(result.productId.price * result.quantity)
             return result
         } catch (error) {
             throw error
