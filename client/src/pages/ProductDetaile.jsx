@@ -5,17 +5,22 @@ import { useParams } from "react-router-dom";
 import useProductStore from "../store/productStore";
 import { motion } from "framer-motion";
 import { MoonLoader } from "react-spinners";
+import useCartStore from "../store/cartStore";
 
 const ProductDetaile = () => {
     const { id } = useParams()
     // console.log(id)
     const { selectedProduct, isLoading, error, fetchProductById } = useProductStore()
+    const { addProductCart } = useCartStore();
     const [selectedSize, setSelectedSize] = useState("S");
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelecteImage] = useState(0)
     useEffect(() => {
         fetchProductById(id);
     }, [id])
+    const addToCart = () => {
+        addProductCart({productId:id,quantity:quantity,size:selectedSize})
+    }
     if (isLoading || !selectedProduct) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
     return (
         <motion.div
@@ -114,7 +119,7 @@ const ProductDetaile = () => {
                                 <FaMinus />
                             </button>
                         </div>
-                        <button className="bg-black h-[50px] text-white px-6 py-2 rounded-md">
+                        <button onClick={addToCart} className="bg-black h-[50px] text-white px-6 py-2 rounded-md cursor-pointer">
                             Add to cart
                         </button>
                     </div>

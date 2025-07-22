@@ -49,20 +49,25 @@ const products = [
 ];
 
 export default function Cart() {
+  const { fetchCart, isLoading, cart, removeProductFromCart, updateProductQuantity } = useCartStore()
   const [selectedItemId, setSelectedItemId] = useState([])
-  const { fetchCart ,isLoading,cart} = useCartStore()
   const [coupon, setCoupon] = useState('MAX500');
   const [allSelected, setAllSelected] = useState(false);
-  // const selectedItem = products.find((item) => item.id === 0);
   const discount = 2.5;
   const delivery = 0;
   const total = 45;
   const navigate = useNavigate();
+  const removeProduct = (cartId) => {
+    removeProductFromCart(cartId);
+  }
+  const updateQuanitiy = (cartId, increase = false) => {
+    updateProductQuantity({ cartId, increase })
+  }
   useEffect(() => {
     fetchCart()
   }, [])
-  if(isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
-  console.log(cart)
+  if (isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
+  // console.log(cart)
   return (
     <div className=" bg-white min-h-screen my-8 pt-17">
       <div className='mb-7'>
@@ -173,11 +178,11 @@ export default function Cart() {
                     <p className="mt-9 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
                   </div>
                 </div>
-                <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' />
+                <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' onClick={() => removeProduct(item._id)} />
                 <div className="absolute right-0 bottom-5 flex items-center gap-2 ">
-                  <button className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
-                  <span className='text-gray-600 font-bold'>1</span>
-                  <button className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiMinus />
+                  <button onClick={() => updateQuanitiy(item._id, true)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
+                  <span className='text-gray-600 font-bold'>{item.quantity}</span>
+                  <button onClick={() => updateQuanitiy(item._id, false)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiMinus />
                   </button>
                 </div>
               </div>

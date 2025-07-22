@@ -186,7 +186,7 @@ function Home() {
               We offer personalized printed t-shirts. Choose your style, add your design, and wear your creativity.
             </p>
             <button
-              class="relative cursor-pointer py-2 px-8 text-black text-base font-bold nded-full overflow-hidden bg-white rounded-full transition-all duration-400 ease-in-out  hover:scale-105 hover:text-white  active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-black before:to-black before:transition-all flex justify-center items-center gap-x-3 before:duration-500 before:ease-in-out before:z-[-1] before:rounded-full hover:before:left-0"
+              className="relative cursor-pointer py-2 px-8 text-black text-base font-bold nded-full overflow-hidden bg-white rounded-full transition-all duration-400 ease-in-out  hover:scale-105 hover:text-white  active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-black before:to-black before:transition-all flex justify-center items-center gap-x-3 before:duration-500 before:ease-in-out before:z-[-1] before:rounded-full hover:before:left-0"
             >
               Explore More <MoveRight />
             </button>
@@ -209,7 +209,7 @@ function Home() {
         </div>
         <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-8 gap-x-3 gap-y-2 lg:gap-x-4  lg:gap-y-5'>
           {
-            products.map((item) => <Link to={`product/${item._id}`}><Card product={item} /></Link>)
+            products.map((item) => <Link key={item._id} to={`product/${item._id}`}><Card product={item} /></Link>)
           }
         </section>
       </section>
@@ -221,7 +221,7 @@ function Home() {
         </div>
         <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-8 gap-x-3 gap-y-2 lg:gap-x-4  lg:gap-y-5'>
           {
-            products.map((item) => <Card product={item} />)
+            products.map((item) => <Link key={item._id} to={`product/${item._id}`}><Card product={item} /></Link>)
           }
         </section>
       </section>

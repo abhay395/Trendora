@@ -1,7 +1,6 @@
 import React from 'react'
 
 function Card({ product }) {
-  console.log(product.images)
   return (
     <div className="w-full max-w-xs sm:max-w-sm md:max-w-md sm:h-[400px] md:h-[400px] lg:h-[400px] cursor-pointer bg-white overflow-hidden">
       <div className="relative flex items-center justify-center w-full bg-white overflow-hidden">
