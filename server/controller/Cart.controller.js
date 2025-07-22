@@ -5,8 +5,8 @@ export default {
     createCart: async (req, res) => {
         const { _id } = req.user;
         // console.log(req.user)
-        const {productId,quantity} = req.body
-        const result = await CartService.createCart(_id, productId, quantity);
+        const { productId, quantity, size } = req.body
+        const result = await CartService.createCart(_id, productId, quantity,size);
         sendSuccessMessage(res, 201, "Product Added In Cart Successfully", result)
     },
     getCartProduct: async (req, res) => {

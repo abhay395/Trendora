@@ -7,7 +7,13 @@ export default {
             if (!await Product.findById(productId)) {
                 throw new ApiError(404, "Product not found")
             }
-            const result = await Cart.create({ productId: productId, userId: userId, quantity: quantity, size: size });
+            let createCart = await Cart.create({ productId: productId, userId: userId, quantity: quantity, size: size })
+            let result = await Cart.findById(createCart._id).populate({
+                path: "productId",
+                select: "_id title images price gender"
+            }).select('productId quantity size');
+            result = result.toObject();
+            result.totalPrice = Math.floor(result.productId.price * result.quantity)
             return result;
         } catch (error) {
             throw error
