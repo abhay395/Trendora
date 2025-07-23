@@ -6,7 +6,6 @@ import useProductStore from "../store/productStore";
 import { motion } from "framer-motion";
 import { MoonLoader } from "react-spinners";
 import useCartStore from "../store/cartStore";
-
 const ProductDetaile = () => {
     const { id } = useParams()
     // console.log(id)
@@ -15,6 +14,7 @@ const ProductDetaile = () => {
     const [selectedSize, setSelectedSize] = useState("S");
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelecteImage] = useState(0)
+    // const notify = () => toast('Here is your toast.');
     useEffect(() => {
         fetchProductById(id);
     }, [id])

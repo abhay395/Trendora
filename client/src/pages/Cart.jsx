@@ -9,6 +9,7 @@ import { FaGift } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
 import useCartStore from '../store/cartStore';
+import CartEmpty from './CartEmpty';
 const products = [
   {
     id: 1,
@@ -49,18 +50,18 @@ const products = [
 ];
 
 export default function Cart() {
-  const { isLoading, cart, removeProductFromCart, updateProductQuantity } = useCartStore()
+  const { isLoading, cart, removeProductFromCart, updateProductQuantity, totalPrice } = useCartStore()
   const [selectedItemId, setSelectedItemId] = useState([])
   const [coupon, setCoupon] = useState('MAX500');
   const [disable, setDisable] = useState(false);
   const [allSelected, setAllSelected] = useState(false);
   const discount = 2.5;
-  const delivery = 0;
-  const total = 45;
   const navigate = useNavigate();
   const removeProduct = (cartId) => {
     removeProductFromCart(cartId);
+    setSelectedItemId(prev => prev.filter(item => item._id != cartId))
   }
+  //? This function handle Cart Product Quanitiy
   const updateQuanitiy = (cartId, increase = false) => {
     let selectedCart = cart.find(item => item._id === cartId);
     const size = selectedCart.size;
@@ -79,13 +80,16 @@ export default function Cart() {
     }
     if (disable) return;
     setDisable(true)
+    setSelectedItemId(prev => prev.map(item => item._id == cartId ? { ...item, quantity: quantity, totalPrice: item.price * quantity } : item))
     updateProductQuantity({ cartId, quantity })
     setTimeout(() => {
       setDisable(false)
     }, 600)
   }
+
   if (isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
-  // console.log(cart)
+  // console.log(cart)<
+  if (cart.length == 0) return <CartEmpty />
   return (
     <div className=" bg-white min-h-screen my-8 pt-17">
       <div className='mb-7'>
@@ -106,8 +110,8 @@ export default function Cart() {
                   let toggleforAll = !allSelected
                   setAllSelected(toggleforAll)
                   if (toggleforAll) {
-                    // let selectedId = products.map((item) => item.id)
-                    setSelectedItemId([...products])
+                    let selectedId = cart.map((item) => ({ _id: item._id, title: item.productId.title, quantity: item.quantity, totalPrice: item.totalPrice, price: item.productId.price }))
+                    setSelectedItemId([...selectedId])
                   } else {
                     setSelectedItemId([]);
                   }
@@ -134,7 +138,7 @@ export default function Cart() {
                 </svg>
               </div>
             </label>
-            <span className='font-semibold text-lg  text-gray-700'>1/4 items selected</span>
+            <span className='font-semibold text-lg  text-gray-700'>{selectedItemId.length}/{cart.length} items selected</span>
           </div>
           <div className="bg-white px-4 pt-2 rounded-xl border border-gray-200">
             {cart.map((item) => (
@@ -157,10 +161,10 @@ export default function Cart() {
                             setSelectedItemId(updatedid)
                             setAllSelected(false);
                           } else {
-                            updatedid = [...selectedItemId, item]
+                            updatedid = [...selectedItemId, { _id: item._id, title: item.productId.title, quantity: item.quantity, totalPrice: item.totalPrice, price: item.productId.price }]
                             setSelectedItemId(updatedid);
-                            console.log(updatedid.length === products.length)
-                            setAllSelected(updatedid.length === products.length)
+                            // console.log(updatedid.length === products.length)
+                            setAllSelected(updatedid.length === cart.length)
                           }
                         }}
                         id={`item-${item._id}`}
@@ -189,15 +193,16 @@ export default function Cart() {
                   </div>
                   <div className='h-full space-y-1'>
                     <h4 className="font-semibold text-lg text-gray-800">{item.productId.title}</h4>
-                    <p className="text-md font-semibold text-gray-500 flex items-center space-x-1"><span>Girl </span> <span><LuDot />
+                    <p className="text-md font-semibold text-gray-500 flex items-center space-x-1"><span>{item.productId.gender} </span> <span><LuDot />
                     </span>{<TbTruckDelivery className='text-xl' />
                       }
                       <span>Express delivery in <span className='text-gray-700 font-bold'> 3 days</span></span></p>
-                    <p className="mt-9 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
+                    <p className='font-semibold text-gray-600'>Size : <span className='font-bold text-gray-800'>{item.size}</span></p>
+                    <p className="mt-4 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
                   </div>
                 </div>
                 <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' onClick={() => removeProduct(item._id)} />
-                <div className="absolute right-0 bottom-5 flex items-center gap-2 ">
+                <div className="absolute right-0 bottom-4 flex items-center gap-2 ">
                   <button onClick={() => updateQuanitiy(item._id, true)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
                   <span className='text-gray-600 font-bold'>{item.quantity}</span>
                   <button onClick={() => updateQuanitiy(item._id, false)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiMinus />
@@ -243,7 +248,7 @@ export default function Cart() {
           </div>
 
           {
-            selectedItemId.length ? (<div className='space-y-4 mt-4'>
+            selectedItemId.length > 0 ? (<div className='space-y-4 mt-4'>
               <h3 className="font-semibold text-gray-700 text-[1.2rem]">Price Details</h3>
               <div className="bg-[#f5f2fe] p-4 rounded-xl ">
                 <div className="text-sm space-y-4 text-gray-500">
@@ -252,13 +257,17 @@ export default function Cart() {
                     {/* <span>${selectedItemId[0]?.price?.toFixed(2)}</span> */}
                   </div>
                   <div className='space-y-3 font-medium'>
-                    <div className="flex justify-between">
-                      <span>1 X Classic t-shirt</span>
-                      <span>${selectedItemId[0]?.price?.toFixed(2)}</span>
-                    </div>
+                    {
+                      selectedItemId.map((item) => {
+                        return <div key={item._id} className="flex justify-between">
+                          <span>{item.quantity} X {item.title}</span>
+                          <span>₹{item.totalPrice}</span>
+                        </div>
+                      })
+                    }
                     <div className="flex justify-between">
                       <span>Coupon discount</span>
-                      <span className="text-green-600">-${discount.toFixed(2)}</span>
+                      <span className="text-green-600">-₹{discount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Delivery Charges</span>
@@ -268,12 +277,11 @@ export default function Cart() {
                     <div className='border border-gray-300 my-5'></div>
                     <div className="flex justify-between text-[1rem] text-gray-700 font-semibold">
                       <span>Total Amount</span>
-                      <span>${(total + delivery).toFixed(2)}</span>
+                      <span>${(selectedItemId.reduce((sum, item) => sum + item.totalPrice, 0)).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
               </div>
-
               <button onClick={() => navigate('/checkout')} className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
                 Place order →
               </button>

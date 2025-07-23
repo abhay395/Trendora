@@ -4,6 +4,7 @@ import Footer from './componente/Footer'
 import { Outlet } from 'react-router-dom'
 import ScrollToTop from './componente/ScrollToTop'
 import { motion } from 'framer-motion'
+import { Toaster } from 'react-hot-toast';
 
 export default function RootLayout() {
     return (
@@ -14,6 +15,7 @@ export default function RootLayout() {
                 <Outlet />
             </div>
             <Footer />
+             <Toaster />
         </div>
     )
 }

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 const BASEURL = import.meta.env.VITE_API_URL;
 const CARTURL = `${BASEURL}/cart`
 const authHeader = () => ({
@@ -34,6 +35,7 @@ const useCartStore = create((set, get) => ({
         try {
             set({ isLoading: true, error: null });
             let body = { productId, quantity, size }
+            toast.success("Product added to cart! ")
             let response = await axios.post(`${CARTURL}/create`, body, {
                 headers: authHeader()
             })
@@ -42,6 +44,7 @@ const useCartStore = create((set, get) => ({
             let updatedCart = [...currentCart, result]
             let totalPrice = calculateTotalPrice(updatedCart)
             set({ isLoading: false, cart: updatedCart, totalPrice, totalProduct: get().totalProduct + 1 })
+            
         } catch (error) {
             set({ isLoading: false, error: { message: 'Product Not added On Cart' } })
         }

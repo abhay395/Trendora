@@ -16,11 +16,13 @@ function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { totalProduct } = useCartStore()
-  useEffect(() => {
-    if (!isDropdown) {
-      setIsDropdown(!isDropdown)
-    }
-  }, [location])
+  // useEffect(() => {
+  //   if (!isDropdown) {
+  //     setIsDropdown(!isDropdown)
+  //   }
+  //   //  setTimeout(()=>{setIsDropdown(false)},2000)
+  //   // return clearTimeout()
+  // }, [location])
   return (
     <nav className="bg-white border-b border-gray-300 fixed w-full top-0 font-poppins z-50 opacity-95 backdrop-blur-md ">
       <div className="max-w-7xl relative mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-center md:justify-between items-center">
@@ -35,12 +37,12 @@ function Navbar() {
         <div className='md:flex md:items-center md:justify-center gap-x-5 absolute left-4 md:static'>
           {localStorage.getItem('token') ? (
             <div className="relative lg:inline-block text-left">
-              <div onClick={toggleDropdown}>
+              <div >
                 <CgProfile className='text-2xl text-gray-800 cursor-pointer' />
               </div>
               {/* Dropdown Items */}
               <div
-                className={`absolute ${isDropdown ? 'hidden' : ''} md:right-[10px]  z-10 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none`}
+                className={`absolute ${!isDropdown ? 'hidden' : ''} md:right-[10px]  z-10 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none`}
                 role="menu"
                 aria-orientation="vertical"
                 tabIndex={-1}
