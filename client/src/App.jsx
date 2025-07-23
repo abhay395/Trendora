@@ -14,10 +14,15 @@ import Logout from './pages/Logout'
 import ProductDetaile from './pages/ProductDetaile'
 import Checkout from './pages/Checkout'
 import PaymentSuccess from './pages/PaymentSuccess'
+import useCartStore from './store/cartStore'
+import { useEffect } from 'react'
 
 function App() {
   const location = useLocation()
-
+  const {fetchCart} = useCartStore()
+    useEffect(() => {
+      fetchCart()
+    }, [])
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>

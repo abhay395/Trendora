@@ -7,6 +7,7 @@ import { FiSettings, FiLogOut } from 'react-icons/fi';
 import { FaBoxOpen, FaUserCircle } from 'react-icons/fa';
 import { FaCartShopping } from "react-icons/fa6";
 import '../Navbar.css'
+import useCartStore from '../store/cartStore';
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
@@ -14,6 +15,7 @@ function Navbar() {
   const toggleDropdown = () => setIsDropdown(!isDropdown);
   const navigate = useNavigate()
   const location = useLocation()
+  const { totalProduct } = useCartStore()
   useEffect(() => {
     if (!isDropdown) {
       setIsDropdown(!isDropdown)
@@ -85,9 +87,12 @@ function Navbar() {
           )}
 
           {/* Cart Button */}
-          <button className='cursor-pointer hidden lg:block' onClick={() => navigate('/cart')}>
-            <FaCartShopping className='text-2xl text-gray-800' />
-          </button>
+          <div className='relative p-3'>
+            <button className='cursor-pointer hidden lg:block' onClick={() => navigate('/cart')}>
+              <FaCartShopping className='text-2xl text-gray-800' />
+             { totalProduct>0?<span className='absolute rounded-full h-5 w-5 top-0 text-sm right-0 bg-gray-700 text-white'>{totalProduct}</span>:null}
+            </button>
+          </div>
         </div>
         {/* Mobile Button */}
         <button

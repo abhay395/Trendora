@@ -49,9 +49,10 @@ const products = [
 ];
 
 export default function Cart() {
-  const { fetchCart, isLoading, cart, removeProductFromCart, updateProductQuantity } = useCartStore()
+  const { isLoading, cart, removeProductFromCart, updateProductQuantity } = useCartStore()
   const [selectedItemId, setSelectedItemId] = useState([])
   const [coupon, setCoupon] = useState('MAX500');
+  const [disable, setDisable] = useState(false);
   const [allSelected, setAllSelected] = useState(false);
   const discount = 2.5;
   const delivery = 0;
@@ -61,11 +62,28 @@ export default function Cart() {
     removeProductFromCart(cartId);
   }
   const updateQuanitiy = (cartId, increase = false) => {
-    updateProductQuantity({ cartId, increase })
+    let selectedCart = cart.find(item => item._id === cartId);
+    const size = selectedCart.size;
+    const sizes = selectedCart.productId.sizes;
+    let quantity = selectedCart.quantity
+    const availableQty = sizes?.[String(size).toUpperCase()];
+    if (increase) {
+      if (quantity <= availableQty) {
+        quantity++
+      } else {
+        return;
+      }
+    } else {
+      if (quantity > 1) quantity--
+      else return
+    }
+    if (disable) return;
+    setDisable(true)
+    updateProductQuantity({ cartId, quantity })
+    setTimeout(() => {
+      setDisable(false)
+    }, 600)
   }
-  useEffect(() => {
-    fetchCart()
-  }, [])
   if (isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
   // console.log(cart)
   return (
