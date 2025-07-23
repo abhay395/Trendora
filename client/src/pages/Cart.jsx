@@ -10,58 +10,59 @@ import { Link, useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
 import useCartStore from '../store/cartStore';
 import CartEmpty from './CartEmpty';
-const products = [
-  {
-    id: 1,
-    title: "Classic White T-Shirt",
-    description: "100% cotton, slim fit, breathable and lightweight.",
-    price: 499,
-    originalPrice: 799,
-    image: "https://rukminim2.flixcart.com/image/832/832/xif0q/shirt/t/v/c/xl-kcsh-fo-1647-wh-fubar-original-imah4zensmpmzgbn.jpeg?q=70&crop=false",
-    category: "Men"
-  },
-  {
-    id: 2,
-    title: "Men’s Denim Jacket",
-    description: "Stylish blue denim jacket for casual wear.",
-    price: 1899,
-    originalPrice: 2499,
-    image: "https://campussutra.com/cdn/shop/files/JKDENIMP02_M_PLN_NBU_1_80a9e6ee-5622-456b-82f5-a2fb3e18f9f8.jpg?v=1728974706&width=800",
-    category: "Men"
-  },
-  {
-    id: 3,
-    title: "Floral Summer Dress",
-    description: "Light and breezy dress perfect for summer outings.",
-    price: 1399,
-    originalPrice: 1999,
-    image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80",
-    category: "Women"
-  },
-  {
-    id: 4,
-    title: "Women’s Beige Coat",
-    description: "Elegant coat with a warm inner lining for winter.",
-    price: 2999,
-    originalPrice: 3799,
-    image: "https://m.media-amazon.com/images/I/61OWk8KmCWL._SY879_.jpg",
-    category: "Women"
-  },
-];
+// const products = [
+//   {
+//     id: 1,
+//     title: "Classic White T-Shirt",
+//     description: "100% cotton, slim fit, breathable and lightweight.",
+//     price: 499,
+//     originalPrice: 799,
+//     image: "https://rukminim2.flixcart.com/image/832/832/xif0q/shirt/t/v/c/xl-kcsh-fo-1647-wh-fubar-original-imah4zensmpmzgbn.jpeg?q=70&crop=false",
+//     category: "Men"
+//   },
+//   {
+//     id: 2,
+//     title: "Men’s Denim Jacket",
+//     description: "Stylish blue denim jacket for casual wear.",
+//     price: 1899,
+//     originalPrice: 2499,
+//     image: "https://campussutra.com/cdn/shop/files/JKDENIMP02_M_PLN_NBU_1_80a9e6ee-5622-456b-82f5-a2fb3e18f9f8.jpg?v=1728974706&width=800",
+//     category: "Men"
+//   },
+//   {
+//     id: 3,
+//     title: "Floral Summer Dress",
+//     description: "Light and breezy dress perfect for summer outings.",
+//     price: 1399,
+//     originalPrice: 1999,
+//     image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80",
+//     category: "Women"
+//   },
+//   {
+//     id: 4,
+//     title: "Women’s Beige Coat",
+//     description: "Elegant coat with a warm inner lining for winter.",
+//     price: 2999,
+//     originalPrice: 3799,
+//     image: "https://m.media-amazon.com/images/I/61OWk8KmCWL._SY879_.jpg",
+//     category: "Women"
+//   },
+// ];
 
 export default function Cart() {
-  const { isLoading, cart, removeProductFromCart, updateProductQuantity, totalPrice } = useCartStore()
-  const [selectedItemId, setSelectedItemId] = useState([])
-  const [coupon, setCoupon] = useState('MAX500');
-  const [disable, setDisable] = useState(false);
   const [allSelected, setAllSelected] = useState(false);
+  const [coupon, setCoupon] = useState('MAX500');
   const discount = 2.5;
   const navigate = useNavigate();
+
+  // function related to cart  Store 
+  const { isLoading, cart, removeProductFromCart, updateProductQuantity, selectProduct, selectAllProduct } = useCartStore()
   const removeProduct = (cartId) => {
     removeProductFromCart(cartId);
-    setSelectedItemId(prev => prev.filter(item => item._id != cartId))
   }
+  let selectedProduct = cart?.filter((item) => item.selected)
   //? This function handle Cart Product Quanitiy
+  const [disable, setDisable] = useState(false);
   const updateQuanitiy = (cartId, increase = false) => {
     let selectedCart = cart.find(item => item._id === cartId);
     const size = selectedCart.size;
@@ -80,15 +81,26 @@ export default function Cart() {
     }
     if (disable) return;
     setDisable(true)
-    setSelectedItemId(prev => prev.map(item => item._id == cartId ? { ...item, quantity: quantity, totalPrice: item.price * quantity } : item))
     updateProductQuantity({ cartId, quantity })
     setTimeout(() => {
       setDisable(false)
     }, 600)
   }
-
+  const selectToggle = (cartId, selected) => {
+    selectProduct(cartId, selected)
+  }
+  const selectAllToggle = (selected) => {
+    setAllSelected(selected)
+    selectAllProduct(selected);
+  }
+  useEffect(() => {
+    if (selectedProduct.length == cart.length) {
+      setAllSelected(true)
+    } else {
+      setAllSelected(false)
+    }
+  }, [cart])
   if (isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
-  // console.log(cart)<
   if (cart.length == 0) return <CartEmpty />
   return (
     <div className=" bg-white min-h-screen my-8 pt-17">
@@ -105,16 +117,9 @@ export default function Cart() {
               className="flex cursor-pointer flex-row items-center gap-2.5 text-white light:text-black"
             >
               <input
-                checked={allSelected === true}
+                checked={allSelected}
                 onChange={() => {
-                  let toggleforAll = !allSelected
-                  setAllSelected(toggleforAll)
-                  if (toggleforAll) {
-                    let selectedId = cart.map((item) => ({ _id: item._id, title: item.productId.title, quantity: item.quantity, totalPrice: item.totalPrice, price: item.productId.price }))
-                    setSelectedItemId([...selectedId])
-                  } else {
-                    setSelectedItemId([]);
-                  }
+                  selectAllToggle(!allSelected)
                 }}
                 id={`item-all`}
                 type="checkbox"
@@ -138,7 +143,7 @@ export default function Cart() {
                 </svg>
               </div>
             </label>
-            <span className='font-semibold text-lg  text-gray-700'>{selectedItemId.length}/{cart.length} items selected</span>
+            <span className='font-semibold text-lg  text-gray-700'>{selectedProduct.length}/{cart.length} items selected</span>
           </div>
           <div className="bg-white px-4 pt-2 rounded-xl border border-gray-200">
             {cart.map((item) => (
@@ -153,19 +158,10 @@ export default function Cart() {
                       className="flex flex-row cursor-pointer items-center gap-2.5 text-white light:text-black absolute top-2 left-2"
                     >
                       <input
-                        checked={selectedItemId.some(el => el._id == item._id)}
+                        checked={item.selected}
                         onChange={() => {
-                          let updatedid = [];
-                          if (selectedItemId.some(el => el._id == item._id)) {
-                            updatedid = selectedItemId.filter((el) => el._id != item._id)
-                            setSelectedItemId(updatedid)
-                            setAllSelected(false);
-                          } else {
-                            updatedid = [...selectedItemId, { _id: item._id, title: item.productId.title, quantity: item.quantity, totalPrice: item.totalPrice, price: item.productId.price }]
-                            setSelectedItemId(updatedid);
-                            // console.log(updatedid.length === products.length)
-                            setAllSelected(updatedid.length === cart.length)
-                          }
+                          let selected = item.selected
+                          selectToggle(item._id, !selected)
                         }}
                         id={`item-${item._id}`}
                         type="checkbox"
@@ -248,7 +244,7 @@ export default function Cart() {
           </div>
 
           {
-            selectedItemId.length > 0 ? (<div className='space-y-4 mt-4'>
+            selectedProduct.length > 0 ? (<div className='space-y-4 mt-4'>
               <h3 className="font-semibold text-gray-700 text-[1.2rem]">Price Details</h3>
               <div className="bg-[#f5f2fe] p-4 rounded-xl ">
                 <div className="text-sm space-y-4 text-gray-500">
@@ -258,9 +254,9 @@ export default function Cart() {
                   </div>
                   <div className='space-y-3 font-medium'>
                     {
-                      selectedItemId.map((item) => {
+                      selectedProduct.map((item) => {
                         return <div key={item._id} className="flex justify-between">
-                          <span>{item.quantity} X {item.title}</span>
+                          <span>{item.quantity} X {item.productId.title}</span>
                           <span>₹{item.totalPrice}</span>
                         </div>
                       })
@@ -277,7 +273,7 @@ export default function Cart() {
                     <div className='border border-gray-300 my-5'></div>
                     <div className="flex justify-between text-[1rem] text-gray-700 font-semibold">
                       <span>Total Amount</span>
-                      <span>${(selectedItemId.reduce((sum, item) => sum + item.totalPrice, 0)).toFixed(2)}</span>
+                      <span>${(selectedProduct.reduce((sum, item) => sum + item.totalPrice, 0)).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

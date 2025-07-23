@@ -44,7 +44,6 @@ const useCartStore = create((set, get) => ({
             let updatedCart = [...currentCart, result]
             let totalPrice = calculateTotalPrice(updatedCart)
             set({ isLoading: false, cart: updatedCart, totalPrice, totalProduct: get().totalProduct + 1 })
-            
         } catch (error) {
             set({ isLoading: false, error: { message: 'Product Not added On Cart' } })
         }
@@ -59,9 +58,32 @@ const useCartStore = create((set, get) => ({
                 return item;
             });
             set({ cart: updatedCart });
-            await axios.post(`${CARTURL}/update-quantity/${cartId}`, { quantity }, {
+            await axios.put(`${CARTURL}/update/${cartId}`, { quantity }, {
                 headers: authHeader()
             })
+        } catch (error) {
+            console.log(error)
+        }
+    },
+    selectProduct: async (cartId, selected) => {
+        try {
+            let updateCart = get().cart.map((item) => item._id == cartId ? { ...item, selected } : item)
+            set({ cart: updateCart })
+            await axios.put(`${CARTURL}/update/${cartId}`, { selected }, {
+                headers: authHeader()
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
+    selectAllProduct: async (selected) => {
+        try {
+            let updateCart = get().cart.map((item) => ({ ...item, selected }))
+            set({ cart: updateCart })
+            let response = await axios.put(`${CARTURL}/update-many`, { selected }, {
+                headers: authHeader()
+            })
+            console.log(response)
         } catch (error) {
             console.log(error)
         }

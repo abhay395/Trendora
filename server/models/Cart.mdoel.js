@@ -18,6 +18,10 @@ const CartSchema = new mongoose.Schema({
     },
     size: {
         type: String, required: true
+    },
+    selected: {
+        type: Boolean,
+        default: false
     }
 })
 
