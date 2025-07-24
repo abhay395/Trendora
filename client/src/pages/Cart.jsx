@@ -10,44 +10,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
 import useCartStore from '../store/cartStore';
 import CartEmpty from './CartEmpty';
-// const products = [
-//   {
-//     id: 1,
-//     title: "Classic White T-Shirt",
-//     description: "100% cotton, slim fit, breathable and lightweight.",
-//     price: 499,
-//     originalPrice: 799,
-//     image: "https://rukminim2.flixcart.com/image/832/832/xif0q/shirt/t/v/c/xl-kcsh-fo-1647-wh-fubar-original-imah4zensmpmzgbn.jpeg?q=70&crop=false",
-//     category: "Men"
-//   },
-//   {
-//     id: 2,
-//     title: "Men’s Denim Jacket",
-//     description: "Stylish blue denim jacket for casual wear.",
-//     price: 1899,
-//     originalPrice: 2499,
-//     image: "https://campussutra.com/cdn/shop/files/JKDENIMP02_M_PLN_NBU_1_80a9e6ee-5622-456b-82f5-a2fb3e18f9f8.jpg?v=1728974706&width=800",
-//     category: "Men"
-//   },
-//   {
-//     id: 3,
-//     title: "Floral Summer Dress",
-//     description: "Light and breezy dress perfect for summer outings.",
-//     price: 1399,
-//     originalPrice: 1999,
-//     image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=80",
-//     category: "Women"
-//   },
-//   {
-//     id: 4,
-//     title: "Women’s Beige Coat",
-//     description: "Elegant coat with a warm inner lining for winter.",
-//     price: 2999,
-//     originalPrice: 3799,
-//     image: "https://m.media-amazon.com/images/I/61OWk8KmCWL._SY879_.jpg",
-//     category: "Women"
-//   },
-// ];
 
 export default function Cart() {
   const [allSelected, setAllSelected] = useState(false);
