@@ -2,11 +2,12 @@ import { useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
 import useCartStore from '../store/cartStore';
 import { MoonLoader } from 'react-spinners';
+import AddressSection from '../componente/AddressSection';
 export default function Checkout() {
     const { cart, isLoading } = useCartStore()
     const discount = 2.5;
-    let selectedProduct = cart.filter((item)=>item.selected)
-    let totalPrice = selectedProduct.reduce((sum,item)=>sum+item.totalPrice,0)
+    let selectedProduct = cart.filter((item) => item.selected)
+    let totalPrice = selectedProduct.reduce((sum, item) => sum + item.totalPrice, 0)
     const navigate = useNavigate();
     if (isLoading) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
     return (
@@ -18,28 +19,7 @@ export default function Checkout() {
                 {/* Left Section */}
                 <div className="col-span-2 space-y-5 flex items-center flex-col w-[90%]">
                     {/* <h2 className="text-xl font-semibold mb-7">Cart</h2> */}
-                    <div className='w-full'>
-                        <div className='mb-4  text-left w-full'>
-                            <span className='font-semibold text-lg text-gray-900'>Select A Delivery Address</span>
-                        </div>
-                        <div className="flex flex-col w-full items-center justify-center px-5 py-5 rounded-xl border border-gray-200 ">
-                            <div className='w-full space-y-2  pt-1 flex space-x-3 items-start'>
-                                <input type="radio" name='address' className='w-5 h-5 mt-1 accent-black cursor-pointer' id='1' />
-                                <label htmlFor='1' className='space-y-2'>
-                                    <p className='font-semibold text-[1.02rem] text-gray-800'>Lydia Geroge</p>
-                                    <p className='text-[0.9rem] font-medium text-gray-500'>2345 Glacier View Dr, Eagle River, Alaska 9957, USA</p>
-                                </label>
-                            </div>
-                            <div className='border-b w-full border-gray-300 my-4'></div>
-                            <div className='w-full space-y-2  pt-1 flex space-x-3 items-start'>
-                                <input type="radio" id='2' name='address' className='w-5 h-5 mt-1 accent-black' />
-                                <label htmlFor='2' className='space-y-2'>
-                                    <p className='font-semibold text-[1.02rem] text-gray-800'>Lydia Geroge</p>
-                                    <p className='text-[0.9rem] font-medium text-gray-500'>2345 Glacier View Dr, Eagle River, Alaska 9957, USA</p>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <AddressSection />
                     <div className='w-full'>
                         <div className='mb-4  text-left w-full'>
                             <span className='font-semibold text-lg text-gray-900'>Select A Delivery Address</span>
@@ -133,7 +113,7 @@ export default function Checkout() {
                                             <div className='flex items-center space-x-4 pr-7'>
                                                 <span className='font-semibold text-gray-700'>QTY :</span>
                                                 {/* <div className="flex items-center gap-2 "> */}
-                                                    <span className='text-gray-600 font-bold'>{item.quantity}</span>
+                                                <span className='text-gray-600 font-bold'>{item.quantity}</span>
                                                 {/* </div> */}
                                             </div>
                                         </div>
