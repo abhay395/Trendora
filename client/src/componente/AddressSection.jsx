@@ -5,17 +5,22 @@ import { RxCross2 } from 'react-icons/rx';
 import { MdEditNote } from "react-icons/md";
 export default function AddressSection() {
   const [showForm, setShowForm] = useState(false);
-  const { fetchAddress, addAddress, addresses, error, deleteAddress } = useAddressStore()
+  const { fetchAddress, addAddress, addresses, error, deleteAddress, selecteAddress } = useAddressStore()
   const { register,
     handleSubmit,
     formState: { errors }, reset
   } = useForm();
-  const [selectedAddressId, setSelectedAddressId] = useState('address1');
+  const selectedAddressId = addresses.find((item) => item.selected)?._id
+  const [select, setSelect] = useState(selectedAddressId)
   const onSubmit = (async (data) => {
     addAddress(data)
   })
   const deleteHandler = (addressId) => {
     deleteAddress(addressId)
+  }
+  const selectedAddresses = (addressId) => {
+    console.log("hesjj")
+    selecteAddress(addressId)
   }
   useEffect(() => {
     fetchAddress()
@@ -26,6 +31,7 @@ export default function AddressSection() {
       reset()
     }
   }, [addresses])
+
   return (
     <div className="w-full px-5 py-6 rounded-xl border border-gray-200 space-y-6">
       <div className="flex justify-between items-center">
@@ -44,9 +50,12 @@ export default function AddressSection() {
             type="radio"
             name="address"
             id={addr._id}
-            className="w-5 h-5 mt-1 accent-black"
-            checked={selectedAddressId === addr._id}
-            onChange={() => setSelectedAddressId(addr._id)}
+            className="w-5 h-5 mt-1 accent-black cursor-pointer"
+            checked={addr._id == select}
+            onChange={() => {
+              setSelect(addr._id)
+               selectedAddresses(addr._id)
+               }}
           />
           <label htmlFor={addr._id} className="space-y-1">
             <p className="font-semibold text-[1.02rem] text-gray-800">{addr.name}</p>

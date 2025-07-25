@@ -50,6 +50,19 @@ const useAddressStore = create((set, get) => ({
             set({ error: error.response.data.message, isLoading: false })
         }
     },
+    selecteAddress: async (addressId) => {
+        try {
+            set({ isLoading: true, error: null })
+            let currentAddress = get().addresses;
+            let updateAddress = currentAddress.map((item) => item._id == addressId ? { ...item, selected: true } : item)
+            set({ addresses: updateAddress })
+            await axios.put(`${ADRESSAPIURL}/selecte/${addressId}`, {}, {
+                headers: authHeader()
+            })
+        } catch (error) {
+            set({ error: error.response.data.message, isLoading: false })
+        }
+    },
     deleteAddress: async (addressId) => {
         try {
             let currentAddress = get().addresses;

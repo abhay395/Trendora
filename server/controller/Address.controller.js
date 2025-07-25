@@ -6,6 +6,12 @@ export default {
         let result = await AddressService.getAllAddress(_id)
         sendSuccessMessage(res, 200, "Address is fetched successfully", result)
     },
+    selectAddress: async (req, res) => {
+        const { addressId } = req.params
+        const { _id } = req.user
+        const result = await AddressService.selectAddress(addressId, _id)
+        sendSuccessMessage(res, 200, "Address is Selected successfully", result)
+    },
     addAddress: async (req, res) => {
         const { body } = req;
         const { _id } = req.user

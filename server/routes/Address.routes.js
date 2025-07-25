@@ -6,6 +6,7 @@ const addressRouter = express.Router();
 
 addressRouter.get('/get', authenticationMiddleware, asyncWrapper(AddressController.getAllAddress))
 addressRouter.post('/add', authenticationMiddleware, asyncWrapper(AddressController.addAddress))
+addressRouter.put('/selecte/:addressId', authenticationMiddleware, asyncWrapper(AddressController.selectAddress))
 addressRouter.put('/update/:addressId', authenticationMiddleware, asyncWrapper(AddressController.updateAddresssById))
 addressRouter.delete('/delete/:addressId', authenticationMiddleware, asyncWrapper(AddressController.deleteAddressById))
 
