@@ -7,7 +7,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm()
   // const [error, setError] = useState(true);

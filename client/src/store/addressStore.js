@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
-const BASEAPIURL = import.meta.env.VITE_API_URL;
+const BASEURL = import.meta.env.VITE_API_URL;
 const ADRESSAPIURL = `${BASEURL}/address`
 const authHeader = () => ({
     Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -30,10 +30,11 @@ const useAddressStore = create((set, get) => ({
             let response = await axios.post(`${ADRESSAPIURL}/add`, { name, phone, pincode, city, state, fullAddress }, {
                 headers: authHeader()
             })
-            set({ addresses: [...currentAddress, response.data.result] })
+            set({ addresses: [...currentAddress, response.data.result], isLoading: false })
             toast.success("Address Added!")
         } catch (error) {
             set({ error: error.response.data.message, isLoading: false })
+            toast.error(`${get().error}`)
         }
     },
     updateAddress: async (addressId, updateBody) => {
@@ -51,14 +52,15 @@ const useAddressStore = create((set, get) => ({
     },
     deleteAddress: async (addressId) => {
         try {
-            let currentAddress = get().address;
+            let currentAddress = get().addresses;
             let updatedAddress = currentAddress.filter(item => item._id != addressId)
             set({ addresses: updatedAddress })
-            await axios.put(`${ADRESSAPIURL}/delete/${addressId}`, {
+            await axios.delete(`${ADRESSAPIURL}/delete/${addressId}`, {
                 headers: authHeader()
             })
         } catch (error) {
-            set({ error: error.response.data.message, isLoading: false })
+            console.log(error)
+            set({ error: error?.response?.data?.message, isLoading: false })
         }
     }
 }))
