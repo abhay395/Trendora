@@ -17,5 +17,4 @@ export default {
         const result = await OrderService.getOrderById(orderId)
         sendSuccessMessage(res, 200, "Order history fetched successfully", result);
     }
-    
 }

@@ -37,7 +37,7 @@ export default {
     },
     getOrders: async (userId) => {
         try {
-            let result = await Order.find({ userId });
+            let result = await Order.find({ userId }).sort({ createdAt: -1 });
             return result;
         } catch (error) {
             throw error
