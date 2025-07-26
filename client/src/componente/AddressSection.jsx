@@ -51,11 +51,11 @@ export default function AddressSection() {
             name="address"
             id={addr._id}
             className="w-5 h-5 mt-1 accent-black cursor-pointer"
-            checked={addr._id == select}
+            checked={addr._id == select || addr.selected}
             onChange={() => {
               setSelect(addr._id)
-               selectedAddresses(addr._id)
-               }}
+              selectedAddresses(addr._id)
+            }}
           />
           <label htmlFor={addr._id} className="space-y-1">
             <p className="font-semibold text-[1.02rem] text-gray-800">{addr.name}</p>

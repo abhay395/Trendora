@@ -4,13 +4,24 @@ import useCartStore from '../store/cartStore';
 import { MoonLoader } from 'react-spinners';
 import AddressSection from '../componente/AddressSection';
 import PaymentSection from '../componente/PaymentSection';
+import useOrderStore from '../store/orderStore';
 export default function Checkout() {
-    const { cart, isLoading: loadingForCart } = useCartStore()
+    const { cart, isLoading: loadingForCart, resetCart } = useCartStore()
+    const { checkoutProduct, isLoading, recentOrder } = useOrderStore();
+
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
     let totalPrice = selectedProduct.reduce((sum, item) => sum + item.totalPrice, 0)
+
+    let checkOutHandler = async () => {
+        const success = await checkoutProduct()
+        if (success) {
+            navigate(`/payment-done/${recentOrder._id}`)
+            resetCart()
+        }
+    }
     const navigate = useNavigate();
-    if (loadingForCart) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
+    if (loadingForCart && isLoading) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
     return (
         <div className=" bg-white min-h-screen my-8 pt-17">
             <div className='mb-7'>
@@ -21,7 +32,7 @@ export default function Checkout() {
                 <div className="col-span-2 space-y-5 flex items-center flex-col w-[90%]">
                     {/* <h2 className="text-xl font-semibold mb-7">Cart</h2> */}
                     <AddressSection />
-                    <PaymentSection/>
+                    <PaymentSection />
                 </div>
 
                 {/* Right Section */}
@@ -91,7 +102,7 @@ export default function Checkout() {
                                     </div>
                                 </div>
 
-                                <button onClick={() => navigate('/payment-done')} className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
+                                <button onClick={checkOutHandler} className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
                                     Place order →
                                 </button>
                             </div>) : null

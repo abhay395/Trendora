@@ -15,6 +15,16 @@ const useCartStore = create((set, get) => ({
     isLoading: false,
     error: null,
     totalProduct: 0,
+    resetCart: () => {
+        set({
+            cart: [],
+            price: 0,
+            totalPrice: 0,
+            isLoading: false,
+            error: null,
+            totalProduct: 0,
+        })
+    },
     fetchCart: async () => {
         try {
             set({ isLoading: true, error: null })
@@ -102,7 +112,7 @@ const useCartStore = create((set, get) => ({
                 error: { message: error?.response?.data?.message || "Failed to remove product" },
             });
         }
-    }
+    },
 }))
 
 export default useCartStore

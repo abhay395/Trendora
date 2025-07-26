@@ -37,7 +37,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="logout" element={<Logout />} />
           <Route path="product/:id" element={<ProductDetaile />} />
-          <Route path="payment-done" element={<PaymentSuccess />} />
+          <Route path="payment-done/:id" element={<PaymentSuccess />} />
         </Route>
       </Routes>
     </AnimatePresence>

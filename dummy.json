@@ -147,3 +147,15 @@
         }
     }
 ]
+
+[
+    {
+        "name": "Abhay",
+        "phone": "95091236",
+        "pincode": "452001",
+        "city": "Indore",
+        "state": "Rajasthan",
+        "street": "ITI Square Pardesipura",
+        "landMark": "Mount Carmel School"
+    }
+]
