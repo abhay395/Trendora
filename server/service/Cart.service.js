@@ -1,4 +1,4 @@
-import Cart from '../models/Cart.mdoel.js'
+import Cart from '../models/Cart.model.js'
 import ApiError from '../utils/ApiError.js'
 import Product from '../models/Product.model.js'
 export default {

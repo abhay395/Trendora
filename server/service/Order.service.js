@@ -1,6 +1,6 @@
 import Order from "../models/Order.model.js"
 import Address from '../models/Address.model.js'
-import Cart from '../models/Cart.mdoel.js'
+import Cart from '../models/Cart.model.js'
 import ApiError from "../utils/ApiError.js"
 export default {
     checkoutProduct: async (userId, paymentMethod) => {
