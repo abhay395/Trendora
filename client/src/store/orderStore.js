@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 const BASEURL = import.meta.env.VITE_API_URL;
 const ORDERURL = `${BASEURL}/order`
 const authHeader = () => ({
@@ -19,8 +19,8 @@ const useOrderStore = create((set, get) => ({
                 headers: authHeader()
             })
             set({ isLoading: false, recentOrder: response?.data?.result })
-            toast.success("Order Placed Successfully")
-            return true;
+            // toast.success("Order Placed Successfully")
+            return response.data.result._id;
         } catch (error) {
             console.log(error)
             set({

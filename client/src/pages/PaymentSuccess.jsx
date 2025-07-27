@@ -1,9 +1,9 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import useOrderStore from "../store/orderStore";
 import { motion } from 'framer-motion';
 import { useEffect } from "react";
+import useCartStore from "../store/cartStore";
 const containerVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
@@ -29,12 +29,16 @@ const cardVariants = {
 
 const PaymentSuccess = () => {
   const navigate = useNavigate()
-  const {id} = useParams()
+  const { id } = useParams()
+  const { resetCart } = useCartStore()
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate('/');
     }, 5000);
     return () => clearTimeout(timer)
+  }, [])
+  useEffect(() => {
+    resetCart()
   }, [])
   return (
     <motion.div

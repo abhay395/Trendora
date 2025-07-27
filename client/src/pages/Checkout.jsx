@@ -5,25 +5,31 @@ import { MoonLoader } from 'react-spinners';
 import AddressSection from '../componente/AddressSection';
 import PaymentSection from '../componente/PaymentSection';
 import useOrderStore from '../store/orderStore';
+import { motion } from 'framer-motion'
 export default function Checkout() {
-    const { cart, isLoading: loadingForCart, resetCart } = useCartStore()
-    const { checkoutProduct, isLoading, recentOrder } = useOrderStore();
+    const { cart, isLoading: loadingForCart } = useCartStore()
+    const { checkoutProduct, isLoading } = useOrderStore();
 
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
     let totalPrice = selectedProduct.reduce((sum, item) => sum + item.totalPrice, 0)
 
     let checkOutHandler = async () => {
-        const success = await checkoutProduct()
-        if (success) {
-            navigate(`/payment-done/${recentOrder._id}`)
-            resetCart()
+        const id = await checkoutProduct()
+        if (id) {
+            navigate(`/payment-done/${id}`)
         }
     }
     const navigate = useNavigate();
     if (loadingForCart && isLoading) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
     return (
-        <div className=" bg-white min-h-screen my-8 pt-17">
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0 }}
+
+            className=" bg-white min-h-screen my-8 pt-17">
             <div className='mb-7'>
                 <Stepper currentStep={2} />
             </div>
@@ -109,6 +115,6 @@ export default function Checkout() {
                     }
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

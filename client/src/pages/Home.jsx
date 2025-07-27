@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import myImage from '../assets/HeroSectionImage.png';
 import { MoveRight } from 'lucide-react';
 import Card from '../componente/Card';
@@ -7,171 +7,18 @@ import { Link } from 'react-router-dom';
 import useProductStore from '../store/productStore';
 import { motion } from 'framer-motion'
 import { MoonLoader } from 'react-spinners'
-// const products3 = [
-//   {
-//     "title": "Western Doodles Casual Shirt",
-//     "description": "100% cotton slim-fit shirt featuring a modern doodle print—lightweight and breathable for all-day comfort.",
-//     "price": 499,
-//     "gender": "Men",
-//     "category": "Shirt",
-//     "sizes": {
-//       "S": 7,
-//       "M": 8,
-//       "L": 10,
-//       "XL": 11
-//     },
-//     "images": [
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/western-doodles-men-shirt-mydesignation-988716.jpg?v=1744923892&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/western-doodles-men-shirt-mydesignation-847079.jpg?v=1744923893&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/western-doodles-men-shirt-mydesignation-536747.jpg?v=1744923893&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/western-doodles-men-shirt-mydesignation-765547.jpg?v=1744923893&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/western-doodles-men-shirt-mydesignation-267844.jpg?v=1744923893&width=750"
-//       }
-//     ]
-//   },
-//   {
-//     "title": "Wolf Printed Shirt",
-//     "description": "Statement men's overcoat with a bold wolf illustration—ideal for layering over smart-casual outfits.",
-//     "price": 1899,
-//     "gender": "Men",
-//     "category": "Shirt",
-//     "sizes": {
-//       "S": 0,
-//       "M": 0,
-//       "L": 0,
-//       "XL": 0
-//     },
-//     "images": [
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/wolf-men-shirt-mydesignation-7655183.jpg?v=1752736267&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/wolf-men-shirt-mydesignation-1402969.jpg?v=1752736266&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/wolf-men-shirt-mydesignation-3719986.jpg?v=1752736266&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/wolf-men-shirt-mydesignation-7655183.jpg?v=1752736267&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/wolf-men-shirt-mydesignation-9389237.jpg?v=1752736267&width=750"
-//       }
-//     ]
-//   },
-//   {
-//     "title": "Gramophone Floral Print T-shirt",
-//     "description": "Women’s relaxed-fit tee with a vintage gramophone floral print—soft, breezy, and stylish for summer days.",
-//     "price": 1399,
-//     "gender": "Women",
-//     "category": "T-shirt",
-//     "sizes": {
-//       "S": 0,
-//       "M": 0,
-//       "L": 0,
-//       "XL": 0
-//     },
-//     "images": [
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/gramophone-men-shirt-mydesignation-4965993.jpg?v=1752736266&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/gramophone-men-shirt-mydesignation-4965993.jpg?v=1752736266&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/gramophone-men-shirt-mydesignation-7943757.jpg?v=1752736267&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/gramophone-men-shirt-mydesignation-8127440.jpg?v=1752736267&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/gramophone-men-shirt-mydesignation-2853337.jpg?v=1752736267&width=750"
-//       }
-//     ]
-//   },
-//   {
-//     "title": "Sands of Time Oversized Tee",
-//     "description": "Women’s oversized tee with abstract print—soft fabric and relaxed fit for maximum comfort.",
-//     "price": 2999,
-//     "gender": "Man",
-//     "category": "Shirt",
-//     "sizes": {
-//       "S": 0,
-//       "M": 0,
-//       "L": 0,
-//       "XL": 0
-//     },
-//     "images": [
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/sands-of-time-men-oversized-t-shirt-mydesignation-4043775.jpg?v=1751311058&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/sands-of-time-men-oversized-t-shirt-mydesignation-9261765.jpg?v=1751311058&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/sands-of-time-men-oversized-t-shirt-mydesignation-9261765.jpg?v=1751311058&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/sands-of-time-men-oversized-t-shirt-mydesignation-4835100.jpg?v=1751311060&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/sands-of-time-men-oversized-t-shirt-mydesignation-4043775.jpg?v=1751311058&width=750"
-//       }
-//     ]
-//   },
-//   {
-//     "title": "Final Lap",
-//     "description": "Unisex black hoodie with front pocket and soft fleece lining—designed for comfort and style.",
-//     "price": 999,
-//     "gender": "Unisex",
-//     "category": "Hoodie",
-//     "sizes": {
-//       "S": 0,
-//       "M": 0,
-//       "L": 0,
-//       "XL": 0
-//     },
-//     "images": [
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/final-lap-men-shirt-mydesignation-1070316.png?v=1751311059&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/final-lap-men-shirt-mydesignation-8937984.png?v=1751311060&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/final-lap-men-shirt-mydesignation-9167980.png?v=1751311061&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/final-lap-men-shirt-mydesignation-8937984.png?v=1751311060&width=750"
-//       },
-//       {
-//         "url": "https://www.mydesignation.com/cdn/shop/files/final-lap-men-shirt-mydesignation-1070316.png?v=1751311059&width=750"
-//       }
-//     ]
-//   }
-// ]
-
 function Home() {
   const { fetchProducts, products, isLoading } = useProductStore();
   useEffect(() => {
     fetchProducts();
   }, [])
-  if (isLoading || products?.length<0) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
+  if (isLoading) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.5 }}
 
       className="min-h-screen px-6 md:px-12 bg-white">
       <div className='flex items-center justify-center'>

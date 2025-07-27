@@ -5,6 +5,6 @@
 /* src/index.css */
 
 @theme{
-    --font-roboto:"Poppins"
+    --font-roboto:"Poppins","Tahoma"
     /* --font-jakarta:"Plus Jakarta Sans","sans-serif" */
 }
