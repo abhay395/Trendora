@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
 import useCartStore from '../store/cartStore';
 import CartEmpty from './CartEmpty';
+import { AnimatePresence, motion } from 'framer-motion'
 
 export default function Cart() {
   const [allSelected, setAllSelected] = useState(false);
@@ -18,7 +19,7 @@ export default function Cart() {
   const navigate = useNavigate();
 
   // function related to cart  Store 
-  const { isLoading, cart, removeProductFromCart, updateProductQuantity, selectProduct, selectAllProduct } = useCartStore()
+  const { cart, removeProductFromCart, updateProductQuantity, selectProduct, selectAllProduct } = useCartStore()
   const removeProduct = (cartId) => {
     removeProductFromCart(cartId);
   }
@@ -62,10 +63,15 @@ export default function Cart() {
       setAllSelected(false)
     }
   }, [cart])
-  if (isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
+  // if (isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
   if (cart.length == 0) return <CartEmpty />
   return (
-    <div className=" bg-white min-h-screen my-8 pt-17">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.1, ease: "easeOut" }}
+      className=" bg-white min-h-screen my-8 pt-17">
       <div className='mb-7'>
         <Stepper currentStep={1} />
       </div>
@@ -108,66 +114,72 @@ export default function Cart() {
             <span className='font-semibold text-lg  text-gray-700'>{selectedProduct.length}/{cart.length} items selected</span>
           </div>
           <div className="bg-white px-4 pt-2 rounded-xl border border-gray-200">
-            {cart.map((item) => (
-              <div
-                key={item._id}
-                className="flex items-center justify-between py-4 relative border-b-gray-100 border-b"
-              >
-                <div className="flex  items-stretch gap-4 justify-center ">
-                  <div className='relative  rounded-lg overflow-hidden'>
-                    <label
-                      htmlFor={`item-${item._id}`}
-                      className="flex flex-row cursor-pointer items-center gap-2.5 text-white light:text-black absolute top-2 left-2"
-                    >
-                      <input
-                        checked={item.selected}
-                        onChange={() => {
-                          let selected = item.selected
-                          selectToggle(item._id, !selected)
-                        }}
-                        id={`item-${item._id}`}
-                        type="checkbox"
-                        className="peer hidden"
-                      />
-                      <div
-                        className="h-5 w-5 flex rounded-md border border-[#a2a1a833] bg-white peer-checked:bg-gray-800 transition"
+            <AnimatePresence>
+              {cart.map((item) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: 100 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  key={item._id}
+                  className="flex items-center justify-between py-4 relative border-b-gray-100 border-b"
+                >
+                  <div className="flex  items-stretch gap-4 justify-center ">
+                    <div className='relative  rounded-lg overflow-hidden'>
+                      <label
+                        htmlFor={`item-${item._id}`}
+                        className="flex flex-row cursor-pointer items-center gap-2.5 text-white light:text-black absolute top-2 left-2"
                       >
-                        <svg
-                          fill="none"
-                          viewBox="0 0 25 25"
-                          className="w-5 h-5 stroke-white"
-                          xmlns="http://www.w3.org/2000/svg"
+                        <input
+                          checked={item.selected}
+                          onChange={() => {
+                            let selected = item.selected
+                            selectToggle(item._id, !selected)
+                          }}
+                          id={`item-${item._id}`}
+                          type="checkbox"
+                          className="peer hidden"
+                        />
+                        <div
+                          className="h-5 w-5 flex rounded-md border border-[#a2a1a833] bg-white peer-checked:bg-gray-800 transition"
                         >
-                          <path
-                            d="M4 12.6111L8.92308 17.5L20 6.5"
-                            strokeWidth="4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </label>
-                    <img src={item.productId.images[0].url} alt={item.productId.title} className="w-45 h-30 object-cover object-top" />
+                          <svg
+                            fill="none"
+                            viewBox="0 0 25 25"
+                            className="w-5 h-5 stroke-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M4 12.6111L8.92308 17.5L20 6.5"
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </label>
+                      <img src={item.productId.images[0].url} alt={item.productId.title} className="w-45 h-30 object-cover object-top" />
+                    </div>
+                    <div className='h-full space-y-1'>
+                      <h4 className="font-semibold text-lg text-gray-800">{item.productId.title}</h4>
+                      <p className="text-md font-semibold text-gray-500 flex items-center space-x-1"><span>{item.productId.gender} </span> <span><LuDot />
+                      </span>{<TbTruckDelivery className='text-xl' />
+                        }
+                        <span>Express delivery in <span className='text-gray-700 font-bold'> 3 days</span></span></p>
+                      <p className='font-semibold text-gray-600'>Size : <span className='font-bold text-gray-800'>{item.size}</span></p>
+                      <p className="mt-4 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
+                    </div>
                   </div>
-                  <div className='h-full space-y-1'>
-                    <h4 className="font-semibold text-lg text-gray-800">{item.productId.title}</h4>
-                    <p className="text-md font-semibold text-gray-500 flex items-center space-x-1"><span>{item.productId.gender} </span> <span><LuDot />
-                    </span>{<TbTruckDelivery className='text-xl' />
-                      }
-                      <span>Express delivery in <span className='text-gray-700 font-bold'> 3 days</span></span></p>
-                    <p className='font-semibold text-gray-600'>Size : <span className='font-bold text-gray-800'>{item.size}</span></p>
-                    <p className="mt-4 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
+                  <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' onClick={() => removeProduct(item._id)} />
+                  <div className="absolute right-0 bottom-4 flex items-center gap-2 ">
+                    <button onClick={() => updateQuanitiy(item._id, true)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
+                    <span className='text-gray-600 font-bold'>{item.quantity}</span>
+                    <button onClick={() => updateQuanitiy(item._id, false)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiMinus />
+                    </button>
                   </div>
-                </div>
-                <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' onClick={() => removeProduct(item._id)} />
-                <div className="absolute right-0 bottom-4 flex items-center gap-2 ">
-                  <button onClick={() => updateQuanitiy(item._id, true)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
-                  <span className='text-gray-600 font-bold'>{item.quantity}</span>
-                  <button onClick={() => updateQuanitiy(item._id, false)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiMinus />
-                  </button>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -247,6 +259,6 @@ export default function Cart() {
           }
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -7,8 +7,8 @@ import PaymentSection from '../componente/PaymentSection';
 import useOrderStore from '../store/orderStore';
 import { motion } from 'framer-motion'
 export default function Checkout() {
-    const { cart, isLoading: loadingForCart } = useCartStore()
-    const { checkoutProduct, isLoading } = useOrderStore();
+    const { cart } = useCartStore()
+    const { checkoutProduct } = useOrderStore();
 
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
@@ -21,13 +21,12 @@ export default function Checkout() {
         }
     }
     const navigate = useNavigate();
-    if (loadingForCart && isLoading) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
     return (
         <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            exit={{ opacity: 0 }}
+            // initial={{ opacity: 0, y: 20 }}
+            // animate={{ opacity: 1, y: 0 }}
+            // exit={{ opacity: 0, y: 20 }}
+            // transition={{ duration: 0.4, ease: "easeOut" }}
 
             className=" bg-white min-h-screen my-8 pt-17">
             <div className='mb-7'>
