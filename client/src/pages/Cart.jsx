@@ -63,7 +63,6 @@ export default function Cart() {
       setAllSelected(false)
     }
   }, [cart])
-  // if (isLoading) return <div className='h-screen flex justify-center items-center'>...Loading</div>
   if (cart.length == 0) return <CartEmpty />
   return (
     <motion.div

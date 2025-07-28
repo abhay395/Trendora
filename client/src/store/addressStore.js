@@ -1,12 +1,7 @@
 import { create } from "zustand";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { persist } from 'zustand/middleware'
-const BASEURL = import.meta.env.VITE_API_URL;
-const ADRESSAPIURL = `${BASEURL}/address`
-const authHeader = () => ({
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-});
+import { addAddressApi, deleteAddressApi, fetchAddressApi, selecteAddressApi } from "../api/addressApi";
 
 const useAddressStore = create(
     persist(
@@ -17,22 +12,18 @@ const useAddressStore = create(
             fetchAddress: async () => {
                 try {
                     set({ isLoading: true, error: null })
-                    let response = await axios.get(`${ADRESSAPIURL}/get`, {
-                        headers: authHeader()
-                    })
+                    let response = await fetchAddressApi()
                     set({ addresses: response.data.result, isLoading: false })
                 } catch (error) {
                     set({ error: error.response.data.message, isLoading: false })
                     console.log(error)
                 }
             },
-            addAddress: async ({ name, phone, pincode, city, state, fullAddress }) => {
+            addAddresApis: async ({ name, phone, pincode, city, state, fullAddress }) => {
                 try {
                     set({ isLoading: true, error: null })
                     let currentAddress = get().addresses;
-                    let response = await axios.post(`${ADRESSAPIURL}/add`, { name, phone, pincode, city, state, fullAddress }, {
-                        headers: authHeader()
-                    })
+                    let response = await addAddressApi({ name, phone, pincode, city, state, fullAddress })
                     set({ addresses: [...currentAddress, response.data.result], isLoading: false })
                     toast.success("Address Added!")
                 } catch (error) {
@@ -44,9 +35,7 @@ const useAddressStore = create(
                 try {
                     set({ isLoading: true, error: null })
                     let currentAddress = get().addresses;
-                    let response = await axios.put(`${ADRESSAPIURL}/update/${addressId}`, updateBody, {
-                        headers: authHeader()
-                    })
+                    let response = await updateAddress(addressId, updateBody)
                     let updateAddress = currentAddress.map((item) => item._id == addressId ? { ...response.data.result } : item)
                     set({ addresses: updateAddress })
                 } catch (error) {
@@ -59,9 +48,7 @@ const useAddressStore = create(
                     let currentAddress = get().addresses;
                     let updateAddress = currentAddress.map((item) => item._id == addressId ? { ...item, selected: true } : item)
                     set({ addresses: updateAddress })
-                    await axios.put(`${ADRESSAPIURL}/selecte/${addressId}`, {}, {
-                        headers: authHeader()
-                    })
+                    await selecteAddressApi(addressId)
                 } catch (error) {
                     set({ error: error.response.data.message, isLoading: false })
                 }
@@ -71,9 +58,7 @@ const useAddressStore = create(
                     let currentAddress = get().addresses;
                     let updatedAddress = currentAddress.filter(item => item._id != addressId)
                     set({ addresses: updatedAddress })
-                    await axios.delete(`${ADRESSAPIURL}/delete/${addressId}`, {
-                        headers: authHeader()
-                    })
+                    await deleteAddressApi(addressId)
                 } catch (error) {
                     console.log(error)
                     set({ error: error?.response?.data?.message, isLoading: false })

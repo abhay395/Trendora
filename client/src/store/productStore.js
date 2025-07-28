@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
+import { fetchProductApi, fetchProductByIdApi } from '../api/productApi'
 const useProductStore = create((set) => ({
     products: [],
     selectedProduct: null,
@@ -8,7 +9,7 @@ const useProductStore = create((set) => ({
     fetchProducts: async () => {
         set({ isLoading: true, error: null })
         try {
-            const res = await axios('http://localhost:3000/api/v1/product')
+            const res = await fetchProductApi()
             let products = res.data.result.results
             set({ products: products, isLoading: false })
             console.log()
@@ -18,9 +19,9 @@ const useProductStore = create((set) => ({
     },
     fetchProductById: async (id) => {
         try {
-            const res = await axios(`http://localhost:3000/api/v1/product/${id}`)
+            const res = await fetchProductByIdApi(id)
             const selectedProduct = res.data.result;
-            set({selectedProduct})
+            set({ selectedProduct })
         } catch (error) {
             set({ error: error.message })
         }

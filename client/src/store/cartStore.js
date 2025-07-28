@@ -1,12 +1,7 @@
 import { create } from "zustand";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { persist } from 'zustand/middleware'
-const BASEURL = import.meta.env.VITE_API_URL;
-const CARTURL = `${BASEURL}/cart`
-const authHeader = () => ({
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-});
+import { addProductCartApi, fetchCartApi, removeProductFromCartApi, selectAllProductApi, selectProductApi, updateProductQuantityApi } from "../api/cartApi";
 const calculateTotalPrice = (cart) => (cart.reduce((sum, item) => sum + item.totalPrice, 0))
 
 const useCartStore = create(
@@ -31,9 +26,7 @@ const useCartStore = create(
             fetchCart: async () => {
                 try {
                     set({ isLoading: true, error: null })
-                    let response = await axios.get(`${CARTURL}/get-all`, {
-                        headers: authHeader()
-                    })
+                    let response = await fetchCartApi()
                     let totalPrice = calculateTotalPrice(response.data.result)
                     set({ cart: response.data.result, totalPrice, totalProduct: response.data.result.length })
                     set({ isLoading: false })
@@ -50,9 +43,7 @@ const useCartStore = create(
                     set({ isLoading: true, error: null });
                     let body = { productId, quantity, size }
                     toast.success("Product added to cart! ")
-                    let response = await axios.post(`${CARTURL}/create`, body, {
-                        headers: authHeader()
-                    })
+                    let response = await addProductCartApi(body)
                     let result = response.data.result;
                     let currentCart = get().cart;
                     let updatedCart = [...currentCart, result]
@@ -72,9 +63,7 @@ const useCartStore = create(
                         return item;
                     });
                     set({ cart: updatedCart });
-                    await axios.put(`${CARTURL}/update/${cartId}`, { quantity }, {
-                        headers: authHeader()
-                    })
+                    await updateProductQuantityApi(cartId, { quantity })
                 } catch (error) {
                     console.log(error)
                 }
@@ -83,9 +72,7 @@ const useCartStore = create(
                 try {
                     let updateCart = get().cart.map((item) => item._id == cartId ? { ...item, selected } : item)
                     set({ cart: updateCart })
-                    await axios.put(`${CARTURL}/update/${cartId}`, { selected }, {
-                        headers: authHeader()
-                    })
+                    await selectProductApi(cartId, { selected })
                 } catch (error) {
                     console.log(error)
                 }
@@ -94,9 +81,7 @@ const useCartStore = create(
                 try {
                     let updateCart = get().cart.map((item) => ({ ...item, selected }))
                     set({ cart: updateCart })
-                    let response = await axios.put(`${CARTURL}/update-many`, { selected }, {
-                        headers: authHeader()
-                    })
+                    let response = await selectAllProductApi({ selected })
                     console.log(response)
                 } catch (error) {
                     console.log(error)
@@ -104,13 +89,10 @@ const useCartStore = create(
             },
             removeProductFromCart: async (cartId) => {
                 try {
-                    // set({ isLoading: true, error: null })
                     let updatedCart = get().cart.filter(item => item._id != cartId)
                     let totalPrice = calculateTotalPrice(updatedCart);
                     set({ isLoading: false, cart: updatedCart, totalPrice, totalProduct: get().totalProduct - 1 })
-                    await axios.delete(`${CARTURL}/remove-product/${cartId}`, {
-                        headers: authHeader()
-                    })
+                    await removeProductFromCartApi(cartId)
                 } catch (error) {
                     set({
                         error: { message: error?.response?.data?.message || "Failed to remove product" },
