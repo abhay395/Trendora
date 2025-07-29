@@ -4,6 +4,7 @@ import asyncWrapper from '../middleware/async.js';
 const productRouter = express.Router();
 productRouter.post('/create',asyncWrapper(ProductController.addMultipleProduct))
 productRouter.get('/', asyncWrapper(ProductController.getAllProduct))
+productRouter.get('/filters', asyncWrapper(ProductController.getProductFilters))
 productRouter.get('/:id', asyncWrapper(ProductController.getProductById))
 productRouter.post('/:id', asyncWrapper(ProductController.updateProduct))
 productRouter.delete('/:id', asyncWrapper(ProductController.deleteProductById))

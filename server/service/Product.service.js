@@ -22,6 +22,39 @@ export default {
 
         }
     },
+    getProductFilters: async () => {
+        try {
+            const category = await Product.distinct("category")
+            const sizes = await Product.aggregate([
+                {
+                    $project: {
+                        sizeKeys: { $objectToArray: "$sizes" }
+                    }
+                },
+                {
+                    $unwind: "$sizeKeys"
+                },
+                {
+                    $group: {
+                        _id: null,
+                        sizes: { $addToSet: "$sizeKeys.k" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        sizes: 1
+                    }
+                }
+            ]);
+            const gender = await Product.distinct("gender")
+            // console.log()
+            let result = { ...sizes[0], categories: category.sort(), genders: gender.sort() }
+            return result;
+        } catch (error) {
+            throw error
+        }
+    },
     deleteProductById: async (id) => {
         try {
             if (!await Product.findById(id)) {
@@ -43,7 +76,7 @@ export default {
             throw error
         }
     },
-    addMultipleProduct:async(body)=>{
+    addMultipleProduct: async (body) => {
         try {
             const result = await Product.create(body);
             return result

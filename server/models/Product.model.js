@@ -19,12 +19,11 @@ const productSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ['Men', 'Women', 'Boys', 'Girls', 'Unisex'],
         required: true
     },
     category: {
         type: String,
-        enum: ['T-shirt', 'Shirt', 'Jeans', 'Jacket', 'Shorts', 'Hoodie',"Coat"],
+        enum: ['T-shirt', 'Shirt', 'Jeans', 'Jacket', 'Shorts', 'Hoodie', "Coat"],
         required: true
     },
     sizes: {
@@ -43,7 +42,7 @@ const productSchema = new mongoose.Schema({
             url: String,
         }
     ]
-});
+}, { timestamps: true });
 
 productSchema.plugin(paginate)
 const Product = mongoose.model('products', productSchema);

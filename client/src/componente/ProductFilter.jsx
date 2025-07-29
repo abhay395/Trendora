@@ -1,0 +1,115 @@
+import React, { useState } from 'react';
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { FaStar } from "react-icons/fa6";
+import { AnimatePresence, motion } from 'framer-motion'
+
+
+const AnimateContent = ({ children }) => {
+    return (
+        <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+            className='overflow-hidden'
+        >
+            <div className='flex flex-wrap gap-2'>{children}</div>
+        </motion.div>
+    )
+}
+
+const FilterSection = ({ title, isOpen, onToggle, items, children }) => (
+    <div className="mb-6">
+        <h3
+            className="font-semibold text-gray-800 mb-2 cursor-pointer select-none flex items-center justify-between"
+            onClick={() => onToggle(!isOpen)}
+        >
+            {title}
+            {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        </h3>
+
+        <AnimatePresence initial={false}>
+            {isOpen && (
+                <AnimateContent
+                >
+                    {items ? (items.map(item => (
+                        <label key={item} className="flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-gray-800 cursor-pointer hover:bg-gray-200 transition">
+                            <input type="checkbox" className="mr-2 accent-black" name="gender" value={item} />
+                            {item}
+                        </label>
+                    ))) : (children)}
+                </AnimateContent>
+            )}
+        </AnimatePresence>
+    </div>
+);
+const ProductFilter = ({ sizes, categories, genders }) => {
+    const [priceRange, setPriceRange] = useState([0, 5000]);
+    const ratings = [4, 3, 2, 1];
+    const [genderOpen, setGenderOpen] = useState(false);
+    const [categoryOpen, setCategoryOpen] = useState(false);
+    const [sizeOpen, setSizeOpen] = useState(false)
+    const [ratingOpen, setRatingOpen] = useState(false)
+    return (
+        <div className="w-full md:w-72 p-6 bg-white border border-gray-200">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900 tracking-tight">Filters</h2>
+
+            {/* Gender Filter */}
+            <FilterSection title="Gender" isOpen={genderOpen} onToggle={setGenderOpen} items={genders}>
+            </FilterSection>
+
+            {/* Category Filter */}
+            <FilterSection title="Category" isOpen={categoryOpen} onToggle={setCategoryOpen} items={categories}>
+            </FilterSection>
+
+            {/* Size Filter */}
+            <FilterSection title="Size" isOpen={sizeOpen} onToggle={setSizeOpen} items={sizes}>
+            </FilterSection>
+
+            {/* Price Filter */}
+            <div className="mb-6">
+                <h3 className="font-semibold text-gray-800 mb-2">Price Range</h3>
+                <div className="flex items-center gap-2">
+                    <input
+                        type="number"
+                        value={priceRange[0]}
+                        min={0}
+                        onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])}
+                        className="w-20 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                        placeholder="Min"
+                    />
+                    <span className="text-gray-500">-</span>
+                    <input
+                        type="number"
+                        value={priceRange[1]}
+                        min={0}
+                        onChange={(e) => setPriceRange([priceRange[0], +e.target.value])}
+                        className="w-20 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                        placeholder="Max"
+                    />
+                </div>
+            </div>
+
+            {/* Rating Filter */}
+            <FilterSection title="Rating" isOpen={ratingOpen} onToggle={setRatingOpen}>
+                <div className="flex flex-col gap-3">
+                    {ratings.map(r => (
+                        <label key={r} className="flex items-center text-gray-800 cursor-pointer hover:text-black">
+                            <input type="radio" name="rating" value={r} className="mr-2 accent-black cursor-pointer w-4 h-4" />
+                            <span className="flex items-center">
+                                <span className="mr-1 flex ">{[...new Array(r)].map((_, i) => <FaStar key={i} />)}</span>
+                                <span className="text-gray-500 font-semibold ml-1 text-xs">&amp; up</span>
+                            </span>
+                        </label>
+                    ))}
+                </div>
+            </FilterSection>
+            <button className="w-full mt-2 bg-black hover:bg-gray-900 text-white py-2 rounded-xl text-base font-semibold shadow-md transition">
+                Apply Filters
+            </button>
+        </div>
+    );
+};
+
+export default ProductFilter;
