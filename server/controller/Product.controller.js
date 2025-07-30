@@ -7,7 +7,7 @@ export default {
         sendSuccessMessage(res, 201, "Prodcut Created Successfully", result);
     },
     getAllProduct: async (req, res) => {
-        const filter = pick(req.query, ["name", "isActive", "onlyExpired"]);
+        const filter = pick(req.query, ["gender", "category", "sizes"]);
         const options = pick(req.query, ["sortBy", "limit", "page", "populate"]);
         const result = await ProductService.getAllProduct(filter, options);
         sendSuccessMessage(res, 200, "Products fetched successfully", result);

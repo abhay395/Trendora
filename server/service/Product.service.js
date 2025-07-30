@@ -5,7 +5,8 @@ import ApiError from "../utils/ApiError.js";
 export default {
     getAllProduct: async (filter, option) => {
         try {
-            const result = await Product.paginate(filter, option);
+            // console.log(filter,option)
+            const result = await Product.find(filter);
             return result;
         } catch (error) {
             throw error

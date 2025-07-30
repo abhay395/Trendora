@@ -2,6 +2,7 @@ import Order from "../models/Order.model.js"
 import Address from '../models/Address.model.js'
 import Cart from '../models/Cart.model.js'
 import ApiError from "../utils/ApiError.js"
+import Product from "../models/Product.model.js"
 export default {
     checkoutProduct: async (userId, paymentMethod) => {
         try {
@@ -29,6 +30,9 @@ export default {
             })
             let totalPrice = selectedProduct.reduce((sum, item) => sum += item.price * item.quantity, 0)
             let order = await Order.create({ address: selectedAddress, userId, items: [...selectedProduct], paymentMethod, totalPrice })
+            // for(let item of cartItems){
+            //     await Product.findByIdAndUpdate(item.productId._id,{sizes[item.size]:})
+            // }
             await Cart.deleteMany({ userId, selected: true })
             return order
         } catch (error) {

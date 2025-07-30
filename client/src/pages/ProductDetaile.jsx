@@ -26,7 +26,6 @@ const ProductDetaile = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
             className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 mt-40">
             {/* Left: Images */}
