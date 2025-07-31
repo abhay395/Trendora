@@ -7,15 +7,26 @@ const useProductStore = create((set) => ({
     isLoading: false,
     error: null,
     filters: null,
+    filterdProduct: [],
     fetchProducts: async () => {
         set({ isLoading: true, error: null })
         try {
             const res = await fetchProductApi()
-            let products = res.data.result.results
+            let products = res.data.result
+            console.log(res)
             set({ products: products, isLoading: false })
             console.log()
         } catch (error) {
             set({ error: error.message })
+        }
+    },
+    fetchFilterdProduct: async (filter) => {
+        set({ isLoading: true, error: null })
+        try {
+            const res = await fetchProductApi(filter)
+            set({ isLoading: false, filterdProduct: res.data.result })
+        } catch (error) {
+            console.log(error)
         }
     },
     fetchProductById: async (id) => {
@@ -33,7 +44,7 @@ const useProductStore = create((set) => ({
             const res = await fetchProductFiltersApi()
             let filters = res.data.result
             // const selectedProduct = res.data.result;
-            set({ filters ,isLoading:false})
+            set({ filters, isLoading: false })
             // console.log(filters)
         } catch (error) {
             set({ error: error.message })

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaStar } from "react-icons/fa6";
 import { AnimatePresence, motion } from 'framer-motion'
-
+import { useForm } from 'react-hook-form'
+import useProductStore from '../store/productStore';
 
 const AnimateContent = ({ children }) => {
     return (
@@ -19,7 +20,7 @@ const AnimateContent = ({ children }) => {
     )
 }
 
-const FilterSection = ({ title, isOpen, onToggle, items, children }) => (
+const FilterSection = ({ title, isOpen, onToggle, items, children, register }) => (
     <div className="mb-6">
         <h3
             className="font-semibold text-gray-800 mb-2 cursor-pointer select-none flex items-center justify-between"
@@ -28,14 +29,13 @@ const FilterSection = ({ title, isOpen, onToggle, items, children }) => (
             {title}
             {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
         </h3>
-
         <AnimatePresence initial={false}>
             {isOpen && (
                 <AnimateContent
                 >
                     {items ? (items.map(item => (
                         <label key={item} className="flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-gray-800 cursor-pointer hover:bg-gray-200 transition">
-                            <input type="checkbox" className="mr-2 accent-black" name="gender" value={item} />
+                            <input {...register(title.toLowerCase())} type="checkbox" className="mr-2 accent-black" name={title.toLowerCase()} value={item} />
                             {item}
                         </label>
                     ))) : (children)}
@@ -45,30 +45,48 @@ const FilterSection = ({ title, isOpen, onToggle, items, children }) => (
     </div>
 );
 const ProductFilter = ({ sizes, categories, genders }) => {
+    const { fetchFilterdProduct } = useProductStore()
     const [priceRange, setPriceRange] = useState([0, 5000]);
     const ratings = [4, 3, 2, 1];
     const [genderOpen, setGenderOpen] = useState(false);
     const [categoryOpen, setCategoryOpen] = useState(false);
     const [sizeOpen, setSizeOpen] = useState(false)
     const [ratingOpen, setRatingOpen] = useState(false)
+    const { register
+        , handleSubmit,
+        formState: { errors }
+    } = useForm()
+    const submit = (data) => {
+        let query = ''
+        if (data?.gender) {
+            query += `gender=${data.gender.join(",")}&`
+        }
+        if (data?.category) {
+            query += `category=${data.category.join(",")}&`
+        }
+        fetchFilterdProduct(query);
+    }
+    // useEffect(() => {
+    //     fetchFilterdProduct()
+    // }, [])
     return (
-        <div className="w-full md:w-72 p-6 bg-white border border-gray-200">
+        <form onSubmit={handleSubmit(submit)} className="w-full md:w-72 p-6 bg-white border border-gray-200">
             <h2 className="text-2xl font-bold mb-6 text-gray-900 tracking-tight">Filters</h2>
 
             {/* Gender Filter */}
-            <FilterSection title="Gender" isOpen={genderOpen} onToggle={setGenderOpen} items={genders}>
+            <FilterSection title="Gender" isOpen={genderOpen} onToggle={setGenderOpen} register={register} items={genders}>
             </FilterSection>
 
             {/* Category Filter */}
-            <FilterSection title="Category" isOpen={categoryOpen} onToggle={setCategoryOpen} items={categories}>
+            <FilterSection title="Category" isOpen={categoryOpen} onToggle={setCategoryOpen} register={register} items={categories}>
             </FilterSection>
 
             {/* Size Filter */}
-            <FilterSection title="Size" isOpen={sizeOpen} onToggle={setSizeOpen} items={sizes}>
+            <FilterSection title="Size" isOpen={sizeOpen} onToggle={setSizeOpen} register={register} items={sizes}>
             </FilterSection>
 
             {/* Price Filter */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
                 <h3 className="font-semibold text-gray-800 mb-2">Price Range</h3>
                 <div className="flex items-center gap-2">
                     <input
@@ -89,10 +107,10 @@ const ProductFilter = ({ sizes, categories, genders }) => {
                         placeholder="Max"
                     />
                 </div>
-            </div>
+            </div> */}
 
             {/* Rating Filter */}
-            <FilterSection title="Rating" isOpen={ratingOpen} onToggle={setRatingOpen}>
+            {/* <FilterSection title="Rating" isOpen={ratingOpen} onToggle={setRatingOpen}>
                 <div className="flex flex-col gap-3">
                     {ratings.map(r => (
                         <label key={r} className="flex items-center text-gray-800 cursor-pointer hover:text-black">
@@ -104,11 +122,11 @@ const ProductFilter = ({ sizes, categories, genders }) => {
                         </label>
                     ))}
                 </div>
-            </FilterSection>
-            <button className="w-full mt-2 bg-black hover:bg-gray-900 text-white py-2 rounded-xl text-base font-semibold shadow-md transition">
+            </FilterSection> */}
+            <button type='submit' className="w-full mt-2 bg-black hover:bg-gray-900 text-white py-2 rounded-xl text-base font-semibold shadow-md transition">
                 Apply Filters
             </button>
-        </div>
+        </form>
     );
 };
 

@@ -6,7 +6,16 @@ export default {
     getAllProduct: async (filter, option) => {
         try {
             // console.log(filter,option)
-            const result = await Product.find(filter);
+            let query = {}
+            if (filter?.category) {
+                let category = filter.category.split(',')
+                query.category = { $in: category }
+            }
+            if (filter?.gender) {
+                let genders = filter.gender.split(',')
+                query.gender = { $in: genders }
+            }
+            const result = await Product.find(query);
             return result;
         } catch (error) {
             throw error

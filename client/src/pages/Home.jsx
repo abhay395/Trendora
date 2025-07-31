@@ -3,16 +3,18 @@ import myImage from '../assets/HeroSectionImage.png';
 import { MoveRight } from 'lucide-react';
 import Card from '../componente/Card';
 import FeatureSection from '../componente/FeatureSection';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import useProductStore from '../store/productStore';
 import { motion } from 'framer-motion'
 import { MoonLoader } from 'react-spinners'
 function Home() {
   const { fetchProducts, products, isLoading } = useProductStore();
+  const location = useLocation();
+  console.log(location)
   useEffect(() => {
     fetchProducts();
   }, [])
-  if (isLoading) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
+  // if (isLoading && location.pathname=='/') return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -56,7 +58,7 @@ function Home() {
         </div>
         <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-8 gap-x-3 gap-y-2 lg:gap-x-4  lg:gap-y-5'>
           {
-            products.map((item) => <Link key={item._id} to={`product/${item._id}`}><Card product={item} /></Link>)
+            products.map((item) => <Card product={item} key={item._id} />)
           }
         </section>
       </section>
@@ -68,7 +70,7 @@ function Home() {
         </div>
         <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-8 gap-x-3 gap-y-2 lg:gap-x-4  lg:gap-y-5'>
           {
-            products.map((item) => <Link key={item._id} to={`product/${item._id}`}><Card product={item} /></Link>)
+            products.map((item) => <Card product={item} key={item._id} />)
           }
         </section>
       </section>

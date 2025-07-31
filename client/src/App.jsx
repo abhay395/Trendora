@@ -24,7 +24,7 @@ function App() {
       fetchCart()
     }, [])
   return (
-    <AnimatePresence mode="wait">
+    // <AnimatePresence mode="sync">
       <Routes location={location} key={location.pathname}>
         <Route path='/' element={<RootLayout />}>
           <Route index element={<Home />} />
@@ -40,7 +40,7 @@ function App() {
           <Route path="payment-done/:id" element={<PaymentSuccess />} />
         </Route>
       </Routes>
-    </AnimatePresence>
+    // </AnimatePresence>
   )
 }
 
