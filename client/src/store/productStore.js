@@ -12,7 +12,7 @@ const useProductStore = create((set) => ({
         set({ isLoading: true, error: null })
         try {
             const res = await fetchProductApi()
-            let products = res.data.result
+            let products = res.data.result.results
             console.log(res)
             set({ products: products, isLoading: false })
             console.log()
@@ -24,7 +24,7 @@ const useProductStore = create((set) => ({
         set({ isLoading: true, error: null })
         try {
             const res = await fetchProductApi(filter)
-            set({ isLoading: false, filterdProduct: res.data.result })
+            set({ isLoading: false, filterdProduct: res.data.result.results })
         } catch (error) {
             console.log(error)
         }

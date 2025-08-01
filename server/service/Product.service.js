@@ -3,20 +3,68 @@ import ApiError from "../utils/ApiError.js";
 
 
 export default {
-    getAllProduct: async (filter, option) => {
+    getAllProduct: async (filter = {}, option = {}) => {
         try {
-            // console.log(filter,option)
             let query = {}
+
             if (filter?.category) {
                 let category = filter.category.split(',')
                 query.category = { $in: category }
             }
+
             if (filter?.gender) {
                 let genders = filter.gender.split(',')
                 query.gender = { $in: genders }
             }
-            const result = await Product.find(query);
-            return result;
+
+            if (filter?.size) {
+                let sizes = filter.size.split(',')
+                query.$or = sizes.map(size => ({
+                    [`sizes.${size}`]: { $gt: 15 }
+                }));
+            }
+            if (filter?.minPrice || filter?.maxPrice) {
+                query.price = {};
+                if (filter.minPrice) query.price.$gte = Number(filter.minPrice);
+                if (filter.maxPrice) query.price.$lte = Number(filter.maxPrice);
+            }
+            if (filter?.rating) {
+                query.rating = {};
+                query.rating.$gte = Number(filter.rating);
+            }
+            if (filter?.search) {
+                console.log(filter?.search)
+                query.$text = { $search: filter?.search }
+                // console.log(filter)
+            }
+            const totalProduct = await Product.countDocuments(query);
+            let limit = Number(option.limit || 10)
+            let totalPages = Math.ceil(totalProduct / limit)
+            let page = Math.min(totalPages, Number(option.page || 1))
+            let skip = Math.max(0, (page - 1) * limit)
+            console.log(skip, page, totalProduct)
+            const sortOption = {
+                priceAsc: { price: 1 },
+                priceDesc: { price: -1 }
+            }
+            // Get min and max price from filtered products
+            const priceStats = await Product.aggregate([
+                { $match: query },
+                {
+                    $group: {
+                        _id: null,
+                        minPrice: { $min: "$price" },
+                        maxPrice: { $max: "$price" }
+                    }
+                }
+            ]);
+
+            let mongoQuery = Product.find(query)
+                .sort(sortOption[option.sortBy] || {})
+                .skip(skip)
+                .limit(limit);
+            let results = await mongoQuery;
+            return { results, totalProduct, totalPages, page, limit, priceStats };
         } catch (error) {
             throw error
         }

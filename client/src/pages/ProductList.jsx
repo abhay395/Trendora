@@ -27,11 +27,11 @@ function ProductList() {
       <ProductFilter {...filters} />
 
       <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-8 gap-x-6 gap-y-6 px-4 w-full'>
-        {isLoading
-          ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
-          : (
+        {/* {isLoading */}
+          {/* // ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />) */}
+          {/* // : ( */}
             <AnimatePresence mode='sync'>
-              {filterdProduct.map((item) => (
+              {filterdProduct?.map((item) => (
                 <motion.div
                   key={item._id}
                   initial={{ opacity: 0, }}
@@ -43,7 +43,7 @@ function ProductList() {
                 </motion.div>
               ))}
             </AnimatePresence>
-          )}
+          {/* // )} */}
       </section>
     </div>
   )

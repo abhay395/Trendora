@@ -44,6 +44,8 @@ const productSchema = new mongoose.Schema({
     ]
 }, { timestamps: true });
 
+productSchema.index({title:"text"})
+
 productSchema.plugin(paginate)
 const Product = mongoose.model('products', productSchema);
 

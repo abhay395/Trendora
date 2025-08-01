@@ -64,6 +64,16 @@ const ProductFilter = ({ sizes, categories, genders }) => {
         if (data?.category) {
             query += `category=${data.category.join(",")}&`
         }
+        if (data?.minPrice) {
+            query += `minPrice=${data.minPrice}&`
+        }
+        if (data?.maxPrice) {
+            query += `maxPrice=${data.maxPrice}&`
+        }
+        if (data?.rating) {
+            query += `rating=${data.rating}&`
+        }
+        // console.log(query)
         fetchFilterdProduct(query);
     }
     // useEffect(() => {
@@ -86,10 +96,11 @@ const ProductFilter = ({ sizes, categories, genders }) => {
             </FilterSection>
 
             {/* Price Filter */}
-            {/* <div className="mb-6">
+            <div className="mb-6">
                 <h3 className="font-semibold text-gray-800 mb-2">Price Range</h3>
                 <div className="flex items-center gap-2">
                     <input
+                        {...register("minPrice")}
                         type="number"
                         value={priceRange[0]}
                         min={0}
@@ -99,6 +110,7 @@ const ProductFilter = ({ sizes, categories, genders }) => {
                     />
                     <span className="text-gray-500">-</span>
                     <input
+                        {...register("maxPrice")}
                         type="number"
                         value={priceRange[1]}
                         min={0}
@@ -107,14 +119,14 @@ const ProductFilter = ({ sizes, categories, genders }) => {
                         placeholder="Max"
                     />
                 </div>
-            </div> */}
+            </div>
 
             {/* Rating Filter */}
-            {/* <FilterSection title="Rating" isOpen={ratingOpen} onToggle={setRatingOpen}>
+            <FilterSection title="Rating" isOpen={ratingOpen} onToggle={setRatingOpen}>
                 <div className="flex flex-col gap-3">
                     {ratings.map(r => (
                         <label key={r} className="flex items-center text-gray-800 cursor-pointer hover:text-black">
-                            <input type="radio" name="rating" value={r} className="mr-2 accent-black cursor-pointer w-4 h-4" />
+                            <input type="radio"  {...register("rating")} name="rating" value={r} className="mr-2 accent-black cursor-pointer w-4 h-4" />
                             <span className="flex items-center">
                                 <span className="mr-1 flex ">{[...new Array(r)].map((_, i) => <FaStar key={i} />)}</span>
                                 <span className="text-gray-500 font-semibold ml-1 text-xs">&amp; up</span>
@@ -122,7 +134,7 @@ const ProductFilter = ({ sizes, categories, genders }) => {
                         </label>
                     ))}
                 </div>
-            </FilterSection> */}
+            </FilterSection>
             <button type='submit' className="w-full mt-2 bg-black hover:bg-gray-900 text-white py-2 rounded-xl text-base font-semibold shadow-md transition">
                 Apply Filters
             </button>
