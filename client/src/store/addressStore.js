@@ -19,7 +19,7 @@ const useAddressStore = create(
                     console.log(error)
                 }
             },
-            addAddresApis: async ({ name, phone, pincode, city, state, fullAddress }) => {
+            addAddress: async ({ name, phone, pincode, city, state, fullAddress }) => {
                 try {
                     set({ isLoading: true, error: null })
                     let currentAddress = get().addresses;
