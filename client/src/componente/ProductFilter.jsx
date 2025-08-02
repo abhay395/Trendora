@@ -4,6 +4,7 @@ import { FaStar } from "react-icons/fa6";
 import { AnimatePresence, motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import useProductStore from '../store/productStore';
+import { RiResetLeftFill } from "react-icons/ri";
 
 const AnimateContent = ({ children }) => {
     return (
@@ -63,7 +64,8 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
     const [ratingOpen, setRatingOpen] = useState(false)
     const { register
         , handleSubmit,
-        formState: { errors }
+        formState: { errors },
+        reset,
     } = useForm()
     const submit = (data) => {
         setQueryData(data)
@@ -109,6 +111,11 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
         }
         fetchFilterdProduct(query)
     }
+    const resetHandler = () => {
+        setQueryData({})
+        fetchFilterdProduct('')
+        reset()
+    }
     useEffect(() => {
         if (priceStats?.minPrice !== undefined && priceStats?.maxPrice !== undefined) {
             setPriceRange([priceStats.minPrice, priceStats.maxPrice]);
@@ -139,9 +146,8 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
                     </div>
                 </div>
             </div>
-            <form onSubmit={handleSubmit(submit)} className="w-full md:w-72 p-6 pt-3 bg-white border border-gray-200">
+            <form onSubmit={handleSubmit(submit)} className="w-full md:w-72 p-6 pt-3 bg-white border h-full border-gray-200">
                 <h2 className="text-2xl font-bold mb-10 text-gray-900 tracking-tight">Filters</h2>
-
                 {/* Gender Filter */}
                 <FilterSection title="Gender" isOpen={genderOpen} onToggle={setGenderOpen} register={register} items={genders}>
                 </FilterSection>
@@ -195,8 +201,14 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
                         ))}
                     </div>
                 </FilterSection>
-                <button type='submit' className="w-full mt-2 bg-black hover:bg-gray-900 text-white py-2 rounded-xl text-base font-semibold shadow-md transition">
+                <button type='submit' className="w-full mt-2 bg-black cursor-pointer hover:bg-gray-900 text-white py-2 rounded-xl text-base font-semibold shadow-md transition">
                     Apply Filters
+                </button>
+                <button onClick={(e) => {
+                    e.preventDefault()
+                    resetHandler()
+                }} className=" bg-white cursor-pointer text-xl mt-4 flex justify-center items-center text-black py-2 w-full rounded-xl font-semibold border-gray-700 border">
+                    <RiResetLeftFill /> Reset
                 </button>
             </form>
         </div>
