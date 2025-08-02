@@ -5,7 +5,7 @@ import { FaStar } from 'react-icons/fa';
 
 function Card({ product, index }) {
   // Calculate average rating (if available)
-  const rating = 4;
+  // const rating = product?.rating;
   const isOutOfStock = Object.values(product?.sizes || {}).every(qty => qty === 0);
 
   return (
@@ -39,11 +39,11 @@ function Card({ product, index }) {
             <h2 className="text-lg font-bold text-gray-900 mb-1 truncate">{product.title}</h2>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-yellow-500 flex items-center text-sm">
-                {[...Array(Math.floor(rating))].map((_, i) => (
+                {[...Array(Math.floor(product?.rating))].map((_, i) => (
                   <FaStar key={i} />
                 ))}
-                {rating > 0 && (
-                  <span className="ml-1 text-gray-600 font-medium">({rating})</span>
+                {product?.rating > 0 && (
+                  <span className="ml-1 text-gray-600 font-medium">({product?.rating})</span>
                 )}
               </span>
             </div>
@@ -59,11 +59,10 @@ function Card({ product, index }) {
               )}
             </div>
             <button
-              className={`w-full py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
-                isOutOfStock
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-black text-white hover:bg-gray-900'
-              }`}
+              className={`w-full py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${isOutOfStock
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-black text-white hover:bg-gray-900'
+                }`}
               disabled={isOutOfStock}
             >
               {isOutOfStock ? 'Out of Stock' : 'View Details'}
