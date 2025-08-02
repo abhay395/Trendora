@@ -45,7 +45,9 @@ export default {
             console.log(skip, page, totalProduct)
             const sortOption = {
                 priceAsc: { price: 1 },
-                priceDesc: { price: -1 }
+                priceDesc: { price: -1 },
+                ratingAsc: { rating: 1 },
+                ratingDesc: { rating: -1 }
             }
             // Get min and max price from filtered products
             const priceStats = await Product.aggregate([
@@ -60,7 +62,7 @@ export default {
             ]);
 
             let mongoQuery = Product.find(query)
-                .sort(sortOption[option.sortBy] || {})
+                .sort(sortOption[option.sortBy] || { rating: -1 })
                 .skip(skip)
                 .limit(limit);
             let results = await mongoQuery;
@@ -106,8 +108,18 @@ export default {
                 }
             ]);
             const gender = await Product.distinct("gender")
+            const priceStats = await Product.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        minPrice: { $min: "$price" },
+                        maxPrice: { $max: "$price" }
+                    }
+                }
+            ]);
             // console.log()
-            let result = { ...sizes[0], categories: category.sort(), genders: gender.sort() }
+
+            let result = { ...sizes[0], categories: category.sort(), genders: gender.sort(), priceStats: priceStats[0] }
             return result;
         } catch (error) {
             throw error
