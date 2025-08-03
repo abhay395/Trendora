@@ -17,10 +17,10 @@ function Card({ product, index }) {
       className="h-full"
     >
       <Link to={`/product/${product._id}`}>
-        <div className="w-full max-w-xs sm:max-w-sm md:max-w-md bg-white shadow-lg rounded-3xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer flex flex-col h-full group border border-gray-100">
+        <div className="w-full  xs:h-full xs:max-w-sm md:max-w-md bg-white shadow-lg rounded-3xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer flex flex-col  group border border-gray-100">
           <div className="relative flex items-center justify-center bg-gradient-to-t from-gray-50 via-white to-gray-100">
             <img
-              className="h-[260px] sm:h-[300px] md:h-[340px] w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+              className="h-[360px] xs:h-[300px] md:h-[340px] w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
               src={product?.images?.[0]?.url}
               alt={product?.title}
             />

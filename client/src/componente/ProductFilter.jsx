@@ -207,7 +207,7 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
                 <button onClick={(e) => {
                     e.preventDefault()
                     resetHandler()
-                }} className=" bg-white cursor-pointer text-xl mt-4 flex justify-center items-center text-black py-2 w-full rounded-xl font-semibold border-gray-700 border">
+                }} className=" bg-white cursor-pointer text-lg gap-x-1 mt-4 flex justify-center items-center text-black py-2 w-full rounded-xl font-semibold border-gray-700 border">
                     <RiResetLeftFill /> Reset
                 </button>
             </form>

@@ -30,14 +30,14 @@ function Home() {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen px-0 md:px-0 bg-gradient-to-br from-white via-gray-50 to-gray-100"
+      className="min-h-screen px-0 mt-10 md:mt-4 md:px-0 bg-gradient-to-br from-white via-gray-50 to-gray-100"
     >
       {/* Hero Section */}
       <section className="w-full flex items-center justify-center py-10 md:py-20 bg-gradient-to-r from-[#f8fafc] via-[#f1f5f9] to-[#e0e7ef]">
-        <div className="max-w-7xl w-full flex flex-col-reverse md:flex-row items-center justify-between gap-x-16 gap-y-10 px-6 md:px-12">
+        <div className="max-w-7xl w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-x-16 gap-y-10 px-6 md:px-12">
           {/* Left Content */}
           <div className="max-w-xl flex flex-col items-start gap-6">
-            <span className="inline-block bg-black text-white text-xs font-semibold px-3 py-1 rounded-full mb-2 tracking-widest shadow-md">
+            <span className="inline-block bg-black text-white text-xs font-semibold px-3 py-1 rounded-full m tracking-widest shadow-md">
               NEW ARRIVALS
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-2">
@@ -67,10 +67,10 @@ function Home() {
               <img
                 src={myImage}
                 alt="Boy in customized tee"
-                className="w-[340px] sm:w-[400px] md:w-[480px] lg:w-[520px] xl:w-[600px] h-auto object-cover rounded-3xl shadow-2xl border-4 border-white"
+                className="w-[400px] sm:w-[480px] md:w-[550px] lg:w-[580px] xl:w-[600px] h-auto object-cover rounded-3xl shadow-2xl border-4 border-white"
                 style={{ boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}
               />
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-md px-6 py-2 rounded-full shadow-md text-sm font-semibold text-gray-700">
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2   bg-white/80 backdrop-blur-md w-50 md:w-60 md:text-sm flex items-center justify-center py-2 rounded-full shadow-md text-xs font-semibold text-gray-700">
                 100% Cotton • Free Shipping
               </div>
             </div>
@@ -88,7 +88,7 @@ function Home() {
             Discover our freshest designs, handpicked for you. Find your next favorite tee!
           </p>
         </div>
-        <section className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6'>
+        <section className='grid grid-cols-1 px-5 md:px-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6'>
           {
             products.length === 0 ? (
               <div className="col-span-full flex justify-center items-center py-10">
@@ -111,7 +111,7 @@ function Home() {
             Our most popular picks, loved by our customers. Grab yours before they're gone!
           </p>
         </div>
-        <section className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6'>
+        <section className='grid grid-cols-1 px-5 md:px-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6'>
           {
             products.length === 0 ? (
               <div className="col-span-full flex justify-center items-center py-10">
