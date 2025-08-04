@@ -19,7 +19,7 @@ const ProductDetaile = () => {
         fetchProductById(id);
     }, [id])
     const addToCart = () => {
-        addProductCart({productId:id,quantity:quantity,size:selectedSize})
+        addProductCart({ productId: id, quantity: quantity, size: selectedSize })
     }
     if (isLoading || !selectedProduct) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
     return (
@@ -27,7 +27,7 @@ const ProductDetaile = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 mt-40">
+            className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 mt-20">
             {/* Left: Images */}
             <div className="flex flex-col w-full md:w-1/2">
                 <div className="w-full relative">
@@ -57,21 +57,24 @@ const ProductDetaile = () => {
             </div>
 
             {/* Right: Product Info */}
-            <div className="w-full md:w-1/2 space-y-4 h-[470px] ">
-                <h1 className="text-4xl text-gray-700 font-bold">{selectedProduct.title}</h1>
-                {/* Rating */}
-                <div className="flex items-center gap-1 text-yellow-500 text-xl">
-                    {[...Array(Math.floor(selectedProduct.rating))].map((_, i) => (
-                        <FaStar key={i} />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">({selectedProduct.rating})</span>
+            <div className="w-full md:w-1/2 space-y-7 h-[600px] px-4 md:px-0 md:min-h-[500px] relative">
+                <div className="space-y-4">
+                    <h1 className="text-4xl text-gray-700 font-bold">{selectedProduct.title}</h1>
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 text-yellow-500 text-xl">
+                        {[...Array(Math.floor(selectedProduct.rating))].map((_, i) => (
+                            <FaStar key={i} />
+                        ))}
+                        <span className="text-sm text-gray-600 ml-2">({selectedProduct.rating})</span>
+                    </div>
                 </div>
 
                 {/* Price */}
                 <p className="text-3xl font-bold mt-4">{selectedProduct.price} ₹</p>
-
+                {/* Description */}
+                <p className="tex-md font-semibold text-gray-800">{selectedProduct.description}</p>
                 {/* Size Selection */}
-                <div className="flex items-center mt-10 text-lg justify-between max-w-[450px] border-b-2 border-t-2 border-gray-100 py-5">
+                <div className="flex items-center mt-10 text-sm md:text-lg justify-between max-w-[450px] border-b-2 border-t-2 border-gray-100 py-5">
                     <div className="">
                         <h3 className="mb-2 font-bold  text-gray-700">Available Size</h3>
                         <div className="flex gap-2">
@@ -98,7 +101,7 @@ const ProductDetaile = () => {
                 </div>
 
                 {/* Quantity + Add to Cart */}
-                <div className="space-y-1 mt-16">
+                <div className="space-y-1 absolute bottom-1 md:bottom-20">
                     <p className="text-md text-gray-500 font-semibold mt-7">
                         <span className="text-gray-800 font-bold">Last 1 left</span> - make it yours!
                     </p>
