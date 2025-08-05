@@ -37,7 +37,8 @@ const useCartStore = create(
             addProductCart: async ({ productId, quantity, size }) => {
                 let check = get().cart.find((item) => item?.productId._id == productId && item.size == size)
                 if (check) {
-                    return
+                    toast.error("This product is already added")
+                    return;
                 }
                 try {
                     set({ isLoading: true, error: null });

@@ -6,20 +6,49 @@ import useProductStore from "../store/productStore";
 import { motion } from "framer-motion";
 import { MoonLoader } from "react-spinners";
 import useCartStore from "../store/cartStore";
+import toast from "react-hot-toast";
 const ProductDetaile = () => {
     const { id } = useParams()
     // console.log(id)
     const { selectedProduct, isLoading, error, fetchProductById } = useProductStore()
     const { addProductCart } = useCartStore();
-    const [selectedSize, setSelectedSize] = useState("S");
+
+    const [selectedSize, setSelectedSize] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelecteImage] = useState(0)
-    // const notify = () => toast('Here is your toast.');
+
     useEffect(() => {
         fetchProductById(id);
     }, [id])
     const addToCart = () => {
         addProductCart({ productId: id, quantity: quantity, size: selectedSize })
+    }
+    useEffect(() => {
+        if (selectedProduct && selectedSize == '') {
+            let sizes = { ...selectedProduct.sizes }
+            // console.log(sizes["S"])
+            for (let [key, value] of Object.entries(sizes)) {
+                if (value > 0) {
+                    setSelectedSize(key);
+                    break;
+                }
+            }
+        }
+    }, [selectedProduct])
+    useEffect(()=>{
+        setQuantity(1);
+    },[selectedSize])
+    const increaseHandler = () => {
+        if (quantity < selectedProduct?.sizes[selectedSize]) {
+            setQuantity(quantity + 1)
+        } else {
+            toast.error(`Only ${selectedProduct?.sizes[selectedSize]} in Stock`)
+        }
+    }
+    const decresaseHandler = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1)
+        }
     }
     if (isLoading || !selectedProduct) return <div className='h-screen flex items-center justify-center'><MoonLoader color='#000' /></div>
     return (
@@ -83,7 +112,7 @@ const ProductDetaile = () => {
                                     key={size}
                                     onClick={() => setSelectedSize(size)}
                                     disabled={qty === 0}
-                                    className={`px-5 py-3 border font-bold text-lg cursor-pointer border-gray-100 rounded-lg ${selectedSize === size ? "bg-black text-white" : "bg-white text-black"
+                                    className={`px-5 py-3 border font-bold text-lg cursor-pointer ${qty == 0 ? "disabled:opacity-40" : ''} border-gray-100 rounded-lg ${selectedSize === size ? "bg-black text-white" : "bg-white text-black"
                                         } ${qty === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
                                 >
                                     {size}
@@ -109,13 +138,13 @@ const ProductDetaile = () => {
                         <div className="flex border rounded-md h-[50px] border-gray-200">
                             <button
                                 className="px-3 py-3 text-md cursor-pointer"
-                                onClick={() => setQuantity(quantity + 1)}
+                                onClick={() => increaseHandler()}
                             >
                                 <FaPlus />
                             </button>
                             <span className="px-4 py-3 text-md font-bold">{quantity}</span>
                             <button
-                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                onClick={() => decresaseHandler()}
                                 className="px-3 py-3 text-md cursor-pointer"
                             >
                                 <FaMinus />
