@@ -11,6 +11,7 @@ import Stepper from '../componente/Stepper';
 import useCartStore from '../store/cartStore';
 import CartEmpty from './CartEmpty';
 import { AnimatePresence, motion } from 'framer-motion'
+import toast from 'react-hot-toast';
 
 export default function Cart() {
   const [allSelected, setAllSelected] = useState(false);
@@ -33,9 +34,10 @@ export default function Cart() {
     let quantity = selectedCart.quantity
     const availableQty = sizes?.[String(size).toUpperCase()];
     if (increase) {
-      if (quantity <= availableQty) {
+      if (quantity < availableQty) {
         quantity++
       } else {
+        toast.error(`Avalible Qty is ${availableQty}`)
         return;
       }
     } else {

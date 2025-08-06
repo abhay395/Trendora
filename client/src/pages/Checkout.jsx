@@ -6,9 +6,11 @@ import AddressSection from '../componente/AddressSection';
 import PaymentSection from '../componente/PaymentSection';
 import useOrderStore from '../store/orderStore';
 import { motion } from 'framer-motion'
+import useProductStore from '../store/productStore';
 export default function Checkout() {
     const { cart } = useCartStore()
     const { checkoutProduct } = useOrderStore();
+    const { fetchProducts } = useProductStore();
 
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
@@ -17,6 +19,7 @@ export default function Checkout() {
     let checkOutHandler = async () => {
         const id = await checkoutProduct()
         if (id) {
+            fetchProducts()
             navigate(`/payment-done/${id}`)
         }
     }

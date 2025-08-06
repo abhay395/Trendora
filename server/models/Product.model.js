@@ -1,5 +1,22 @@
 import mongoose from 'mongoose'
 import { paginate } from "./plugin/paginate.plugin.js";
+
+
+
+let reviewSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Types.ObjectId,
+        ref: "User"
+    },
+    comment: {
+        type: String,
+    },
+    likes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+    dislikes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+    images: [{
+        url: String
+    }]
+}, { timestamps: true })
 const productSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -41,10 +58,15 @@ const productSchema = new mongoose.Schema({
         {
             url: String,
         }
-    ]
+    ],
+    isOutOfStock: {
+        type: Boolean,
+        default: false
+    },
+    review: [reviewSchema]
 }, { timestamps: true });
 
-productSchema.index({title:"text"})
+productSchema.index({ title: "text" })
 
 productSchema.plugin(paginate)
 const Product = mongoose.model('products', productSchema);

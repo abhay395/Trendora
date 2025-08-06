@@ -8,6 +8,7 @@ const useProductStore = create((set) => ({
     error: null,
     filters: null,
     filterdProduct: [],
+    clearSelectedProduct: () => set({ selectedProduct: null }),
     fetchProducts: async () => {
         set({ isLoading: true, error: null })
         try {

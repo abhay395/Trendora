@@ -7,13 +7,16 @@ import mongoose from "mongoose"
 export default {
     checkoutProduct: async (userId, paymentMethod) => {
         try {
-            let selectedAddress = await Address.findOne({ userId, selected: true }).select("name phone pincode city state fullAddress _id").lean();
+            // 1. Get selected address
+            const selectedAddress = await Address.findOne({ userId, selected: true })
+                .select("name phone pincode city state fullAddress _id")
+                .lean();
 
             if (!selectedAddress) {
                 throw new ApiError("Please select or add an address!");
             }
-
-            let cartItems = await Cart.find({ userId, selected: true })
+            // 2. Get selected cart items with product info
+            const cartItems = await Cart.find({ userId, selected: true })
                 .populate({
                     path: "productId",
                     select: "_id title images price gender sizes"
@@ -24,13 +27,15 @@ export default {
             if (cartItems.length === 0) {
                 throw new ApiError(400, "Cart is empty or no products selected");
             }
+            // 3. Validate and prepare selected products
+            const selectedProduct = [];
+            const bulkStockUpdates = [];
 
-            let selectedProduct = [];
-
-            for (let item of cartItems) {
+            for (const item of cartItems) {
                 const product = item.productId;
+                const availableQty = product.sizes[item.size] || 0;
 
-                if (item.quantity > product.sizes[item.size]) {
+                if (item.quantity > availableQty) {
                     throw new ApiError(400, `Insufficient stock for ${product.title} (${item.size})`);
                 }
 
@@ -42,23 +47,24 @@ export default {
                     quantity: item.quantity,
                     size: item.size
                 });
-            }
 
-            // Reduce stock without transaction
-            const bulkOps = selectedProduct.map(item => ({
-                updateOne: {
-                    filter: { _id: item.productId },
-                    update: {
-                        $inc: {
-                            [`sizes.${item.size}`]: -item.quantity
+                bulkStockUpdates.push({
+                    updateOne: {
+                        filter: { _id: product._id },
+                        update: {
+                            $inc: { [`sizes.${item.size}`]: -item.quantity }
                         }
                     }
-                }
-            }));
-            await Product.bulkWrite(bulkOps);
+                });
+            }
 
-            const totalPrice = selectedProduct.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            // 4. Calculate total price
+            const totalPrice = selectedProduct.reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0
+            );
 
+            // 5. Create order
             const order = await Order.create({
                 address: selectedAddress,
                 userId,
@@ -67,8 +73,29 @@ export default {
                 totalPrice
             });
 
-            await Cart.deleteMany({ userId, selected: true });
+            // 6. Update stock and clear cart in parallel
+            await Promise.all([
+                Product.bulkWrite(bulkStockUpdates),
+                Cart.deleteMany({ userId, selected: true })
+            ]);
 
+            // 7. Check for out-of-stock products and update in bulk
+            const productIds = [...new Set(selectedProduct.map(p => p.productId.toString()))];
+            const updatedProducts = await Product.find({ _id: { $in: productIds } }).select("sizes").lean();
+
+            const bulkOutOfStockOps = updatedProducts.map(prod => {
+                const totalQty = Object.values(prod.sizes || {}).reduce((sum, q) => sum + q, 0);
+                return {
+                    updateOne: {
+                        filter: { _id: prod._id },
+                        update: { $set: { isOutOfStock: totalQty <= 0 } }
+                    }
+                };
+            });
+
+            if (bulkOutOfStockOps.length > 0) {
+                await Product.bulkWrite(bulkOutOfStockOps);
+            }
             return order;
         } catch (error) {
             throw error;
