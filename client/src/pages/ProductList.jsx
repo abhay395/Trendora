@@ -5,6 +5,7 @@ import Card from '../componente/Card'
 import SkeletonCard from '../componente/SkeletonCard'
 import { AnimatePresence, motion } from 'framer-motion'
 import ProductNotFound from '../componente/ProductNotFound'
+import { useLocation } from 'react-router-dom'
 
 function ProductList() {
   const {
@@ -15,7 +16,8 @@ function ProductList() {
     filterdProduct,
   } = useProductStore()
 
-
+  const [searchTerm, setSearchTerm] = useState('')
+  const location = useLocation()
   useEffect(() => {
     const loadData = async () => {
       await fetchProductFilters()
@@ -23,10 +25,20 @@ function ProductList() {
     }
     loadData()
   }, [])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    let searchTerm = searchParams.get('search')
+    if (searchTerm) {
+      setSearchTerm(searchTerm)
+      let query = `search=${searchTerm}`
+      fetchFilterdProduct(query)
+    }
+  }, [location.search])
+
   return (
     <div className='min-h-screen text-black w-full flex mt-16 relative'>
       <ProductFilter {...filters} />
-
       {filterdProduct.length == 0 && !isLoading ?
         <ProductNotFound /> : <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-18 gap-x-6 gap-y-6 px-4 w-full'>
           {/* {isLoading */}

@@ -33,10 +33,12 @@ export default {
                 query.rating.$gte = Number(filter.rating);
             }
             if (filter?.search) {
-                console.log(filter?.search)
-                query.$text = { $search: filter?.search }
-                // console.log(filter)
+                query.$or = [
+                    { title: { $regex: filter.search, $options: "i" } },
+                    { description: { $regex: filter.search, $options: "i" } }
+                ];
             }
+
             const totalProduct = await Product.countDocuments(query);
             let limit = Number(option.limit || 10)
             let totalPages = Math.ceil(totalProduct / limit)

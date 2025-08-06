@@ -66,7 +66,7 @@ const productSchema = new mongoose.Schema({
     review: [reviewSchema]
 }, { timestamps: true });
 
-productSchema.index({ title: "text" })
+productSchema.index({ title: "text", description: "text" })
 
 productSchema.plugin(paginate)
 const Product = mongoose.model('products', productSchema);
