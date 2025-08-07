@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import axios from 'axios'
 import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi } from '../api/productApi'
+
 const useProductStore = create((set) => ({
     products: [],
     selectedProduct: null,
@@ -8,47 +9,49 @@ const useProductStore = create((set) => ({
     error: null,
     filters: null,
     filterdProduct: [],
+    
     clearSelectedProduct: () => set({ selectedProduct: null }),
+    
     fetchProducts: async () => {
         set({ isLoading: true, error: null })
         try {
             const res = await fetchProductApi()
-            let products = res.data.result.results
-            console.log(res)
-            set({ products: products, isLoading: false })
-            console.log()
+            const products = res.data.result.results
+            set({ products, isLoading: false })
         } catch (error) {
-            set({ error: error.message })
+            set({ error: error.message, isLoading: false })
         }
     },
+    
     fetchFilterdProduct: async (filter) => {
         set({ isLoading: true, error: null })
         try {
             const res = await fetchProductApi(filter)
             set({ isLoading: false, filterdProduct: res.data.result.results })
         } catch (error) {
-            console.log(error)
+            set({ error: error.message, isLoading: false })
         }
     },
+    
     fetchProductById: async (id) => {
+        set({ isLoading: true, error: null })
         try {
             const res = await fetchProductByIdApi(id)
-            const selectedProduct = res.data.result;
-            set({ selectedProduct })
+            const selectedProduct = res.data.result
+            set({ selectedProduct, isLoading: false })
         } catch (error) {
-            set({ error: error.message })
+            set({ error: error.message, isLoading: false })
         }
     },
+    
     fetchProductFilters: async () => {
+        set({ isLoading: true, error: null })
         try {
-            set({ isLoading: true, error: null })
             const res = await fetchProductFiltersApi()
-            let filters = res.data.result
-            // const selectedProduct = res.data.result;
+            const filters = res.data.result
             set({ filters, isLoading: false })
-            // console.log(filters)
         } catch (error) {
-            set({ error: error.message })
+            set({ error: error.message, isLoading: false })
         }
     }
 }))

@@ -20,7 +20,7 @@ export default {
             if (filter?.size) {
                 let sizes = filter.size.split(',')
                 query.$or = sizes.map(size => ({
-                    [`sizes.${size}`]: { $gt: 15 }
+                    [`sizes.${size}`]: { $gt: 0 }
                 }));
             }
             if (filter?.minPrice || filter?.maxPrice) {
