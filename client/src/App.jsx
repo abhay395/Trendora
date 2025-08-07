@@ -16,6 +16,8 @@ import Checkout from './pages/Checkout'
 import PaymentSuccess from './pages/PaymentSuccess'
 import useCartStore from './store/cartStore'
 import { useEffect } from 'react'
+import Profile from './pages/Profile'
+import Orders from './pages/Order'
 
 function App() {
   const location = useLocation()
@@ -38,6 +40,8 @@ function App() {
           <Route path="logout" element={<Logout />} />
           <Route path="product/:id" element={<ProductDetaile />} />
           <Route path="payment-done/:id" element={<PaymentSuccess />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="orders" element={<Orders />} />
         </Route>
       </Routes>
     // </AnimatePresence>

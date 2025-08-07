@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { checkoutProductApi } from "../api/orderApi";
+import { fetchOrderHistoryApi } from "../api/orderApi";
 
 
 const useOrderStore = create((set, get) => ({
@@ -23,7 +24,13 @@ const useOrderStore = create((set, get) => ({
         }
     },
     fetchOrderList: async () => {
-
+        try {
+            set({ isLoading: true, error: null });
+            let response = await fetchOrderHistoryApi();
+            set({ order: response.data.result, isLoading: false });
+        } catch (error) {
+            set({ error: error.response?.data?.message, isLoading: false });
+        }
     },
 }))
 export default useOrderStore

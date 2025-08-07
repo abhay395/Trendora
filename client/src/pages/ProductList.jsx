@@ -4,7 +4,7 @@ import useProductStore from '../store/productStore'
 import Card from '../componente/Card'
 import SkeletonCard from '../componente/SkeletonCard'
 import { AnimatePresence, motion } from 'framer-motion'
-import ProductNotFound from '../componente/ProductNotFound'
+import ProductNotFoundForFilter from '../componente/ProductNotFoundForFilter'
 import { useLocation } from 'react-router-dom'
 
 function ProductList() {
@@ -40,7 +40,7 @@ function ProductList() {
     <div className='min-h-screen text-black w-full flex mt-16 relative'>
       <ProductFilter {...filters} />
       {filterdProduct.length == 0 && !isLoading ?
-        <ProductNotFound /> : <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-18 gap-x-6 gap-y-6 px-4 w-full'>
+        <ProductNotFoundForFilter /> : <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-18 gap-x-6 gap-y-6 px-4 w-full'>
           {/* {isLoading */}
           {/* // ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />) */}
           {/* // : ( */}
