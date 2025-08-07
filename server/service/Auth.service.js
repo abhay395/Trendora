@@ -39,5 +39,13 @@ export default {
         } catch (error) {
             throw error
         }
+    },
+    profileUser: async (userId) => {
+        try {
+            const result = await User.findById(userId);
+            return result;
+        } catch (error) {
+            throw error
+        }
     }
 }

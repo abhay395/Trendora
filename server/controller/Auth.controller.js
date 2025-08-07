@@ -12,5 +12,9 @@ export default {
     logoutUser: async (req, res) => {
         await AuthServer.logoutUser(req.user._id);
         sendSuccessMessage(res, 200, 'User Logout Successfully', null);
+    },
+    profileUser: async (req, res) => {
+        const result = await AuthServer.profileUser(req.user._id);
+        sendSuccessMessage(res,200,"User data fetched",result)
     }
 }
