@@ -30,7 +30,11 @@ function Navbar() {
     // Add your search functionality here
     navigate(`/products?search=${encodeURIComponent(searchTerm)}`)
   }
-
+  const enterHandler = (e) => {
+    if (e.key == "Enter") {
+      handleSearch()
+    }
+  }
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,7 +42,6 @@ function Navbar() {
         setIsDropdown(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDropdown]);
@@ -82,6 +85,8 @@ function Navbar() {
                     type="text"
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
+                    onKeyDown={enterHandler}
+                    // onDragEnter={()=>handleSearch()}
                     className="flex-1 border-0 focus:ring-0 outline-none text-gray-800 placeholder-gray-400 text-base bg-transparent"
                     placeholder="Search for products..."
                   />
