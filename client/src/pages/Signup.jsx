@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form"
-import axios from "axios";
+import useAuthStore from "../store/authStore";
 
 const Signup = () => {
   const {
@@ -12,14 +12,11 @@ const Signup = () => {
   } = useForm()
   const navigate = useNavigate()
   const password = watch('password');
+  const { signupUser, error } = useAuthStore()
   const onSubmit = async (data) => {
-    try {
-      const response = await axios.post('http://localhost:3000/api/v1/auth/signup', data)
-      const token = response.data.result.token;
-      localStorage.setItem('token', token)
+    let res = await signupUser(data)
+    if (res) {
       navigate('/')
-    } catch (error) {
-      console.log(error)
     }
   }
   useEffect(() => {

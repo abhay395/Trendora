@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/authStore";
 
 const Login = () => {
   const {
@@ -11,21 +12,13 @@ const Login = () => {
   } = useForm()
   // const [error, setError] = useState(true);
   const navigate = useNavigate()
+  const { loginUser } = useAuthStore()
   const onSubmit = async (data) => {
-    try {
-      const response = await axios.post('http://localhost:3000/api/v1/auth/login', data)
-      const token = response.data.result.token
-      localStorage.setItem('token',token)
+    let res = await loginUser(data)
+    if (res) {
       navigate('/')
-    } catch (error) {
-      console.log(error)
     }
   }
-  useEffect(()=>{
-    if(localStorage.getItem('token')){
-      navigate('/')
-    }
-  },[])
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12" >
       <div className="max-w-xl w-full bg-white p-8 rounded-2xl  border border-gray-200">

@@ -1,32 +1,17 @@
 import React, { useEffect } from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import useAuthStore from '../store/authStore';
 function Logout() {
     const navigate = useNavigate();
+    const { logoutUser } = useAuthStore()
+
     useEffect(() => {
         const logout = async () => {
-            try {
-                await axios.post(
-                    'http://localhost:3000/api/v1/auth/logout',
-                    {},
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    }
-                );
-                localStorage.removeItem('token');
-                navigate('/');
-            } catch (error) {
-                console.log(error);
-                navigate('/');
-            }
+            let res = await logoutUser()
+            if (res) navigate('/')
         };
-
         logout();
     }, []);
-
-
     return (
         <div className='h-screen'>
             <div className="flex items-center justify-center h-screen bg-white">

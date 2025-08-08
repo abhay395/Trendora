@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
 
 import Home from './pages/Home'
 import About from './pages/About'
@@ -22,30 +21,32 @@ import OrderDetaile from './pages/OrderDetaile'
 
 function App() {
   const location = useLocation()
-  const {fetchCart} = useCartStore()
-    useEffect(() => {
+  const { fetchCart } = useCartStore()
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
       fetchCart()
-    }, [])
+    }
+  }, [])
   return (
     // <AnimatePresence mode="sync">
-      <Routes location={location} key={location.pathname}>
-        <Route path='/' element={<RootLayout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="products" element={<ProductList />} />
-          <Route path="login" element={<Login />} />
-          <Route path="signin" element={<Signup />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="logout" element={<Logout />} />
-          <Route path="product/:id" element={<ProductDetaile />} />
-          <Route path="payment-done/:id" element={<PaymentSuccess />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="order/:id" element={<OrderDetaile />} />
-        </Route>
-      </Routes>
+    <Routes location={location} key={location.pathname}>
+      <Route path='/' element={<RootLayout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="contact" element={<Contact />} />
+        <Route path="products" element={<ProductList />} />
+        <Route path="login" element={<Login />} />
+        <Route path="signin" element={<Signup />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="checkout" element={<Checkout />} />
+        <Route path="logout" element={<Logout />} />
+        <Route path="product/:id" element={<ProductDetaile />} />
+        <Route path="payment-done/:id" element={<PaymentSuccess />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="orders" element={<Orders />} />
+        <Route path="order/:id" element={<OrderDetaile />} />
+      </Route>
+    </Routes>
     // </AnimatePresence>
   )
 }
