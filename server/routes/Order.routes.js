@@ -7,6 +7,6 @@ const orderRoute = express.Router();
 
 orderRoute.post('/checkout', authenticationMiddleware, asyncWrapper(OrderController.checkoutProduct))
 orderRoute.get('/history', authenticationMiddleware, asyncWrapper(OrderController.getOrders))
-orderRoute.get('/get-by-id/:orderId', authenticationMiddleware, asyncWrapper(OrderController.getOrderById))
+orderRoute.get('/:orderId', authenticationMiddleware, asyncWrapper(OrderController.getOrderById))
 
 export default orderRoute

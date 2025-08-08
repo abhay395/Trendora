@@ -65,12 +65,15 @@ export default {
             );
 
             // 5. Create order
+            let estimateDeliveryDate = new Date()
+            estimateDeliveryDate.setDate(estimateDeliveryDate.getDate() + 5);
             const order = await Order.create({
                 address: selectedAddress,
                 userId,
                 items: selectedProduct,
                 paymentMethod,
-                totalPrice
+                totalPrice,
+                estimateDeliveryDate
             });
 
             // 6. Update stock and clear cart in parallel

@@ -13,7 +13,8 @@ export default {
         sendSuccessMessage(res, 200, "Order history fetched successfully", result)
     },
     getOrderById: async (req, res) => {
-        const { orderId } = req.parmas;
+        const { orderId } = req.params;
+        console.log(req.params,orderId)
         const result = await OrderService.getOrderById(orderId)
         sendSuccessMessage(res, 200, "Order history fetched successfully", result);
     }

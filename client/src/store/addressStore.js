@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { persist } from 'zustand/middleware'
-import { addAddressApi, deleteAddressApi, fetchAddressApi, selecteAddressApi } from "../api/addressApi";
+import { addAddressApi, deleteAddressApi, fetchAddressApi, selecteAddressApi, updateAddressApi } from "../api/addressApi";
 
 const useAddressStore = create(
     persist(
@@ -35,10 +35,11 @@ const useAddressStore = create(
                 try {
                     set({ isLoading: true, error: null })
                     let currentAddress = get().addresses;
-                    let response = await updateAddress(addressId, updateBody)
+                    let response = await updateAddressApi(addressId, updateBody)
                     let updateAddress = currentAddress.map((item) => item._id == addressId ? { ...response.data.result } : item)
                     set({ addresses: updateAddress })
                 } catch (error) {
+                    console.log(error)
                     set({ error: error.response.data.message, isLoading: false })
                 }
             },

@@ -43,10 +43,14 @@ const orderSchema = new mongoose.Schema({
         enum: ['paid', "unpaid"],
         default: "unpaid"
     },
-    deliveryDate: {
+    deliveredAt: {
         type: Date,
         default: null
     },
+    estimateDeliveryDate: {
+        type: Date,
+        default: null
+    }
 }, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema)

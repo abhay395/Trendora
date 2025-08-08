@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { checkoutProductApi } from "../api/orderApi";
+import { checkoutProductApi, fetchOrderById } from "../api/orderApi";
 import { fetchOrderHistoryApi } from "../api/orderApi";
 
 
@@ -8,6 +8,7 @@ const useOrderStore = create((set, get) => ({
     recentOrder: null,
     isLoading: false,
     error: null,
+    selectedOrde: null,
     checkoutProduct: async (paymentMethod) => {
         try {
             set({ isLoading: true, error: null })
@@ -32,5 +33,15 @@ const useOrderStore = create((set, get) => ({
             set({ error: error.response?.data?.message, isLoading: false });
         }
     },
+    fetchOrderById: async (orderId) => {
+        set({ isLoading: true, error: null });
+        try {
+            let response = await fetchOrderById(orderId);
+            set({ selectedOrder: response.data.result, isLoading: false });
+            return response.data.result
+        } catch (error) {
+            set({ error: error.response?.data?.message, isLoading: false });
+        }
+    }
 }))
 export default useOrderStore
