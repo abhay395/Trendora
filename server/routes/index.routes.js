@@ -4,6 +4,7 @@ import productRouter from './Product.routes.js';
 import cartRoute from './Cart.routes.js';
 import addressRouter from './Address.routes.js';
 import orderRoute from './Order.routes.js';
+import userRouter from './User.routes.js';
 const router = express.Router();
 const routes = [
     {
@@ -25,6 +26,10 @@ const routes = [
     {
         path: '/order',
         route: orderRoute
+    },
+    {
+        path: '/user',
+        route: userRouter
     }
 ]
 

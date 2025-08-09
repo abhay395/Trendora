@@ -800,5 +800,13 @@
                 }
             ]
         }
+    ],
+    "data3": [
+        {
+            "name": "Product Name",
+            "category": "Category Name",
+            "price": 100,
+            "stock": 50
+        }
     ]
 }

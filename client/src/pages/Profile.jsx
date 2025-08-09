@@ -14,7 +14,7 @@ import { motion } from 'framer-motion'
 const Profile = () => {
   const { cart, totalPrice, totalProduct, fetchCart, isLoading: cartLoading } = useCartStore();
   const { order, fetchOrderList, isLoading: orderLoading } = useOrderStore();
-  const { user, fetchUserProfile, isLoading: userLoading } = useUserStore();
+  const { user, fetchUserProfile, isLoading: userLoading, updateUserProfile } = useUserStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +22,9 @@ const Profile = () => {
     fetchOrderList();
     fetchUserProfile();
   }, []);
-
+  const onEdit = (data) => {
+    updateUserProfile(data)
+  }
   return (
     <motion.div
       initial="hidden"
@@ -37,7 +39,7 @@ const Profile = () => {
 
       {/* 1. Basic Profile Info */}
       <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
-        <UserProfileSection user={user} onEdit={() => alert('Edit profile coming soon!')} />
+        <UserProfileSection user={user} onEdit={onEdit} />
       </motion.div>
       {/* 2. Order Information */}
       <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>

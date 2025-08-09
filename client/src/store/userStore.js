@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { fetchUserProfileApi } from "../api/authApi";
+import { fetchUserProfileApi, updateProfileApi } from "../api/userApi";
+// import { fetchUserProfileApi } from "../api/authApi";
 
 const useUserStore = create((set) => ({
     user: null,
@@ -14,6 +15,15 @@ const useUserStore = create((set) => ({
             set({ error: error.response?.data?.message, isLoading: false });
         }
     },
+    updateUserProfile: async (updatedData) => {
+        set({ isLoading: true, error: null })
+        try {
+            let response = await updateProfileApi(updatedData)
+            set({ user: response.data.result, isLoading: false })
+        } catch (error) {
+            set({ error: error.response?.data?.message, isLoading: false });
+        }
+    }
 }));
 
 export default useUserStore;
