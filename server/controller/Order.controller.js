@@ -17,5 +17,8 @@ export default {
         console.log(req.params,orderId)
         const result = await OrderService.getOrderById(orderId)
         sendSuccessMessage(res, 200, "Order history fetched successfully", result);
+    },
+    createOrder:async(req,res)=>{
+        
     }
 }
