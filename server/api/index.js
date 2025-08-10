@@ -11,10 +11,15 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use(async (req, res, next) => {
+  await connectDb();
+  next();
+});
 app.get("/", (req, res) => res.send("Hello world"));
 app.use('/api/v1', router)
 app.use(errorHandlerMiddleware)
-connectDb()
+// connectDb()
 
 
 
