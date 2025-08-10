@@ -17,16 +17,19 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true); // Allow the request
+    if (!origin) return callback(null, true); // allow server-to-server or curl
+    const cleanedOrigin = origin.replace(/\/$/, ""); // remove trailing slash
+    if (allowedOrigins.includes(cleanedOrigin)) {
+      callback(null, true);
     } else {
-      callback(new Error("CORS Not Allowed"));
+      callback(new Error("CORS Not Allowed: " + origin));
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
+
 
 app.use(express.json());
 
