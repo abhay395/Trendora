@@ -19,9 +19,6 @@ app.use(async (req, res, next) => {
 app.get("/", (req, res) => res.send("Hello world"));
 app.use('/api/v1', router)
 app.use(errorHandlerMiddleware)
-// connectDb()
-
-
 
 export default app
 export const handler = serverless(app)
