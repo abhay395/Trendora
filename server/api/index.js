@@ -1,9 +1,9 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import errorHandlerMiddleware from './middleware/error-handler.js'
+import errorHandlerMiddleware from '../middleware/error-handler.js'
 import cors from 'cors';
-import connectDb from './db/connectdb.js'
-import router from './routes/index.routes.js';
+import connectDb from '../db/connectdb.js'
+import router from '../routes/index.routes.js';
 import serverless from 'serverless-http';
 dotenv.config();
 
