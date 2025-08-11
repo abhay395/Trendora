@@ -63,11 +63,11 @@ export default {
                 }
             ]);
 
-            let mongoQuery = Product.find(query)
+            let results = await Product.find(query)
                 .sort(sortOption[option.sortBy] || { rating: -1 })
                 .skip(skip)
                 .limit(limit);
-            let results = await mongoQuery;
+            // let results = await mongoQuery;
             return { results, totalProduct, totalPages, page, limit, priceStats };
         } catch (error) {
             throw error
@@ -81,7 +81,7 @@ export default {
             const result = await Product.findById(id);
             return result;
         } catch (error) {
-
+            throw error
         }
     },
     getProductFilters: async () => {
