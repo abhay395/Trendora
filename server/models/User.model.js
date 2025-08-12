@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["admin", "user"],
     default: "user"
-  }
+  },
+  isDeleted: { type: Boolean, default: false }
 }, { timestamps: true });
 
 userSchema.statics.isEmailTaken = async function (email) {

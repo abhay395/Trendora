@@ -38,7 +38,7 @@ export default {
                     { description: { $regex: filter.search, $options: "i" } }
                 ];
             }
-
+            query.isDeleted = false;
             const totalProduct = await Product.countDocuments(query);
             let limit = Number(option.limit || 10)
             let totalPages = Math.ceil(totalProduct / limit)

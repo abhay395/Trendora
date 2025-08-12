@@ -63,6 +63,10 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
     review: [reviewSchema]
 }, { timestamps: true });
 
