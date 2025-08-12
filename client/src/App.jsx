@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
@@ -13,20 +14,29 @@ import Logout from './pages/Logout'
 import ProductDetaile from './pages/ProductDetaile'
 import Checkout from './pages/Checkout'
 import PaymentSuccess from './pages/PaymentSuccess'
-import useCartStore from './store/cartStore'
-import { useEffect } from 'react'
 import Profile from './pages/Profile'
 import Orders from './pages/Orders'
 import OrderDetaile from './pages/OrderDetaile'
+import Dashbord from './pages/Admin/Dashboard'
+import useCartStore from './store/cartStore'
+import Dashboard from './pages/Admin/Dashboard'
+import PageNotFound from './pages/PageNotFound'
+import useUserStore from './store/userStore'
+import ProtectedRoute from './componente/ProtectedRoute'
+import Unauthorized from './pages/AccessDenied'
 
 function App() {
   const location = useLocation()
   const { fetchCart } = useCartStore()
+  const { fetchUserProfile } = useUserStore()
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       fetchCart()
+      fetchUserProfile()
     }
   }, [])
+
   return (
     // <AnimatePresence mode="sync">
     <Routes location={location} key={location.pathname}>
@@ -36,7 +46,7 @@ function App() {
         <Route path="contact" element={<Contact />} />
         <Route path="products" element={<ProductList />} />
         <Route path="login" element={<Login />} />
-        <Route path="signin" element={<Signup />} />
+        <Route path="signup" element={<Signup />} />
         <Route path="cart" element={<Cart />} />
         <Route path="checkout" element={<Checkout />} />
         <Route path="logout" element={<Logout />} />
@@ -46,6 +56,15 @@ function App() {
         <Route path="orders" element={<Orders />} />
         <Route path="order/:id" element={<OrderDetaile />} />
       </Route>
+      <Route path="*" element={<PageNotFound />} />
+      {/* Admin Routes - Separate from main layout */}
+      <Route path="/unauthorized" element={<Unauthorized/>} />
+      <Route path="/admin" element=
+        {
+          <ProtectedRoute allowedRole='admin'>
+            <Dashboard />
+          </ProtectedRoute>} />
+      <Route path="/admin/dashboard" element={<Dashboard />} />
     </Routes>
     // </AnimatePresence>
   )
