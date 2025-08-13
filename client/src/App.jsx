@@ -24,6 +24,7 @@ import PageNotFound from './pages/PageNotFound'
 import useUserStore from './store/userStore'
 import ProtectedRoute from './componente/ProtectedRoute'
 import Unauthorized from './pages/AccessDenied'
+import AdminLayout from './pages/Admin/AdminLayout'
 
 function App() {
   const location = useLocation()
@@ -58,13 +59,13 @@ function App() {
       </Route>
       <Route path="*" element={<PageNotFound />} />
       {/* Admin Routes - Separate from main layout */}
-      <Route path="/unauthorized" element={<Unauthorized/>} />
-      <Route path="/admin" element=
-        {
-          <ProtectedRoute allowedRole='admin'>
-            <Dashboard />
-          </ProtectedRoute>} />
-      <Route path="/admin/dashboard" element={<Dashboard />} />
+      <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="admin" element={
+        <ProtectedRoute allowedRole='admin'>
+          <AdminLayout />
+        </ProtectedRoute>}>
+        <Route path="" element={<Dashboard />} />
+      </Route>
     </Routes>
     // </AnimatePresence>
   )

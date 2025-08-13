@@ -43,7 +43,7 @@ const productSchema = new mongoose.Schema({
         enum: ['T-shirt', 'Shirt', 'Jeans', 'Jacket', 'Shorts', 'Hoodie', "Coat"],
         required: true
     },
-    sizes: {
+    sizes: { // work On IT
         type: Map,
         of: Number,
         required: true,

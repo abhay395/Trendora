@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import AdminNavbar from './componente/AdminNavbar'
 import AdminSidebar from './componente/AdminSideBar'
+import useAdminStore from '../../store/adminStore'
 function AdminLayout() {
-    return (
-       <div className="flex h-screen bg-gray-50">
+  const { fetchStaticsInDashboard } = useAdminStore()
+  useEffect(() => {
+    fetchStaticsInDashboard();
+  }, [])
+  return (
+    <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <AdminSidebar />
 
@@ -16,7 +21,7 @@ function AdminLayout() {
         </main>
       </div>
     </div>
-    )
+  )
 }
 
 export default AdminLayout

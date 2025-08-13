@@ -3,6 +3,10 @@ import { sendSuccessMessage } from "../utils/helper.js"
 import { pick } from "../utils/pick.js"
 
 export default {
+    getDashBoard: async (req, res) => {
+        const result = await adminService.getDashBoard();
+        sendSuccessMessage(res, 200, "Dashboard Data Fetched", result)
+    },
     getUser: async (req, res) => {
         const filter = pick(req.query, ['search'])
         const option = pick(req.query, ["sortBy", "limit", "page"])

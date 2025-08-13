@@ -19,7 +19,7 @@ export default {
             const cartItems = await Cart.find({ userId, selected: true })
                 .populate({
                     path: "productId",
-                    select: "_id title images price gender sizes"
+                    select: "_id title images price gender sizes category"
                 })
                 .select("productId quantity size")
                 .lean();
@@ -38,14 +38,15 @@ export default {
                 if (item.quantity > availableQty) {
                     throw new ApiError(400, `Insufficient stock for ${product.title} (${item.size})`);
                 }
-
+                // console.log(product)
                 selectedProduct.push({
                     productId: product._id,
                     title: product.title,
                     image: product.images[0].url,
                     price: product.price,
                     quantity: item.quantity,
-                    size: item.size
+                    size: item.size,
+                    category: product.category
                 });
 
                 bulkStockUpdates.push({
@@ -57,7 +58,7 @@ export default {
                     }
                 });
             }
-
+            // console.log(selectedProduct)
             // 4. Calculate total price
             const totalPrice = selectedProduct.reduce(
                 (sum, item) => sum + item.price * item.quantity,

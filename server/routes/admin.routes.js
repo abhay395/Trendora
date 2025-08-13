@@ -4,6 +4,11 @@ import adminController from '../controller/Admin.controller.js';
 
 let adminRoute = express.Router();
 
+
+
+
+
+adminRoute.get('/dashboard', asyncWrapper(adminController.getDashBoard));
 //*--------------------------------------------------------------------------USER API---------------------------------------------------------------------------\\
 
 adminRoute.get('/user/', asyncWrapper(adminController.getUser))

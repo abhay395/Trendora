@@ -6,6 +6,53 @@ import ApiError from '../utils/ApiError.js'
 
 
 export default {
+    getDashBoard: async () => {
+        try {
+            let totalProduct = await Product.countDocuments();
+            // let totalOrder = await Order.countDocuments();
+            let orders = await Order.find({}).select('totalPrice').lean();
+            let saleGraph = await Order.aggregate([
+                {
+                    $group: {
+                        _id: { $dateToString: { format: '%Y-%m', date: "$createdAt" } },
+                        totalSales: { $sum: "$totalPrice" }
+                    }
+                }, {
+                    $sort: { _id: 1 }
+                }
+            ])
+            let topCategory = await Order.aggregate([
+                { $unwind: "$items" },
+                {
+                    $group: {
+                        _id: "$items.category",
+                        totalSold: { $sum: "$items.quantity" },
+                        totalRevenue: { $sum: { $multiply: ['$items.price', "$items.quantity"] } }
+                    }
+                }
+            ])
+            let lowStock = await Product.find({
+                $or: [
+                    { 'sizes.S': { $lt: 5 } },
+                    { 'sizes.L': { $lt: 5 } },
+                    { 'sizes.XL': { $lt: 5 } },
+                    { 'sizes.M': { $lt: 5 } },
+                ]
+            }).select('title sizes')
+            let totalUser = await User.countDocuments()
+            let totalSales = orders.reduce((ac, el) => el.totalPrice + ac, 0);
+            let totalOrders = orders.length;
+            let currency = '₹'
+            let stats = {}
+            stats.totalProduct = totalProduct
+            stats.totalSales = totalSales
+            stats.totalOrders = totalOrders
+            stats.totalUser = totalUser
+            return { stats, currency, saleGraph, topCategory, lowStock }
+        } catch (error) {
+            throw error
+        }
+    },
     getUser: async (filter, option) => {
         let query = {}
         if (filter?.search) {
