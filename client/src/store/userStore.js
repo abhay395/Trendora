@@ -4,7 +4,7 @@ import { fetchUserProfileApi, updateProfileApi } from "../api/userApi";
 
 const useUserStore = create((set) => ({
     user: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
     fetchUserProfile: async () => {
         try {

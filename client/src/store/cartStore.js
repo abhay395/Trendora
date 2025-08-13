@@ -10,7 +10,7 @@ const useCartStore = create(
             cart: [],
             price: 0,
             totalPrice: 0,
-            isLoading: false,
+            isLoading: true,
             error: null,
             totalProduct: 0,
             resetCart: () => {

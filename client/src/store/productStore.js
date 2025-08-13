@@ -5,7 +5,7 @@ import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi } from '..
 const useProductStore = create((set) => ({
     products: [],
     selectedProduct: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
     filters: null,
     filterdProduct: [],

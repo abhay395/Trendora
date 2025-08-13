@@ -6,7 +6,7 @@ import { fetchOrderHistoryApi } from "../api/orderApi";
 const useOrderStore = create((set, get) => ({
     order: [],
     recentOrder: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
     selectedOrde: null,
     checkoutProduct: async (paymentMethod) => {
