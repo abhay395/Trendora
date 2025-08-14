@@ -25,6 +25,8 @@ import useUserStore from './store/userStore'
 import ProtectedRoute from './componente/ProtectedRoute'
 import Unauthorized from './pages/AccessDenied'
 import AdminLayout from './pages/Admin/AdminLayout'
+import AdminProduct from './pages/Admin/AdminProduct'
+import AddProduct from './pages/Admin/AddProduct'
 
 function App() {
   const location = useLocation()
@@ -65,6 +67,8 @@ function App() {
           <AdminLayout />
         </ProtectedRoute>}>
         <Route path="" element={<Dashboard />} />
+        <Route path="products" element={<AdminProduct />} />
+        <Route path="add-product" element={<AddProduct />} />
       </Route>
     </Routes>
     // </AnimatePresence>

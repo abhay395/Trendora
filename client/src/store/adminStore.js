@@ -1,22 +1,46 @@
-
-
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { dashBoardStaticsApi } from "../api/adminApi";
+import { dashBoardStaticsAdminApi, ordersAdminApi } from "../api/adminApi";
 
 const useAdminStore = create((set) => ({
-    isLoading: true,
+    isStaticsLoading: true,
+    isOrdersLoading: true,
     error: null,
-    data: null,
+    statics: null,
+    recentOrder: [],
+
     fetchStaticsInDashboard: async () => {
-        set({ isLoading: true, error: null });
+        set({ isStaticsLoading: true, error: null });
         try {
-            const response = await dashBoardStaticsApi();
-            set({ data: response.data.result, isLoading: false })
+            const [staticsRes, recentOrderRes] = await Promise.all([
+                dashBoardStaticsAdminApi(),
+                ordersAdminApi(),
+            ]);
+            set({
+                statics: staticsRes?.data?.result,
+                recentOrder: recentOrderRes?.data?.result?.results || [],
+                isStaticsLoading: false,
+            });
         } catch (error) {
-            set({ error: error.response?.data?.message, isLoading: false });
+            const message =
+                error.response?.data?.message || error.message || "Something went wrong";
+            toast.error(message);
+            set({ error: message, isStaticsLoading: false });
         }
-    }
+    },
+
+    fetchOrdersInAdmin: async () => {
+        set({ isOrdersLoading: true, error: null });
+        try {
+            const response = await ordersAdminApi();
+            set({ orders: response.data.result, isOrdersLoading: false });
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message || "Something went wrong";
+            toast.error(message);
+            set({ error: message, isOrdersLoading: false });
+        }
+    },
 }));
 
 export default useAdminStore;
