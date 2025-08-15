@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useAdminStore from "../../store/adminStore";
 
 function AdminProduct() {
   const navigate = useNavigate();
@@ -56,25 +57,12 @@ function AdminProduct() {
         },
       ],
     },
-    {
-      isOutOfStock: true,
-      _id: "6888895dcc51b9dcd7292ac6",
-      title: "Gramophone Floral Print T-shirt",
-      description:
-        "Women’s relaxed-fit tee with a vintage gramophone floral print—soft, breezy, and stylish for summer days.",
-      price: 1399,
-      rating: 3,
-      gender: "Women",
-      category: "T-shirt",
-      sizes: { S: 0, M: 0, L: 0, XL: 0 },
-      images: [
-        {
-          url: "https://www.mydesignation.com/cdn/shop/files/gramophone-men-shirt-mydesignation-4965993.jpg?v=1752736266&width=750",
-        },
-      ],
-    },
   ];
-
+  const { fetchProductsInAdmin, productData, isProductLoading } = useAdminStore();
+  useEffect(() => {
+    fetchProductsInAdmin?.()
+  }, [])
+  if (isProductLoading) return <div>...Loading</div>
   return (
     <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
       {/* Header */}
@@ -90,7 +78,7 @@ function AdminProduct() {
 
       {/* Product Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
-        {products.map((p) => (
+        {productData?.product?.map((p) => (
           <div
             key={p._id}
             className="flex flex-col bg-gray-50 rounded-lg shadow-sm border border-gray-200 hover:shadow-lg transition-all group"
@@ -132,11 +120,10 @@ function AdminProduct() {
                   {p.gender}
                 </span>
                 <span
-                  className={`text-xs px-2 py-0.5 rounded font-medium ${
-                    p.isOutOfStock
-                      ? "bg-red-100 text-red-600"
-                      : "bg-green-100 text-green-600"
-                  }`}
+                  className={`text-xs px-2 py-0.5 rounded font-medium ${p.isOutOfStock
+                    ? "bg-red-100 text-red-600"
+                    : "bg-green-100 text-green-600"
+                    }`}
                 >
                   {p.isOutOfStock ? "Out of Stock" : "In Stock"}
                 </span>
@@ -161,11 +148,10 @@ function AdminProduct() {
                 {Object.entries(p.sizes).map(([size, qty]) => (
                   <span
                     key={size}
-                    className={`text-xs px-2 py-0.5 rounded border ${
-                      qty === 0
-                        ? "bg-gray-100 text-gray-400 border-gray-200"
-                        : "bg-blue-100 text-blue-700 border-blue-200"
-                    }`}
+                    className={`text-xs px-2 py-0.5 rounded border ${qty === 0
+                      ? "bg-gray-100 text-gray-400 border-gray-200"
+                      : "bg-blue-100 text-blue-700 border-blue-200"
+                      }`}
                   >
                     {size}
                   </span>

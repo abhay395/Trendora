@@ -36,4 +36,13 @@ function getSort(sortString = '') {
     })
     return sortObj
 }
-export { sendSuccessMessage, createToken, getPagination, getSort }
+const pick = (object, keys) => {
+    return keys.reduce((obj, key) => {
+        if (object && Object.prototype.hasOwnProperty.call(object, key)) {
+            obj[key] = object[key];
+        }
+        return obj;
+    }, {});
+};
+
+export { sendSuccessMessage, createToken, getPagination, getSort, pick }

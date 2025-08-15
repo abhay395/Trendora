@@ -1,45 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
+import useAdminStore from "../../store/adminStore";
+import { useForm } from 'react-hook-form'
 
 function AddProduct() {
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    price: "",
-    stock: "",
-    description: "",
-    images: [null, null, null, null],
-  });
-
   const [previews, setPreviews] = useState([null, null, null, null]);
-
-  const handleChange = (e) => {
-    const { name, value, files, dataset } = e.target;
-
-    if (name.startsWith("image")) {
-      const idx = parseInt(dataset.idx, 10);
-      if (files && files[0]) {
-        setFormData((prev) => {
-          const newImages = [...prev.images];
-          newImages[idx] = files[0];
-          return { ...prev, images: newImages };
-        });
-        setPreviews((prev) => {
-          const newPreviews = [...prev];
-          newPreviews[idx] = URL.createObjectURL(files[0]);
-          return newPreviews;
-        });
-      }
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-  };
-
+  const { categories, fetchCategoriesInAdmin } = useAdminStore();
+  const { register, handleSubmit, formState: { errors } } = useForm()
+  useEffect(() => {
+    fetchCategoriesInAdmin()
+  }, [fetchCategoriesInAdmin])
+  const onSubmit = (data) => {
+    console.log(data)
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center py-10">
       <div className="w-full max-w-3xl bg-white/90 shadow-xl rounded-3xl p-10 border border-gray-100">
@@ -50,7 +23,7 @@ function AddProduct() {
           Add New Product
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Product Name & Category */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -61,10 +34,8 @@ function AddProduct() {
                 type="text"
                 name="name"
                 placeholder="e.g. Classic White Shirt"
-                value={formData.name}
-                onChange={handleChange}
                 className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                required
+                {...register("name", { required: true })}
               />
             </div>
             <div>
@@ -73,15 +44,14 @@ function AddProduct() {
               </label>
               <select
                 name="category"
-                value={formData.category}
-                onChange={handleChange}
                 className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                required
+                {...register("category", { required: true })}
               >
                 <option value="">Select category</option>
-                <option value="Clothing">Clothing</option>
+                {categories?.map((op) => <option key={op.id} value={op.name} className="outline-none">{op.name}</option>)}
+                {/* <option value="Clothing">Clothing</option>
                 <option value="Shoes">Shoes</option>
-                <option value="Accessories">Accessories</option>
+                <option value="Accessories">Accessories</option> */}
               </select>
             </div>
           </div>
@@ -97,10 +67,8 @@ function AddProduct() {
                 name="price"
                 min="0"
                 placeholder="e.g. 999"
-                value={formData.price}
-                onChange={handleChange}
                 className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                required
+                {...register("price", { required: true })}
               />
             </div>
             <div>
@@ -112,10 +80,8 @@ function AddProduct() {
                 name="stock"
                 min="0"
                 placeholder="e.g. 50"
-                value={formData.stock}
-                onChange={handleChange}
                 className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                required
+                {...register("stock", { required: true })}
               />
             </div>
           </div>
@@ -128,8 +94,7 @@ function AddProduct() {
             <textarea
               name="description"
               placeholder="Describe the product..."
-              value={formData.description}
-              onChange={handleChange}
+              {...register("description", { required: true })}
               rows="4"
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
               required
@@ -166,9 +131,9 @@ function AddProduct() {
                     name={`image${idx}`}
                     data-idx={idx}
                     accept="image/*"
-                    onChange={handleChange}
                     className="hidden"
                     required={idx === 0}
+                    {...register(`images.${idx}`, { required: idx === 0 })}
                   />
                 </label>
               ))}

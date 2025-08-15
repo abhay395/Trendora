@@ -4,15 +4,15 @@ import AdminNavbar from './componente/AdminNavbar'
 import AdminSidebar from './componente/AdminSideBar'
 import useAdminStore from '../../store/adminStore'
 function AdminLayout() {
-  const { fetchStaticsInDashboard } = useAdminStore()
+  const fetchStaticsInDashboard = useAdminStore((state) => state?.fetchStaticsInDashboard);
+
   useEffect(() => {
-    fetchStaticsInDashboard();
-  }, [])
+    fetchStaticsInDashboard?.(); // optional chaining prevents crash if undefined
+  }, [fetchStaticsInDashboard]);
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <AdminSidebar />
-
       {/* Main content */}
       <div className="flex flex-col flex-1">
         <AdminNavbar />
