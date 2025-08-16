@@ -1,6 +1,5 @@
 import ProductService from "../service/Product.service.js";
-import { sendSuccessMessage } from "../utils/helper.js";
-import { pick } from "../utils/pick.js";
+import { sendSuccessMessage,pick } from "../utils/helper.js";
 export default {
     addMultipleProduct: async (req, res) => {
         const result = await ProductService.addMultipleProduct(req.body);

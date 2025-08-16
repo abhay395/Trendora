@@ -1,6 +1,6 @@
 import adminService from "../service/Admin.service.js"
-import { sendSuccessMessage } from "../utils/helper.js"
-import { pick } from "../utils/pick.js"
+import ApiError from "../utils/ApiError.js";
+import { sendSuccessMessage, pick } from "../utils/helper.js"
 
 export default {
     getDashBoard: async (req, res) => {
@@ -58,8 +58,12 @@ export default {
         sendSuccessMessage(res, 200, "Order updated successfully", result)
     },
     createProduct: async (req, res) => {
-        const { body } = req;
-        const result = await adminService.createProduct(body);
+        // const { body } = req;
+        if (!req.files || req.files.length == 0) {
+            throw new ApiError(400, "Images Is requierd", null)
+        }
+        const { body, files } = req;
+        const result = await adminService.createProduct(files, body);
         sendSuccessMessage(res, 200, "Product created successfully", result)
     },
     getProducts: async (req, res) => {

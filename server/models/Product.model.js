@@ -39,30 +39,22 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     category: {
-        type: String,
-        enum: ['T-shirt', 'Shirt', 'Jeans', 'Jacket', 'Shorts', 'Hoodie', "Coat"],
+        type: mongoose.Types.ObjectId,
+        ref: "Category",
         required: true
     },
-    sizes: { // work On IT
-        type: Map,
-        of: Number,
-        required: true,
-        default: {
-            S: 0,
-            M: 0,
-            L: 0,
-            XL: 0,
-        }
-    },
-    images: [
+    sizes: [
         {
-            url: String,
+            name: { type: String, required: true },  // e.g., S, M, L, XL
+            quantity: { type: Number, default: 0, min: 0 }
         }
     ],
-    isOutOfStock: {
-        type: Boolean,
-        default: false
-    },
+    images: [
+        {
+            url: { type: String, required: true },
+            _id: false,
+        }
+    ],
     isDeleted: {
         type: Boolean,
         default: false
@@ -70,9 +62,16 @@ const productSchema = new mongoose.Schema({
     review: [reviewSchema]
 }, { timestamps: true });
 
+productSchema.virtual('isOutOfStock').get(function () {
+    return this.sizes.every(size => size.quantity === 0);
+});
+
+productSchema.set('toJSON', { virtuals: true });
+productSchema.set('toObject', { virtuals: true });
+
 productSchema.index({ title: "text", description: "text" })
 
 productSchema.plugin(paginate)
-const Product = mongoose.model('products', productSchema);
+const Product = mongoose.model('Product', productSchema);
 
 export default Product

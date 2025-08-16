@@ -3,6 +3,7 @@ import Order from '../models/Order.model.js'
 import Product from '../models/Product.model.js'
 import { getPagination, getSort } from '../utils/helper.js'
 import ApiError from '../utils/ApiError.js'
+import uploadToCloudinary from '../utils/cloudinary.js'
 
 
 export default {
@@ -182,13 +183,18 @@ export default {
             throw error
         }
     },
-    createProduct: async (body) => {
+    createProduct: async (files, body) => {
         try {
-            let result = new Product(body);
-            await result.save();
+            const images = await Promise.all(files.map(async (file) => {
+                let image = await uploadToCloudinary({ file })
+                return { url: image.secure_url }
+            }))
+            console.log(images)
+            const result = new Product({ images:images, ...body })
+            await result.save()
             return result;
         } catch (error) {
-            throw error
+            throw new ApiError(400, "Product creation failed: " + (error.message || error));
         }
     },
     getProducts: async (filter = {}, option = {}) => {
