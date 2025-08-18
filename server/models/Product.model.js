@@ -45,8 +45,9 @@ const productSchema = new mongoose.Schema({
     },
     sizes: [
         {
-            name: { type: String, required: true },  // e.g., S, M, L, XL
-            quantity: { type: Number, default: 0, min: 0 }
+            size: { type: String, required: true },  // e.g., S, M, L, XL
+            quantity: { type: Number, default: 0, min: 0 },
+            _id: false,
         }
     ],
     images: [

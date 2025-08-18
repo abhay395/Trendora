@@ -6,7 +6,6 @@ export default {
         const filter = pick(req.query, ["search", "createdAt"])
         const option = pick(req.query, ['sortBy', "page", "limit"])
         const result = await CategoryService.getCategories(filter, option)
-        console.log(result)
         sendSuccessMessage(res, 200, "Category fetched Successfully", result)
     },
     addCategory: async (req, res) => {

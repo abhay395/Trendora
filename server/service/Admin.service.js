@@ -189,7 +189,6 @@ export default {
                 let image = await uploadToCloudinary({ file })
                 return { url: image.secure_url }
             }))
-            console.log(images)
             const result = new Product({ images:images, ...body })
             await result.save()
             return result;

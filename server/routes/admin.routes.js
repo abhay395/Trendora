@@ -22,7 +22,7 @@ adminRoute.patch('/orders/update/:id', asyncWrapper(adminController.updateOrder)
 
 //*--------------------------------------------------------------------------Product API---------------------------------------------------------------------------\\
 
-adminRoute.post('/product/create', upload.array('image'), asyncWrapper(adminController.createProduct))
+adminRoute.post('/product/create', upload.array('images',5), asyncWrapper(adminController.createProduct))
 adminRoute.get('/product/', asyncWrapper(adminController.getProducts))
 adminRoute.get('/product/:id', asyncWrapper(adminController.getProductById))
 adminRoute.patch('/product/update/:id', asyncWrapper(adminController.updateProductId))

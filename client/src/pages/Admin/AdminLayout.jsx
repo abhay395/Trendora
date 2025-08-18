@@ -5,10 +5,12 @@ import AdminSidebar from './componente/AdminSideBar'
 import useAdminStore from '../../store/adminStore'
 function AdminLayout() {
   const fetchStaticsInDashboard = useAdminStore((state) => state?.fetchStaticsInDashboard);
+  const fetchCategoriesInAdmin = useAdminStore((state) => state?.fetchCategoriesInAdmin)
 
   useEffect(() => {
+    fetchCategoriesInAdmin?.()
     fetchStaticsInDashboard?.(); // optional chaining prevents crash if undefined
-  }, [fetchStaticsInDashboard]);
+  }, [fetchStaticsInDashboard, fetchCategoriesInAdmin]);
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi,getcategoryAdminApi } from "../api/adminApi";
+import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi, getcategoryAdminApi } from "../api/adminApi";
 
 const useAdminStore = create((set) => ({
     isStaticsLoading: true,

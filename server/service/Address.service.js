@@ -32,7 +32,6 @@ export default {
     },
     updateAddresssById: async (addressId, updateBody) => {
         try {
-            console.log(addressId)
             if (!await Address.findById(addressId)) {
                 throw new ApiError(404, "Address not found")
             }
