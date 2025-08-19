@@ -4,8 +4,22 @@ import Product from '../models/Product.model.js'
 import { getPagination, getSort } from '../utils/helper.js'
 import ApiError from '../utils/ApiError.js'
 import uploadToCloudinary from '../utils/cloudinary.js'
+import fs from 'fs'
+import csv from 'csv-parser'
+import Category from '../models/Category.model.js'
 
 
+
+function readCSV(filePath) {
+    return new Promise((resolve, reject) => {
+        const results = [];
+        fs.createReadStream(filePath)
+            .pipe(csv())
+            .on("data", (row) => results.push(row))
+            .on("end", () => resolve(results))
+            .on("error", reject);
+    });
+}
 export default {
     getDashBoard: async () => {
         try {
@@ -189,11 +203,41 @@ export default {
                 let image = await uploadToCloudinary({ file })
                 return { url: image.secure_url }
             }))
-            const result = new Product({ images:images, ...body })
+            const result = new Product({ images: images, ...body })
             await result.save()
             return result;
         } catch (error) {
             throw new ApiError(400, "Product creation failed: " + (error.message || error));
+        }
+    },
+    bulkUpload: async (file) => {
+        try {
+            let data = await readCSV(file.path)
+            data = await Promise.all(data.map(async (item) => {
+                let images = item.images.split(';').map((url) => {
+                    return {
+                        url: url
+                    }
+                })
+                let category = await Category.findOne({ name: item?.category })
+                if (!category) {
+                    category = await Category.create({ name: item.category })
+                }
+                let sizes = JSON.parse(item.sizes)
+                let result = await Product.create({
+                    title: item.title,
+                    category: category._id,
+                    gender: item.gender,
+                    description: item.description,
+                    images,
+                    sizes
+                })
+                return result
+            }))
+            fs.unlinkSync(file.path)
+            return data
+        } catch (error) {
+            console.log(error)
         }
     },
     getProducts: async (filter = {}, option = {}) => {

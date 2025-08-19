@@ -2,6 +2,7 @@ import express from 'express'
 import asyncWrapper from '../middleware/async.js';
 import adminController from '../controller/Admin.controller.js';
 import upload from '../middleware/memory.multer.js';
+import uploadForCsv from '../middleware/disk.multer.js'
 let adminRoute = express.Router();
 
 
@@ -22,7 +23,8 @@ adminRoute.patch('/orders/update/:id', asyncWrapper(adminController.updateOrder)
 
 //*--------------------------------------------------------------------------Product API---------------------------------------------------------------------------\\
 
-adminRoute.post('/product/create', upload.array('images',5), asyncWrapper(adminController.createProduct))
+adminRoute.post('/product/create', upload.array('images', 5), asyncWrapper(adminController.createProduct))
+adminRoute.post('/product/bulk-upload', uploadForCsv.single('file'), asyncWrapper(adminController.bulkUpload))
 adminRoute.get('/product/', asyncWrapper(adminController.getProducts))
 adminRoute.get('/product/:id', asyncWrapper(adminController.getProductById))
 adminRoute.patch('/product/update/:id', asyncWrapper(adminController.updateProductId))

@@ -66,7 +66,7 @@ export default {
             let results = await Product.find(query)
                 .sort(sortOption[option.sortBy] || { rating: -1 })
                 .skip(skip)
-                .limit(limit);
+                .limit(limit).populate('category');
             // let results = await mongoQuery;
             return { results, totalProduct, totalPages, page, limit, priceStats };
         } catch (error) {

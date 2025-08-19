@@ -1,7 +1,6 @@
 import adminService from "../service/Admin.service.js"
 import ApiError from "../utils/ApiError.js";
 import { sendSuccessMessage, pick } from "../utils/helper.js"
-
 export default {
     getDashBoard: async (req, res) => {
         const result = await adminService.getDashBoard();
@@ -64,6 +63,15 @@ export default {
         }
         const { body, files } = req;
         const result = await adminService.createProduct(files, body);
+        sendSuccessMessage(res, 200, "Product created successfully", result)
+    },
+    bulkUpload: async (req, res) => {
+        // const { body } = req;
+        if (!req.file) {
+            throw new ApiError(400, "Images Is requierd", null)
+        }
+        // const { body, files } = req;
+        const result = await adminService.bulkUpload(req.file);
         sendSuccessMessage(res, 200, "Product created successfully", result)
     },
     getProducts: async (req, res) => {

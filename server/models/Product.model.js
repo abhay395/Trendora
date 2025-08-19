@@ -26,10 +26,6 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    price: {
-        type: Number,
-        required: true
-    },
     rating: {
         type: Number,
         default: 0,
@@ -47,6 +43,7 @@ const productSchema = new mongoose.Schema({
         {
             size: { type: String, required: true },  // e.g., S, M, L, XL
             quantity: { type: Number, default: 0, min: 0 },
+            price: { type: Number, default: 0 },
             _id: false,
         }
     ],
