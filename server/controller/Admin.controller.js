@@ -67,8 +67,9 @@ export default {
     },
     bulkUpload: async (req, res) => {
         // const { body } = req;
+        console.log(req)
         if (!req.file) {
-            throw new ApiError(400, "Images Is requierd", null)
+            throw new ApiError(400, "Csv Is requierd", null)
         }
         // const { body, files } = req;
         const result = await adminService.bulkUpload(req.file);

@@ -267,7 +267,7 @@ export default {
                 query.isDeleted = filter.isDeleted === 'true';
             }
             const totalProduct = await Product.countDocuments(query);
-            const { skip, totalPages, limit, page } = getPagination({ totalItems: totalProduct, limit: filter?.limit, page: filter?.page })
+            const { skip, totalPages, limit, page } = getPagination({ totalItems: totalProduct, limit: option?.limit, page: option?.page })
             const sortBy = getSort(option.sortBy)
             let result = await Product.find(query).sort(sortBy).skip(skip).limit(limit);
             return { results: result, totalProduct, totalPages, page, limit }

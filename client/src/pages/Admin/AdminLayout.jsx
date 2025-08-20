@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import AdminNavbar from './componente/AdminNavbar'
 import AdminSidebar from './componente/AdminSideBar'
 import useAdminStore from '../../store/adminStore'
+import { Toaster } from 'react-hot-toast'
 function AdminLayout() {
   const fetchStaticsInDashboard = useAdminStore((state) => state?.fetchStaticsInDashboard);
   const fetchCategoriesInAdmin = useAdminStore((state) => state?.fetchCategoriesInAdmin)
@@ -22,6 +23,7 @@ function AdminLayout() {
           <Outlet /> {/* All admin pages render here */}
         </main>
       </div>
+      <Toaster />
     </div>
   )
 }

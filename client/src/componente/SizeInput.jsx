@@ -1,52 +1,78 @@
 import React from "react";
 import { useFieldArray } from "react-hook-form";
+import { FiTrash2, FiPlus } from "react-icons/fi";
 
 function SizeInput({ control, register }) {
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "sizes"
+    name: "sizes",
   });
 
   return (
-    <div>
-      <label className="block text-gray-700 font-semibold mb-2">
-        Sizes & Quantity
+    <div className="w-full">
+      <label className="block text-gray-800 font-bold mb-4 text-xl tracking-tight">
+        Sizes, Price & Quantity
       </label>
+
       <div className="space-y-4">
+        {fields.length === 0 && (
+          <div className="text-gray-400 italic text-sm mb-2">
+            No sizes added yet. Click <span className="inline-flex items-center gap-1 font-semibold text-black"><FiPlus className="inline" /> Add Size</span> to begin.
+          </div>
+        )}
         {fields.map((item, index) => (
           <div
             key={item.id}
-            className="flex gap-4 items-center  p-3 rounded-lg"
+            className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center p-4 border border-gray-100 rounded-2xl bg-gray-50 shadow-sm relative group transition hover:shadow-md"
           >
-            <input
-              type="text"
-              placeholder="Size (e.g. M, L, XL)"
-              className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none"
-              {...register(`sizes.${index}.size`, { required: true })}
-            />
-            <input
-              type="number"
-              placeholder="Quantity"
-              min="0"
-              className="w-32 border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none"
-              {...register(`sizes.${index}.quantity`, { required: true })}
-            />
+            <div className="flex-1 flex flex-col md:flex-row gap-2 md:gap-4">
+              <div className="flex flex-col">
+                <label className="text-xs text-gray-500 mb-1 ml-1">Size</label>
+                <input
+                  type="text"
+                  placeholder="e.g. M, L, XL"
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition"
+                  {...register(`sizes.${index}.size`, { required: true })}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-xs text-gray-500 mb-1 ml-1">Price (₹)</label>
+                <input
+                  type="number"
+                  placeholder="Price"
+                  min="0"
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28"
+                  {...register(`sizes.${index}.price`, { required: true })}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-xs text-gray-500 mb-1 ml-1">Quantity</label>
+                <input
+                  type="number"
+                  placeholder="Quantity"
+                  min="0"
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28"
+                  {...register(`sizes.${index}.quantity`, { required: true })}
+                />
+              </div>
+            </div>
             <button
               type="button"
               onClick={() => remove(index)}
-              className="text-red-500 font-bold px-2"
+              className="absolute top-2 right-2 md:static md:ml-2 text-red-500 hover:bg-red-100 hover:text-red-700 p-2 rounded-lg transition flex items-center justify-center"
+              title="Remove size"
             >
-              ✕
+              <FiTrash2 className="w-5 h-5" />
             </button>
           </div>
         ))}
 
         <button
           type="button"
-          onClick={() => append({ size: "", quantity: 0 })}
-          className="px-4 py-2 bg-gray-100 rounded-xl border border-gray-300 hover:bg-gray-200 transition"
+          onClick={() => append({ size: "", quantity: "", price: "" })}
+          className="w-full md:w-auto mt-2 px-5 py-2 bg-black text-white font-semibold rounded-xl border border-black flex items-center justify-center gap-2 transition hover:bg-gray-900 hover:scale-[1.03] shadow"
         >
-          + Add Size
+          <FiPlus className="w-5 h-5" /> Add Size
         </button>
       </div>
     </div>
