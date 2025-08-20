@@ -53,13 +53,21 @@ const useAdminStore = create((set) => ({
         try {
             const response = await getproductAdminApi();
             console.log(response)
+            // set((state) => ({
+            //     productData: {
+            //         ...state.productData,
+            //         product: response.data.result.results,
+            //         totalPages: response.data.result.totalPages,
+            //     }
+            // }), { isProductLoading: false });
             set((state) => ({
                 productData: {
                     ...state.productData,
                     product: response.data.result.results,
                     totalPages: response.data.result.totalPages,
-                }
-            }), { isProductLoading: false });
+                },
+                isProductLoading: false
+            }));
         } catch (error) {
             const message =
                 error.response?.data?.message || error.message || "Something went wrong";

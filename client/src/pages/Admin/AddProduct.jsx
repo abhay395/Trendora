@@ -7,8 +7,9 @@ import SizeInput from "../../componente/SizeInput";
 function AddProduct() {
   const [previews, setPreviews] = useState([null, null, null, null]);
   const [mode, setMode] = useState("manual"); // 👈 form or csv
-  const { categories, AddProductInAdmin, isProductLoading } = useAdminStore();
-  const bulkProductUpload = useAdminStore((state) => state.bulkProductUpload)
+  const categories = useAdminStore(s => s?.categories);
+  const bulkProductUpload = useAdminStore((state) => state?.bulkProductUpload)
+  const AddProductInAdmin = useAdminStore((state) => state?.AddProductInAdmin)
   const { register, handleSubmit, formState: { errors }, control } = useForm()
 
   const onSubmit = (data) => {
@@ -31,10 +32,11 @@ function AddProduct() {
     });
     AddProductInAdmin(form);
   };
-  const onSubmitForCsv = (data) => {
+  const onSubmitForCsv = async (data) => {
     const form = new FormData();
+    console.log(data)
     form.append('file', data.csv[0])
-    bulkProductUpload?.(form)
+    await bulkProductUpload?.(form)
   }
   // 🧹 Cleanup URLs when component unmounts
   useEffect(() => {
@@ -42,7 +44,9 @@ function AddProduct() {
       previews.forEach((url) => url && URL.revokeObjectURL(url));
     };
   }, [previews]);
-
+  // useEffect(()=>{
+  //   categories
+  // },[])
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center py-10">
       <div className="w-full max-w-3xl bg-white/90 shadow-xl rounded-3xl p-10 border border-gray-100">
