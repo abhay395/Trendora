@@ -29,5 +29,6 @@ adminRoute.get('/product/', asyncWrapper(adminController.getProducts))
 adminRoute.get('/product/:id', asyncWrapper(adminController.getProductById))
 adminRoute.patch('/product/update/:id', asyncWrapper(adminController.updateProductId))
 adminRoute.delete('/product/:id', asyncWrapper(adminController.deleteProduct))
+adminRoute.delete('/product/soft-delete/:id', asyncWrapper(adminController.softDelteProduct))
 
 export default adminRoute

@@ -96,6 +96,11 @@ export default {
         const { id } = req.params;
         await adminService.deleteProduct(id);
         sendSuccessMessage(res, 200, "Product deleted successfully");
+    },
+    softDelteProduct: async (req, res) => {
+        const { id } = req.params;
+        await adminService.softDelteProduct(id);
+        sendSuccessMessage(res, 200, "Product soft deleted successfully");
     }
 
 }

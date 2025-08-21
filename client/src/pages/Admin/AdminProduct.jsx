@@ -4,65 +4,20 @@ import useAdminStore from "../../store/adminStore";
 
 function AdminProduct() {
   const navigate = useNavigate();
+  const {
+    fetchProductsInAdmin,
+    productData,
+    isProductLoading,
+    softDeleteProduct,
+    deleteProductPermanently,
+  } = useAdminStore();
 
-  const products = [
-    {
-      isOutOfStock: false,
-      _id: "6888895dcc51b9dcd7292ad2",
-      title: "Western Doodles Casual Shirt",
-      description:
-        "100% cotton slim-fit shirt featuring a modern doodle print—lightweight and breathable for all-day comfort.",
-      price: 499,
-      rating: 4,
-      gender: "Men",
-      category: "Shirt",
-      sizes: { S: 0, M: 0, L: 0, XL: 0 },
-      images: [
-        {
-          url: "https://www.mydesignation.com/cdn/shop/files/western-doodles-men-shirt-mydesignation-988716.jpg?v=1744923892&width=750",
-        },
-      ],
-    },
-    {
-      isOutOfStock: false,
-      _id: "6888895dcc51b9dcd7292acc",
-      title: "Wolf Printed Shirt",
-      description:
-        "Statement men's overcoat with a bold wolf illustration—ideal for layering over smart-casual outfits.",
-      price: 1899,
-      rating: 3,
-      gender: "Men",
-      category: "Shirt",
-      sizes: { S: 0, M: 0, L: 0, XL: 0 },
-      images: [
-        {
-          url: "https://www.mydesignation.com/cdn/shop/files/wolf-men-shirt-mydesignation-7655183.jpg?v=1752736267&width=750",
-        },
-      ],
-    },
-    {
-      isOutOfStock: true,
-      _id: "6888895dcc51b9dcd7292ac6",
-      title: "Gramophone Floral Print T-shirt",
-      description:
-        "Women’s relaxed-fit tee with a vintage gramophone floral print—soft, breezy, and stylish for summer days.",
-      price: 1399,
-      rating: 3,
-      gender: "Women",
-      category: "T-shirt",
-      sizes: { S: 0, M: 0, L: 0, XL: 0 },
-      images: [
-        {
-          url: "https://www.mydesignation.com/cdn/shop/files/gramophone-men-shirt-mydesignation-4965993.jpg?v=1752736266&width=750",
-        },
-      ],
-    },
-  ];
-  const { fetchProductsInAdmin, productData, isProductLoading } = useAdminStore();
   useEffect(() => {
-    fetchProductsInAdmin?.()
-  }, [])
-  if (isProductLoading) return <div>...Loading</div>
+    fetchProductsInAdmin?.();
+  }, []);
+
+  if (isProductLoading) return <div className="text-center py-10">...Loading</div>;
+
   return (
     <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
       {/* Header */}
@@ -70,7 +25,7 @@ function AdminProduct() {
         <h2 className="text-2xl font-bold tracking-tight">Products</h2>
         <button
           onClick={() => navigate("/admin/add-product")}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-base font-medium shadow-sm transition-all"
+          className="bg-black hover:bg-gray-800 text-white px-5 py-2 rounded-lg text-base font-medium shadow-sm transition"
         >
           + Add Product
         </button>
@@ -81,18 +36,23 @@ function AdminProduct() {
         {productData?.product?.map((p) => (
           <div
             key={p._id}
-            className="flex flex-col bg-gray-50 rounded-lg shadow-sm border border-gray-200 hover:shadow-lg transition-all group"
+            className="flex flex-col bg-gray-50 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group"
           >
             {/* Image Section */}
             <div className="relative">
               <img
                 src={p.images[0]?.url}
                 alt={p.title}
-                className="w-full h-80 object-cover object-top  rounded-t-lg"
+                className="w-full h-80 object-cover object-top rounded-t-lg"
               />
               {p.isOutOfStock && (
                 <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-3 py-1 rounded-full font-semibold shadow">
                   Out of Stock
+                </span>
+              )}
+              {p.isDeleted && (
+                <span className="absolute top-2 left-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded font-medium">
+                  Deleted
                 </span>
               )}
             </div>
@@ -106,24 +66,25 @@ function AdminProduct() {
                 >
                   {p.title}
                 </h3>
-                <span className="text-blue-700 font-bold text-base">
-                  ₹{p.price}
+                <span className="text-gray-900 font-bold text-base">
+                  ₹{p.sizes[0].price}
                 </span>
               </div>
 
               {/* Tags */}
               <div className="flex items-center gap-2 mb-2">
                 <span className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
-                  {p.category}
+                  {p.category?.name}
                 </span>
                 <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded">
                   {p.gender}
                 </span>
                 <span
-                  className={`text-xs px-2 py-0.5 rounded font-medium ${p.isOutOfStock
-                    ? "bg-red-100 text-red-600"
-                    : "bg-green-100 text-green-600"
-                    }`}
+                  className={`text-xs px-2 py-0.5 rounded font-medium ${
+                    p.isOutOfStock
+                      ? "bg-red-100 text-red-600"
+                      : "bg-green-100 text-green-600"
+                  }`}
                 >
                   {p.isOutOfStock ? "Out of Stock" : "In Stock"}
                 </span>
@@ -139,36 +100,43 @@ function AdminProduct() {
 
               {/* Rating */}
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-yellow-500 font-bold">{p.rating} ★</span>
+                <span className="text-yellow-500 font-bold">{p.rating.average} ★</span>
                 <span className="text-xs text-gray-400">/ 5</span>
               </div>
 
               {/* Sizes */}
               <div className="flex flex-wrap gap-2 mb-3">
-                {Object.entries(p.sizes).map(([size, qty]) => (
+                {p.sizes.map((el) => (
                   <span
-                    key={size}
-                    className={`text-xs px-2 py-0.5 rounded border ${qty === 0
-                      ? "bg-gray-100 text-gray-400 border-gray-200"
-                      : "bg-blue-100 text-blue-700 border-blue-200"
-                      }`}
+                    key={el.size}
+                    className={`text-xs px-2 py-0.5 rounded border ${
+                      el.quantity === 0
+                        ? "bg-gray-100 text-gray-400 border-gray-200"
+                        : "bg-blue-100 text-blue-700 border-blue-200"
+                    }`}
                   >
-                    {size}
+                    {el.size}
                   </span>
                 ))}
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 mt-auto">
+              <div className="flex gap-2 mt-auto">
                 <button
                   onClick={() => navigate(`/admin/products/edit/${p._id}`)}
-                  className="text-blue-600 hover:underline text-sm font-medium"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-black text-white hover:bg-gray-800 transition"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => console.log("Delete", p._id)}
-                  className="text-red-600 hover:underline text-sm font-medium"
+                  onClick={() => softDeleteProduct(p._id)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+                >
+                  Archive
+                </button>
+                <button
+                  onClick={() => deleteProductPermanently(p._id)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition"
                 >
                   Delete
                 </button>
@@ -179,7 +147,7 @@ function AdminProduct() {
       </div>
 
       {/* No products case */}
-      {products.length === 0 && (
+      {productData?.product?.length === 0 && (
         <div className="text-center text-gray-500 py-10">
           No products found.
         </div>

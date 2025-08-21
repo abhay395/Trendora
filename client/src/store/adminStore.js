@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi, getcategoryAdminApi, uploadBulkProductApi } from "../api/adminApi";
+import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi, getcategoryAdminApi, uploadBulkProductApi, softDeleteAdminProductApi, deleteAdminProductPermanently } from "../api/adminApi";
 
-const useAdminStore = create((set) => ({
+const useAdminStore = create((set, get) => ({
     isStaticsLoading: true,
     isOrdersLoading: true,
     isProductLoading: true,
@@ -53,7 +53,7 @@ const useAdminStore = create((set) => ({
         try {
             const response = await getproductAdminApi();
             console.log(response)
-            // set((state) => ({
+            // set((state) => ({ //? reasone of is not a function bug 
             //     productData: {
             //         ...state.productData,
             //         product: response.data.result.results,
@@ -91,7 +91,14 @@ const useAdminStore = create((set) => ({
         set({ isProductLoading: true, error: null })
         try {
             const response = await createproductAdminApi(data);
-            set({ isProductLoading: true, error: null })
+            set((state) => ({
+                productData: {
+                    ...state.productData,
+                    product: response.data.result
+                },
+                isProductLoading: false
+            }))
+            // set({ isProductLoading: true, error: null })
             console.log(response)
         } catch (error) {
             const message = error?.data?.message || error?.message || "Something went wrong"
@@ -104,11 +111,54 @@ const useAdminStore = create((set) => ({
             const response = await uploadBulkProductApi(data);
             console.log(response)
             toast.success("Product added Successfully")
-            set({ isProductLoading: false, error: null })
+            set((state) => ({
+                productData: {
+                    ...state.productData,
+                    product: {
+                        ...state.productData.product,
+                        ...response.data.result
+                    }
+                }
+            }))
+            // set({ isProductLoading: false, error: null })
         } catch (error) {
             const message = error?.data?.message || error?.message || "Something went wrong"
             set({ error: message, isProductLoading: false })
             return false
+        }
+    },
+    softDeleteProduct: async (id) => {
+        try {
+            await softDeleteAdminProductApi(id)
+            let product = get()?.productData?.product
+            product = product.map(item => (item._id == id ? { ...item, isDeleted: true } : item))
+            set((state) => ({
+                productData: {
+                    ...state.productData,
+                    product: product
+                }
+            }))
+        } catch (error) {
+            const message = error?.data?.message || error?.message || "Something went wrong"
+            set({ error: message })
+            toast.error(message)
+        }
+    },
+    deleteProductPermanently: async (id) => {
+        try {
+            let product = get()?.productData?.product;
+            product = product.filter(item => item._id != id);
+            set((state) => ({
+                productData: {
+                    ...state.productData,
+                    product: product
+                }
+            }))
+            await deleteAdminProductPermanently(id);
+        } catch (error) {
+            const message = error?.data?.message || error?.message || "Something went wrong"
+            set({ error: message })
+            toast.error(message)
         }
     }
 }));

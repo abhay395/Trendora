@@ -39,21 +39,21 @@ function Card({ product, index }) {
             <h2 className="text-lg font-bold text-gray-900 mb-1 truncate">{product.title}</h2>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-yellow-500 flex items-center text-sm">
-                {[...Array(Math.floor(product?.rating))].map((_, i) => (
+                {[...Array(Math.floor(product?.rating.average))].map((_, i) => (
                   <FaStar key={i} />
                 ))}
-                {product?.rating > 0 && (
-                  <span className="ml-1 text-gray-600 font-medium">({product?.rating})</span>
+                {product?.rating?.average > 0 && (
+                  <span className="ml-1 text-gray-600 font-medium">({product?.rating.average})</span>
                 )}
               </span>
             </div>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-xl font-extrabold text-gray-800">₹{product.price}</span>
+              <span className="text-xl font-extrabold text-gray-800">₹{product.sizes[0].price}</span>
               {product?.sizes && (
                 <span className="text-xs text-gray-500">
-                  {Object.entries(product.sizes)
-                    .filter(([size, qty]) => qty > 0)
-                    .map(([size]) => size)
+                  {product.sizes
+                    .filter((item) => item.quantity > 0)
+                    .map((item) => item.size)
                     .join(', ') || 'No sizes'}
                 </span>
               )}

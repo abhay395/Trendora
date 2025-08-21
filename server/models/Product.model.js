@@ -16,6 +16,12 @@ let reviewSchema = new mongoose.Schema({
     images: [{
         url: String
     }]
+    , rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+        required: true
+    }
 }, { timestamps: true })
 const productSchema = new mongoose.Schema({
     title: {
@@ -25,10 +31,6 @@ const productSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true,
-    },
-    rating: {
-        type: Number,
-        default: 0,
     },
     gender: {
         type: String,
@@ -57,12 +59,29 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    review: [reviewSchema]
+    review: [reviewSchema],
+    rating: {
+        average: { type: Number, default: 0 },  // e.g., 4.3
+        count: { type: Number, default: 0 }     // e.g., 120 reviews
+    }
+
 }, { timestamps: true });
 
 productSchema.virtual('isOutOfStock').get(function () {
     return this.sizes.every(size => size.quantity === 0);
 });
+
+productSchema.methods.updateRating = async function () { /// Use this function when you add any review on Product
+    if (this.review.length === 0) {
+        this.rating.average = 0;
+        this.rating.count = 0;
+    } else {
+        this.rating.count = this.review.length;
+        this.rating.average = this.review.reduce((acc, r) => acc + r.rating, 0) / this.rating.count;
+    }
+    await this.save();
+};
+
 
 productSchema.set('toJSON', { virtuals: true });
 productSchema.set('toObject', { virtuals: true });

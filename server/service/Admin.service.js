@@ -269,7 +269,7 @@ export default {
             const totalProduct = await Product.countDocuments(query);
             const { skip, totalPages, limit, page } = getPagination({ totalItems: totalProduct, limit: option?.limit, page: option?.page })
             const sortBy = getSort(option.sortBy)
-            let result = await Product.find(query).sort(sortBy).skip(skip).limit(limit);
+            let result = await Product.find(query).sort(sortBy).skip(skip).limit(limit).populate('category');
             return { results: result, totalProduct, totalPages, page, limit }
         } catch (error) {
             throw error
@@ -298,6 +298,16 @@ export default {
         }
     },
     deleteProduct: async (id) => {
+        try {
+            if (!await Product.findOne({ _id: id })) {
+                throw new ApiError(404, "Product not found", null);
+            }
+           await Product.findByIdAndDelete(id)
+        } catch (error) {
+            throw error
+        }
+    },
+    softDelteProduct: async (id) => {
         try {
             if (!await Product.findOne({ _id: id, isDeleted: false })) {
                 throw new ApiError(404, "Product not found", null);
