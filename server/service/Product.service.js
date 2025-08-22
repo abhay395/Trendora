@@ -1,5 +1,8 @@
 import Product from "../models/Product.model.js"
+import Review from "../models/Review.modle.js";
 import ApiError from "../utils/ApiError.js";
+import uploadToCloudinary from "../utils/cloudinary.js";
+import { getPagination, getSort } from "../utils/helper.js";
 
 
 export default {
@@ -152,6 +155,44 @@ export default {
         try {
             const result = await Product.create(body);
             return result
+        } catch (error) {
+            throw error
+        }
+    },
+    createReview: async (files, body) => {
+        try {
+            if (files && files.length > 0) {
+                const images = await Promise.allSettled(
+                    files.map(async (file) => {
+                        const res = await uploadToCloudinary({ file });
+                        return { url: res?.secure_url || null };
+                    })
+                );
+
+                body.images = images
+                    .filter(img => img.status === "fulfilled")
+                    .map(img => img.value);
+            } else {
+                body.images = [];
+            }
+            const result = new Review(body)
+            await result.save()
+            return result
+        } catch (error) {
+            throw error
+        }
+    },
+    getReview: async (id, option) => {
+        try {
+            const totalItems = await Review.countDocuments({ productId: id })
+            const sortOption = getSort(option.sortBy);
+            const { skip, totalPages, limit, page } = getPagination({ totalItems: totalItems, limit: Number(option.limit), page: option?.page })
+            console.log(option, sortOption)
+            const results = await Review.find({ productId: id }).sort(sortOption).skip(skip).limit(limit).populate({
+                path: "userId",
+                select: 'name'
+            });
+            return { results, limit, totalItems, totalPages, page }
         } catch (error) {
             throw error
         }
