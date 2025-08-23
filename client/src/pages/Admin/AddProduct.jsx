@@ -54,13 +54,13 @@ function AddProduct() {
         <div className="flex justify-center gap-4 mb-8">
           <button
             onClick={() => setMode("manual")}
-            className={`px-4 py-2 rounded-xl font-semibold ${mode === "manual" ? "bg-gray-900 text-white" : "bg-gray-200 text-gray-700"}`}
+            className={`px-4 py-2 rounded-xl cursor-pointer font-semibold ${mode === "manual" ? "bg-gray-900 text-white" : "bg-gray-200 text-gray-700"}`}
           >
             Manual Form
           </button>
           <button
             onClick={() => setMode("csv")}
-            className={`px-4 py-2 rounded-xl font-semibold ${mode === "csv" ? "bg-gray-900 text-white" : "bg-gray-200 text-gray-700"}`}
+            className={`px-4 py-2 rounded-xl cursor-pointer font-semibold ${mode === "csv" ? "bg-gray-900 text-white" : "bg-gray-200 text-gray-700"}`}
           >
             Upload CSV
           </button>
@@ -93,7 +93,7 @@ function AddProduct() {
                 </label>
                 <select
                   name="category"
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+                  className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                   {...register("category", { required: true })}
                 >
                   <option value="">Select category</option>
@@ -110,7 +110,7 @@ function AddProduct() {
                 </label>
                 <select
                   name="gender"
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+                  className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                   {...register("gender", { required: true })}
                 >
                   <option value="">Select gender</option>
@@ -198,7 +198,7 @@ function AddProduct() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full bg-gray-900 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-700 transition"
+              className="w-full cursor-pointer bg-gray-900 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-700 transition"
             >
               🚀 Add Product
             </button>
@@ -253,7 +253,7 @@ function AddProduct() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="mt-2 w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-xl shadow-md transition duration-200"
+                  className="mt-2 cursor-pointer w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-xl shadow-md transition duration-200"
                 >
                   Upload CSV
                 </button>

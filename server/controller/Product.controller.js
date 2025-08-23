@@ -32,6 +32,8 @@ export default {
     },
     createReview: async (req, res) => {
         const { body, files } = req
+        body.userId = req.user._id
+        console.log(body, files)
         const result = await ProductService.createReview(files, body);
         sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
     },

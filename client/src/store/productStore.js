@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
-import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi } from '../api/productApi'
+import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi, fetchProductReviewApi, addProductReviewApi } from '../api/productApi'
 
 const useProductStore = create((set) => ({
     products: [],
@@ -9,9 +9,10 @@ const useProductStore = create((set) => ({
     error: null,
     filters: null,
     filterdProduct: [],
-    
-    clearSelectedProduct: () => set({ selectedProduct: null }),
-    
+    review: null,
+    reviewLoading: true,
+    clearSelectedProduct: () => set({ selectedProduct: null, reiview: null }),
+
     fetchProducts: async () => {
         set({ isLoading: true, error: null })
         try {
@@ -22,7 +23,7 @@ const useProductStore = create((set) => ({
             set({ error: error.message, isLoading: false })
         }
     },
-    
+
     fetchFilterdProduct: async (filter) => {
         set({ isLoading: true, error: null })
         try {
@@ -32,7 +33,7 @@ const useProductStore = create((set) => ({
             set({ error: error.message, isLoading: false })
         }
     },
-    
+
     fetchProductById: async (id) => {
         set({ isLoading: true, error: null })
         try {
@@ -43,7 +44,31 @@ const useProductStore = create((set) => ({
             set({ error: error.message, isLoading: false })
         }
     },
-    
+    fetchProductReview: async (productId, options = '') => {
+        set({ reviewLoading: true, error: null })
+        try {
+            const res = await fetchProductReviewApi(productId, options);
+            // console.log(res.data.result)
+            set({ review: res?.data?.result, reviewLoading: false })
+        } catch (error) {
+            set({ error: error.message, reviewLoading: false })
+        }
+    },
+    addProductReview: async (form) => {
+        try {
+            
+            const res = await addProductReviewApi(form);
+            console.log(res.data.result)
+            // set((state) => ({
+            //     review: {
+            //         ...state.reiview,
+            //         results: [res.data.result,...state?.review?.results]
+            //     }
+            // }))
+        } catch (error) {
+            set({ error: error.message })
+        }
+    },
     fetchProductFilters: async () => {
         set({ isLoading: true, error: null })
         try {

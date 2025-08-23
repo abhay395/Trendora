@@ -25,7 +25,7 @@ function AdminProduct() {
         <h2 className="text-2xl font-bold tracking-tight">Products</h2>
         <button
           onClick={() => navigate("/admin/add-product")}
-          className="bg-black hover:bg-gray-800 text-white px-5 py-2 rounded-lg text-base font-medium shadow-sm transition"
+          className="bg-black hover:bg-gray-800 text-white cursor-pointer px-5 py-2 rounded-lg text-base font-medium shadow-sm transition"
         >
           + Add Product
         </button>
@@ -39,7 +39,7 @@ function AdminProduct() {
             className="flex flex-col bg-gray-50 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group"
           >
             {/* Image Section */}
-            <div className="relative">
+            <div className="relative cursor-pointer">
               <img
                 src={p.images[0]?.url}
                 alt={p.title}

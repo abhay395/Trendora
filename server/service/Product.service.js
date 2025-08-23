@@ -168,15 +168,15 @@ export default {
                         return { url: res?.secure_url || null };
                     })
                 );
-
                 body.images = images
                     .filter(img => img.status === "fulfilled")
                     .map(img => img.value);
             } else {
                 body.images = [];
             }
-            const result = new Review(body)
+            let result = new Review(body)
             await result.save()
+            result = await Review.findById(result._id).populate({path:'userId',select:'name'})
             return result
         } catch (error) {
             throw error

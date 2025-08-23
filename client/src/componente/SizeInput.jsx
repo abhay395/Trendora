@@ -70,7 +70,7 @@ function SizeInput({ control, register }) {
         <button
           type="button"
           onClick={() => append({ size: "", quantity: "", price: "" })}
-          className="w-full md:w-auto mt-2 px-5 py-2 bg-black text-white font-semibold rounded-xl border border-black flex items-center justify-center gap-2 transition hover:bg-gray-900 hover:scale-[1.03] shadow"
+          className="w-full cursor-pointer md:w-auto mt-2 px-5 py-2 bg-black text-white font-semibold rounded-xl border border-black flex items-center justify-center gap-2 transition hover:bg-gray-900 hover:scale-[1.03] shadow"
         >
           <FiPlus className="w-5 h-5" /> Add Size
         </button>
