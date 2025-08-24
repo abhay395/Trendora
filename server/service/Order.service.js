@@ -19,7 +19,7 @@ export default {
             const cartItems = await Cart.find({ userId, selected: true })
                 .populate({
                     path: "productId",
-                    select: "_id title images price gender sizes category"
+                    select: "_id title images gender sizes category"
                 })
                 .select("productId quantity size")
                 .lean();
@@ -33,7 +33,7 @@ export default {
 
             for (const item of cartItems) {
                 const product = item.productId;
-                const availableQty = product.sizes[item.size] || 0;
+                const availableQty = product.sizes.find((size) => size.size == item.size).quantity;
 
                 if (item.quantity > availableQty) {
                     throw new ApiError(400, `Insufficient stock for ${product.title} (${item.size})`);
@@ -43,18 +43,18 @@ export default {
                     productId: product._id,
                     title: product.title,
                     image: product.images[0].url,
-                    price: product.price,
+                    price: product.sizes.find((size => size.size == item.size)).price,
                     quantity: item.quantity,
                     size: item.size,
                     category: product.category
                 });
-
                 bulkStockUpdates.push({
                     updateOne: {
                         filter: { _id: product._id },
                         update: {
-                            $inc: { [`sizes.${item.size}`]: -item.quantity }
-                        }
+                            $inc: { "sizes.$[elem].quantity": -item.quantity }
+                        },
+                        arrayFilters: [{ "elem.size": item.size }]
                     }
                 });
             }

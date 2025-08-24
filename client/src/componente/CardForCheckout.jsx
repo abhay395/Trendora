@@ -11,7 +11,7 @@ function CardForCheckout({ item, index, length }) {
                     <p className="text-sm font-medium text-gray-500 flex items-center space-x-1">
                         <span>Estimated delivery by <span className='text-gray-700 text-sm font-bold'>14 July 2025</span></span></p>
                     <div className='flex items-center justify-between left-0 absolute bottom-2 right-4'>
-                        <p className="font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
+                        <p className="font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{[...item.productId.sizes].find((size) => size.size == item.size).price.toFixed(2)}</p>
                         <div className='flex items-center space-x-4 pr-7'>
                             <span className='font-semibold text-gray-700'>QTY :</span>
                             {/* <div className="flex items-center gap-2 "> */}

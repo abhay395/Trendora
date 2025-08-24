@@ -28,11 +28,10 @@ const ProductDetail = () => {
     }, [id]);
     useEffect(() => {
         fetchProductReview(id, sortBy);
-    }, [sortBy,id])
+    }, [sortBy, id])
     const addToCart = () => {
         if (selectedSize) {
             addProductCart({ productId: id, quantity, size: selectedSize });
-            toast.success("Added to cart!");
         } else {
             toast.error("Please select a size.");
         }

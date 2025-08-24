@@ -33,14 +33,12 @@ export default {
     createReview: async (req, res) => {
         const { body, files } = req
         body.userId = req.user._id
-        console.log(body, files)
         const result = await ProductService.createReview(files, body);
         sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
     },
     getReview: async (req, res) => {
         const { productId } = req.params
         const option = pick(req.query, ['sortBy', 'page', 'limit'])
-        console.log(option)
         const result = await ProductService.getReview(productId, option);
         sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
     },
@@ -48,7 +46,6 @@ export default {
         const { reviewId } = req.params
         const userId = req.user._id
         const option = pick(req.query, ['sortBy', 'page', 'limit'])
-        console.log(option)
         const result = await ProductService.addHelpfulUser(reviewId, userId);
         sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
     }
