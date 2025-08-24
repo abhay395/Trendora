@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import axios from 'axios'
-import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi, fetchProductReviewApi, addProductReviewApi } from '../api/productApi'
+import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi, fetchProductReviewApi, addProductReviewApi, addhelpfulInReviewApi } from '../api/productApi'
 
-const useProductStore = create((set) => ({
+const useProductStore = create((set, get) => ({
     products: [],
     selectedProduct: null,
     isLoading: true,
@@ -45,10 +45,9 @@ const useProductStore = create((set) => ({
         }
     },
     fetchProductReview: async (productId, options = '') => {
-        set({ reviewLoading: true, error: null })
+        // set({ reviewLoading: true, error: null })
         try {
             const res = await fetchProductReviewApi(productId, options);
-            // console.log(res.data.result)
             set({ review: res?.data?.result, reviewLoading: false })
         } catch (error) {
             set({ error: error.message, reviewLoading: false })
@@ -56,15 +55,14 @@ const useProductStore = create((set) => ({
     },
     addProductReview: async (form) => {
         try {
-            
-            const res = await addProductReviewApi(form);
-            console.log(res.data.result)
-            // set((state) => ({
-            //     review: {
-            //         ...state.reiview,
-            //         results: [res.data.result,...state?.review?.results]
-            //     }
-            // }))
+            await addProductReviewApi(form);
+        } catch (error) {
+            set({ error: error.message })
+        }
+    },
+    addhelpfulInReviewApi: async (reviewId, userId) => {
+        try {
+            const res = await addhelpfulInReviewApi(reviewId);
         } catch (error) {
             set({ error: error.message })
         }

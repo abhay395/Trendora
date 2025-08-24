@@ -19,14 +19,16 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [isOutOfStock, setIsOutOfStock] = useState(false);
+    const [sortBy, setSortBy] = useState('createdAt:asc')
 
     useEffect(() => {
         clearSelectedProduct();
         fetchProductById(id);
-        fetchProductReview(id);
         setIsOutOfStock(false);
     }, [id]);
-
+    useEffect(() => {
+        fetchProductReview(id, sortBy);
+    }, [sortBy,id])
     const addToCart = () => {
         if (selectedSize) {
             addProductCart({ productId: id, quantity, size: selectedSize });
@@ -145,8 +147,8 @@ const ProductDetail = () => {
                                     <FaStar key={i} />
                                 )
                             )}
-                            <span className="text-sm text-gray-600 ml-2">
-                                ({selectedProduct.rating.average})
+                            <span className="text-sm text-gray-600 ml-1 mt-1">
+                                ({selectedProduct?.rating?.average})
                             </span>
                         </div>
                     </div>
@@ -228,7 +230,7 @@ const ProductDetail = () => {
             </motion.div>
             {/* Review */}
             <div className="max-w-7xl mx-auto mt-10 px-4 md:px-0">
-                {!reviewLoading && <ReviewSection productId={id} productTitle={selectedProduct?.title} reviews={review?.results} />}
+                {!reviewLoading && <ReviewSection productId={id} productTitle={selectedProduct?.title} sortBy={sortBy} setSortBy={setSortBy} reviews={review?.results} />}
             </div>
         </section>
     );

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { paginate } from "./plugin/paginate.plugin.js";
+import Review from './Review.modle.js';
 
 const productSchema = new mongoose.Schema({
     title: {
@@ -47,18 +48,6 @@ const productSchema = new mongoose.Schema({
 productSchema.virtual('isOutOfStock').get(function () {
     return this.sizes.every(size => size.quantity === 0);
 });
-
-// productSchema.methods.updateRating = async function () { /// Use this function when you add any review on Product
-//     if (this.review.length === 0) {
-//         this.rating.average = 0;
-//         this.rating.count = 0;
-//     } else {
-//         this.rating.count = this.review.length;
-//         this.rating.average = this.review.reduce((acc, r) => acc + r.rating, 0) / this.rating.count;
-//     }
-//     await this.save();
-// };
-
 
 productSchema.set('toJSON', { virtuals: true });
 productSchema.set('toObject', { virtuals: true });

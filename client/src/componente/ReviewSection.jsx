@@ -6,15 +6,11 @@ import { RxCross2 } from "react-icons/rx";
 import useProductStore from "../store/productStore";
 
 
-function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
+function ReviewSection({ productId, productTitle, reviews: initialReviews, sortBy, setSortBy }) {
   const formatDate = (date) => date.toISOString().split("T")[0];
-  const addProductReview = useProductStore(s => s.addProductReview)
-  const { user } = useUserStore() || null
-  // const userId = useUserStore((state) => { state?.user?.userId }) || null
-  // const [user, setUser] = useState()
-  const [sortBy, setSortBy] = useState("recent");
+  const { addProductReview, addhelpfulInReviewApi } = useProductStore()
+  const user = useUserStore((s) => s.user)
   const [prview, setPreview] = useState([]);
-  const [disabled, setDisabled] = useState(false)
   const [localReviews, setLocalReviews] = useState(initialReviews || [])
   const [newReview, setNewReview] = useState({
     rating: 0,
@@ -58,24 +54,9 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
       // images: [],
       createdAt: new Date().toUTCString()
     };
-    const dem = {
-      _id: "68a9af9a775fe943ffd4c845",
-      productId: "68a8217f016ea46e0c412ffd",
-      userId: {
-        _id: "688f37c1bcf1c89054e2ccdc",
-        name: "Abhay Prajapati"
-      },
-      comment: "akaka",
-      helpful: [],
-      images: [],
-      rating: 4,
-      createdAt: "2025-08-23T12:10:02.427Z",
-      updatedAt: "2025-08-23T12:10:02.427Z",
-      "__v": 0
-    }
-    setNewReview({ rating: 0, comment: "", images: [] });
     setLocalReviews([tempreview, ...localReviews])
-    console.log(localReviews)
+    setNewReview({ rating: 0, comment: "", images: [] });
+    setPreview([])
     const form = new FormData();
     for (let [key, value] of Object.entries({
       productId: productId,
@@ -91,20 +72,12 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
         form.append(key, value)
       }
     }
-    setDisabled(true)
-    await addProductReview(form)
-    setDisabled(false)
-    setPreview([])
-    // console.log(review)
-    // setReviews([review, ...reviews]);
+    addProductReview(form)
   };
 
-  const markHelpful = (id) => {
-    // if (helpfulMarkedIds.has(id)) return;
-    // setReviews((prev) =>
-    //   prev.map((r) => (r.id === id ? { ...r, helpful: r.helpful + 1 } : r))
-    // );
-    // setHelpfulMarkedIds((prev) => new Set(prev).add(id));
+  const markHelpful = (reviewId) => {
+
+    addhelpfulInReviewApi(reviewId, user._id)
   };
 
   return (
@@ -131,9 +104,9 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
             onChange={(e) => setSortBy(e.target.value)}
             className="border rounded-lg px-2 py-1 text-gray-700 focus:ring-2 focus:ring-black/40 outline-none"
           >
-            <option value="recent">Most recent</option>
-            <option value="rating_desc">Highest rated</option>
-            <option value="rating_asc">Lowest rated</option>
+            <option value="createdAt:asc">Most recent</option>
+            <option value="rating:desc">Highest rated</option>
+            <option value="rating:asc">Lowest rated</option>
           </select>
         </div>
       </div>
@@ -163,7 +136,6 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
           onChange={(e) =>
             setNewReview({ ...newReview, comment: e.target.value })
           }
-          disabled={disabled}
           className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-black/40 outline-none"
         ></textarea>
 
@@ -175,7 +147,6 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
             accept="image/*"
             className="hidden"
             onChange={handleImageChange}
-            disabled={disabled}
           />
         </label>
 
@@ -200,7 +171,6 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
 
         <button
           type="submit"
-          disabled={disabled}
           className="bg-black text-white px-5 py-2 rounded-lg font-medium hover:bg-gray-900 transition"
         >
           Submit Review
@@ -237,14 +207,13 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews }) {
               )}</div>
             <div className="mt-3 flex items-center gap-2">
               <button
-                // onClick={() => markHelpful(review?._id)}
+                onClick={() => markHelpful(review._id)}
                 className={`flex items-center gap-1 text-sm px-3 py-1 rounded-md border transition 
-                  ${[...review?.helpful].includes(user?._id)
+                  ${[...review?.helpful].includes(user?._id) || review.userId._id == user?._id
                     ? "opacity-60 cursor-not-allowed"
                     : "hover:bg-gray-100"
                   }`}
-
-              // disabled={helpful.has(review?._id)}
+                disabled={[...review?.helpful].includes(user?._id) || review.userId._id == user?._id}
               >
                 <FiThumbsUp />
                 Helpful ({review?.helpful.length})

@@ -176,7 +176,11 @@ export default {
             }
             let result = new Review(body)
             await result.save()
-            result = await Review.findById(result._id).populate({path:'userId',select:'name'})
+            result = await Review.findById(result._id).populate({ path: 'userId', select: 'name' })
+            const reivewsOfProduct = await Review.find({ productId: result.productId })
+            let averageReviews = reivewsOfProduct.reduce((acc, r) => acc + r.rating, 0) / reivewsOfProduct.length
+            averageReviews = Math.round(averageReviews * 100) / 100
+            await Product.findByIdAndUpdate(result.productId, { rating: { count: reivewsOfProduct.length, average: averageReviews } })
             return result
         } catch (error) {
             throw error
@@ -186,13 +190,23 @@ export default {
         try {
             const totalItems = await Review.countDocuments({ productId: id })
             const sortOption = getSort(option.sortBy);
-            const { skip, totalPages, limit, page } = getPagination({ totalItems: totalItems, limit: Number(option.limit), page: option?.page })
-            console.log(option, sortOption)
+            const { skip, totalPages, limit, page } = getPagination({ totalItems: totalItems, limit: option?.limit, page: option?.page })
             const results = await Review.find({ productId: id }).sort(sortOption).skip(skip).limit(limit).populate({
                 path: "userId",
                 select: 'name'
             });
             return { results, limit, totalItems, totalPages, page }
+        } catch (error) {
+            throw error
+        }
+    },
+    addHelpfulUser: async (reviewId, userId) => {
+        try {
+            if (await Review.findOne({ _id: reviewId, helpful: { $in: userId } })) {
+                throw new ApiError(400, "This user Already added it's helpfull")
+            }
+            const result = await Review.findByIdAndUpdate(reviewId, { $push: { helpful: userId } }, { new: true })
+            return result
         } catch (error) {
             throw error
         }

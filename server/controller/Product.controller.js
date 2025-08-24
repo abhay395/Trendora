@@ -43,5 +43,13 @@ export default {
         console.log(option)
         const result = await ProductService.getReview(productId, option);
         sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
+    },
+    addHelpfulUser: async (req, res) => {
+        const { reviewId } = req.params
+        const userId = req.user._id
+        const option = pick(req.query, ['sortBy', 'page', 'limit'])
+        console.log(option)
+        const result = await ProductService.addHelpfulUser(reviewId, userId);
+        sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
     }
 }
