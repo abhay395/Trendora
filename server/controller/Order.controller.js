@@ -1,4 +1,4 @@
-import OrderService from "../service/Order.service.js"
+import OrderService from "../services/Order.service.js"
 import { sendSuccessMessage } from "../utils/helper.js"
 export default {
     checkoutProduct: async (req, res) => {

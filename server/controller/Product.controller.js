@@ -1,4 +1,4 @@
-import ProductService from "../service/Product.service.js";
+import ProductService from "../services/Product.service.js";
 import { sendSuccessMessage, pick } from "../utils/helper.js";
 export default {
     addMultipleProduct: async (req, res) => {

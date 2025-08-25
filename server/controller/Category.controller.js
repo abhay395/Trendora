@@ -1,4 +1,4 @@
-import CategoryService from "../service/Category.service.js"
+import CategoryService from "../services/Category.service.js"
 import { sendSuccessMessage, pick } from '../utils/helper.js'
 // import pick
 export default {

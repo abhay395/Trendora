@@ -1,4 +1,4 @@
-import adminService from "../service/Admin.service.js"
+import adminService from "../services/Admin.service.js"
 import ApiError from "../utils/ApiError.js";
 import { sendSuccessMessage, pick } from "../utils/helper.js"
 export default {
