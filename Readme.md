@@ -26,7 +26,7 @@ Trendora is a modern **eCommerce web application** designed to provide a seamles
 
 ---
 
-## ✨ Features
+##  Features
 
 * 🔐 User authentication and profile management
 * 🛍️ Product catalog with search and filtering
@@ -39,7 +39,7 @@ Trendora is a modern **eCommerce web application** designed to provide a seamles
 
 ---
 
-## 🛠️ Technologies Used
+##  Technologies Used
 
 **Frontend**: React, Tailwind CSS, Zustand, React-Hook-Form, React-Icons, React-Toastify
 
@@ -47,7 +47,7 @@ Trendora is a modern **eCommerce web application** designed to provide a seamles
 
 ---
 
-## ⚙️ Installation & Setup
+##  Installation & Setup
 
 ### Clone the repository:
 
@@ -79,7 +79,7 @@ Your app should now be running on:
 
 ---
 
-## 🔑 Environment Variables
+##  Environment Variables
 
 Create a `.env` file in both `server` and `client` directories.
 
@@ -104,7 +104,7 @@ VITE_RAZORPAY_KEY_ID=
 
 ---
 
-## 📂 Folder Structure
+##  Folder Structure
 
 ```
 Trendora/
@@ -116,7 +116,7 @@ Trendora/
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 ### Home Page 1
 
