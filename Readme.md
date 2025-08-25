@@ -97,7 +97,7 @@ Backend: http://localhost:5173
 
 ### Add multiple product
 
-![product-add-admin](./screenshots/product-add.png)
+![product-add-admin](./screenshots/add-multiple-product.png)
 
 ## Contributing
 
