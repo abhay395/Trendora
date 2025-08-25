@@ -1,3 +1,4 @@
+import Category from "../models/Category.model.js";
 import Product from "../models/Product.model.js"
 import Review from "../models/Review.modle.js";
 import ApiError from "../utils/ApiError.js";
@@ -22,18 +23,36 @@ export default {
 
             if (filter?.size) {
                 let sizes = filter.size.split(',')
-                query.$or = sizes.map(size => ({
-                    [`sizes.${size}`]: { $gt: 0 }
-                }));
+                query.sizes = {
+                    $elemMatch: {
+                        $or: []
+                    }
+                }
+                sizes.map(size => {
+                    query.sizes.$elemMatch.$or.push({
+                        size: size,
+                        quantity: { $gt: 0 }
+                    })
+                });
             }
             if (filter?.minPrice || filter?.maxPrice) {
-                query.price = {};
-                if (filter.minPrice) query.price.$gte = Number(filter.minPrice);
-                if (filter.maxPrice) query.price.$lte = Number(filter.maxPrice);
+
+                if (!query?.sizes) query.sizes = {
+                    $elemMatch: {
+                        price: {
+
+                        }
+                    }
+                }
+                else query.sizes.$elemMatch.price = {
+                    
+                }
+                if (filter.minPrice) query.sizes.$elemMatch.price.$gte = Number(filter.minPrice);
+                if (filter.maxPrice) query.sizes.$elemMatch.price.$lte = Number(filter.maxPrice);
             }
             if (filter?.rating) {
-                query.rating = {};
-                query.rating.$gte = Number(filter.rating);
+                query['rating.average'] = {}
+                query['rating.average'].$gte = Number(filter.rating)
             }
             if (filter?.search) {
                 query.$or = [
@@ -47,12 +66,14 @@ export default {
             let totalPages = Math.ceil(totalProduct / limit)
             let page = Math.min(totalPages, Number(option.page || 1))
             let skip = Math.max(0, (page - 1) * limit)
-            console.log(skip, page, totalProduct)
-            const sortOption = {
-                priceAsc: { price: 1 },
-                priceDesc: { price: -1 },
-                ratingAsc: { rating: 1 },
-                ratingDesc: { rating: -1 }
+            const sortOption = getSort(option?.sortBy)
+            if (sortOption.price) {
+                sortOption['sizes.price'] = sortOption.price
+                delete sortOption.price
+            }
+            if (sortOption.rating) {
+                sortOption['rating.average'] = sortOption.rating
+                delete sortOption.rating
             }
             // Get min and max price from filtered products
             const priceStats = await Product.aggregate([
@@ -65,9 +86,8 @@ export default {
                     }
                 }
             ]);
-
             let results = await Product.find(query)
-                .sort(sortOption[option.sortBy] || { rating: -1 })
+                .sort(sortOption)
                 .skip(skip)
                 .limit(limit).populate('category');
             // let results = await mongoQuery;
@@ -89,20 +109,15 @@ export default {
     },
     getProductFilters: async () => {
         try {
-            const category = await Product.distinct("category")
+            const category = await Category.find({})
             const sizes = await Product.aggregate([
                 {
-                    $project: {
-                        sizeKeys: { $objectToArray: "$sizes" }
-                    }
-                },
-                {
-                    $unwind: "$sizeKeys"
+                    $unwind: "$sizes"
                 },
                 {
                     $group: {
                         _id: null,
-                        sizes: { $addToSet: "$sizeKeys.k" }
+                        sizes: { $addToSet: "$sizes.size" }
                     }
                 },
                 {
@@ -112,19 +127,21 @@ export default {
                     }
                 }
             ]);
+            // console.log(sizes)
             const gender = await Product.distinct("gender")
             const priceStats = await Product.aggregate([
                 {
+                    $unwind: '$sizes'
+                },
+                {
                     $group: {
                         _id: null,
-                        minPrice: { $min: "$price" },
-                        maxPrice: { $max: "$price" }
+                        minPrice: { $min: "$sizes.price" },
+                        maxPrice: { $max: "$sizes.price" }
                     }
                 }
             ]);
-            // console.log()
-
-            let result = { ...sizes[0], categories: category.sort(), genders: gender.sort(), priceStats: priceStats[0] }
+            let result = { ...sizes[0], categories: category, genders: gender.sort(), priceStats: priceStats[0] }
             return result;
         } catch (error) {
             throw error
