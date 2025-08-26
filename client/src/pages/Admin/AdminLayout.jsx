@@ -9,8 +9,8 @@ function AdminLayout() {
   const fetchCategoriesInAdmin = useAdminStore((state) => state?.fetchCategoriesInAdmin)
 
   useEffect(() => {
-    fetchCategoriesInAdmin?.()
-    fetchStaticsInDashboard?.(); // optional chaining prevents crash if undefined
+    fetchCategoriesInAdmin()
+    fetchStaticsInDashboard(); // optional chaining prevents crash if undefined
   }, [fetchStaticsInDashboard, fetchCategoriesInAdmin]);
   return (
     <div className="flex h-screen bg-gray-50">

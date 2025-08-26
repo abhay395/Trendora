@@ -123,7 +123,7 @@ function AdminProduct() {
               {/* Actions */}
               <div className="flex gap-2 mt-auto">
                 <button
-                  onClick={() => navigate(`/admin/products/edit/${p._id}`)}
+                  onClick={() => navigate(`/admin/product/edit/${p._id}`)}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium bg-black text-white hover:bg-gray-800 transition"
                 >
                   Edit

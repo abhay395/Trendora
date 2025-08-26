@@ -28,12 +28,7 @@ const productSchema = new mongoose.Schema({
             _id: false,
         }
     ],
-    images: [
-        {
-            url: { type: String, required: true },
-            _id: false,
-        }
-    ],
+    images: [{ type: mongoose.Types.ObjectId, ref: "Images" }],
     isDeleted: {
         type: Boolean,
         default: false
@@ -45,6 +40,14 @@ const productSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
+
+function autoPopulate(next) {
+    this.populate("images");
+    next();
+}
+productSchema.pre("find", autoPopulate);
+productSchema.pre("findOne", autoPopulate);
+productSchema.pre("findById", autoPopulate);
 productSchema.virtual('isOutOfStock').get(function () {
     return this.sizes.every(size => size.quantity === 0);
 });

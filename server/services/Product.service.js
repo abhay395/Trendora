@@ -89,7 +89,7 @@ export default {
             let results = await Product.find(query)
                 .sort(sortOption)
                 .skip(skip)
-                .limit(limit).populate('category');
+                .limit(limit).populate('category').populate('images');
             // let results = await mongoQuery;
             return { results, totalProduct, totalPages, page, limit, priceStats };
         } catch (error) {
@@ -101,7 +101,7 @@ export default {
             if (!await Product.findById(id)) {
                 throw new ApiError(404, "Product not found", null)
             }
-            const result = await Product.findById(id);
+            const result = await Product.findById(id).populate('category').populate('images');
             return result;
         } catch (error) {
             throw error

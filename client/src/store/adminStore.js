@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi, getcategoryAdminApi, uploadBulkProductApi, softDeleteAdminProductApi, deleteAdminProductPermanently } from "../api/adminApi";
+import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi, getcategoryAdminApi, uploadBulkProductApi, softDeleteAdminProductApi, deleteAdminProductPermanently, getproductByIdAdminApi } from "../api/adminApi";
 
 const useAdminStore = create((set, get) => ({
     isStaticsLoading: true,
@@ -16,6 +16,7 @@ const useAdminStore = create((set, get) => ({
         limit: 10,
         totalPages: 1,
     },
+    selecetedProduct: null,
     error: null,
     fetchStaticsInDashboard: async () => {
         set({ isStaticsLoading: true, error: null });
@@ -68,6 +69,22 @@ const useAdminStore = create((set, get) => ({
                 },
                 isProductLoading: false
             }));
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message || "Something went wrong";
+            toast.error(message);
+            set({ error: message, isProductLoading: false });
+        }
+    },
+    fetchProductsInAdminById: async (id) => {
+        set({ isProductLoading: true, error: null, selecetedProduct: null });
+        try {
+
+            const response = await getproductByIdAdminApi(id);
+            set({
+                selecetedProduct: response.data.result,
+                isProductLoading: false
+            });
         } catch (error) {
             const message =
                 error.response?.data?.message || error.message || "Something went wrong";

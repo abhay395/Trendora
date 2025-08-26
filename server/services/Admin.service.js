@@ -7,6 +7,7 @@ import uploadToCloudinary from '../utils/cloudinary.js'
 import fs from 'fs'
 import csv from 'csv-parser'
 import Category from '../models/Category.model.js'
+import Image from '../models/image.model.js'
 
 
 
@@ -201,10 +202,13 @@ export default {
         try {
             const images = await Promise.all(files.map(async (file) => {
                 let image = await uploadToCloudinary({ file })
-                return { url: image.secure_url }
+                image = await Image.create({ url: image?.secure_url })
+                return image._id
             }))
-            const result = new Product({ images: images, ...body })
+            let result = new Product({ images: images, ...body })
             await result.save()
+            result = await result.populate('images')
+            // result = await Product.findById(result._id).populate('images.image');
             return result;
         } catch (error) {
             throw new ApiError(400, "Product creation failed: " + (error.message || error));
@@ -213,18 +217,20 @@ export default {
     bulkUpload: async (file) => {
         try {
             let data = await readCSV(file.path)
+            let productId = []
             data = await Promise.all(data.map(async (item) => {
-                let images = item.images.split(';').map((url) => {
-                    return {
-                        url: url
-                    }
-                })
-                let category = await Category.findOne({ name: item?.category })
-                if (!category) {
-                    category = await Category.create({ name: item.category })
-                }
+                const imageDocs = await Image.insertMany(
+                    item.images.split(";").map((url) => ({ url }))
+                );
+                const images = imageDocs.map((img) => img._id);
+
+                const category = await Category.findOneAndUpdate(
+                    { name: item.category },
+                    { $setOnInsert: { name: item.category } },
+                    { new: true, upsert: true }
+                );
                 let sizes = JSON.parse(item.sizes)
-                let result = await Product.create({
+                let product = await Product.create({
                     title: item.title,
                     category: category._id,
                     gender: item.gender,
@@ -232,10 +238,11 @@ export default {
                     images,
                     sizes
                 })
-                return result
+                productId.push(product._id)
             }))
             fs.unlinkSync(file.path)
-            return data
+            const results = await Product.find({ _id: { $in: productId } }).populate('category').populate('images')
+            return { results, totalItems: results.length }
         } catch (error) {
             console.log(error)
         }
@@ -269,7 +276,7 @@ export default {
             const totalProduct = await Product.countDocuments(query);
             const { skip, totalPages, limit, page } = getPagination({ totalItems: totalProduct, limit: option?.limit, page: option?.page })
             const sortBy = getSort(option.sortBy)
-            let result = await Product.find(query).sort(sortBy).skip(skip).limit(limit).populate('category');
+            let result = await Product.find(query).sort(sortBy).skip(skip).limit(limit).populate('category').populate('images');;
             return { results: result, totalProduct, totalPages, page, limit }
         } catch (error) {
             throw error
@@ -277,7 +284,7 @@ export default {
     },
     getProductById: async (id) => {
         try {
-            let result = await Product.findById(id);
+            let result = await Product.findById(id).populate('images');
             if (!result) {
                 throw new ApiError(404, "Product not found", null)
             }
@@ -291,7 +298,7 @@ export default {
             if (!await Product.findById(id)) {
                 throw new ApiError(404, "Product not found", null)
             }
-            let result = await Product.findByIdAndUpdate(id, updateBody, { new: true });
+            let result = await Product.findByIdAndUpdate(id, updateBody, { new: true }).populate('category').populate('images');
             return result
         } catch (error) {
             throw error
@@ -302,7 +309,7 @@ export default {
             if (!await Product.findOne({ _id: id })) {
                 throw new ApiError(404, "Product not found", null);
             }
-           await Product.findByIdAndDelete(id)
+            await Product.findByIdAndDelete(id)
         } catch (error) {
             throw error
         }

@@ -44,9 +44,6 @@ function AddProduct() {
       previews.forEach((url) => url && URL.revokeObjectURL(url));
     };
   }, [previews]);
-  // useEffect(()=>{
-  //   categories
-  // },[])
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center py-10">
       <div className="w-full max-w-3xl bg-white/90 shadow-xl rounded-3xl p-10 border border-gray-100">

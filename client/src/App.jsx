@@ -27,6 +27,7 @@ import Unauthorized from './pages/AccessDenied'
 import AdminLayout from './pages/Admin/AdminLayout'
 import AdminProduct from './pages/Admin/AdminProduct'
 import AddProduct from './pages/Admin/AddProduct'
+import EditProduct from './pages/Admin/EditProduct'
 
 function App() {
   const location = useLocation()
@@ -69,6 +70,7 @@ function App() {
         <Route path="" element={<Dashboard />} />
         <Route path="products" element={<AdminProduct />} />
         <Route path="add-product" element={<AddProduct />} />
+        <Route path="product/edit/:id" element={<EditProduct />} />
       </Route>
     </Routes>
     // </AnimatePresence>
