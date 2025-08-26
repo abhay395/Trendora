@@ -37,12 +37,6 @@ Trendora is a full-stack eCommerce web application built to provide a seamless o
 - ☁️ Cloud image uploads with Cloudinary
 - 🛠️ Admin dashboard (Product management & stock updates)
 
----
-
-Got it 👍 Here’s an improved version of your **Technologies Used** section with better formatting, grouping, and badges (makes it more professional and eye-catching for recruiters):
-
----
-
 ## 🛠️ Technologies Used
 
 ### 🌐 Frontend
