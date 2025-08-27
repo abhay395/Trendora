@@ -7,6 +7,7 @@ import orderRoute from './Order.routes.js';
 import userRouter from './User.routes.js';
 import adminRoute from './Admin.routes.js';
 import categoryRoute from './Category.routes.js';
+
 const router = express.Router();
 const routes = [
     {
