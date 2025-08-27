@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import AdminNavbar from './componente/AdminNavbar'
-// import AdminSidebar from './componente/AdminSideBar'
+import AdminSidebar from './componente/AdminSideBar'
 import useAdminStore from '../../store/adminStore'
 import { Toaster } from 'react-hot-toast'
 function AdminLayout() {
@@ -15,7 +15,7 @@ function AdminLayout() {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      {/* <AdminSidebar /> */}
+      <AdminSidebar />
       {/* Main content */}
       <div className="flex flex-col flex-1">
         <AdminNavbar />
