@@ -15,7 +15,7 @@ function AdminLayout() {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <AdminSidebar />
+      {/* <AdminSidebar /> */}
       {/* Main content */}
       <div className="flex flex-col flex-1">
         <AdminNavbar />

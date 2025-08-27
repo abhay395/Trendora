@@ -1,4 +1,3 @@
-import React from "react";
 import { LayoutDashboard, Package, ShoppingCart, Users, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 function AdminSidebar() {
