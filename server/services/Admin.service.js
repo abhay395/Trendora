@@ -8,6 +8,7 @@ import fs from 'fs'
 import csv from 'csv-parser'
 import Category from '../models/Category.model.js'
 import Image from '../models/image.model.js'
+import path from 'path'
 
 
 
@@ -47,6 +48,13 @@ export default {
                     }
                 }
             ])
+            topCategory = await Promise.all(topCategory.map(async (item) => {
+                const category = await Category.findById(item._id);
+                return {
+                    ...item,
+                    name: category.name
+                }
+            }))
             let lowStock = await Product.find({
                 $or: [
                     { 'sizes.S': { $lt: 5 } },
@@ -217,34 +225,53 @@ export default {
     bulkUpload: async (file) => {
         try {
             let data = await readCSV(file.path)
-            let productId = []
+            let product = []
             data = await Promise.all(data.map(async (item) => {
-                const imageDocs = await Image.insertMany(
-                    item.images.split(";").map((url) => ({ url }))
-                );
-                const images = imageDocs.map((img) => img._id);
+                try {
+                    const imageDocs = await Image.insertMany(
+                        item.images.split(";").map((img) => {
+                            let url = img.split("n_320w$&wid=317")
+                            url = url.join("n_750w$&wid=750")
+                            return { url }
+                        })
+                    );
+                    const images = imageDocs.map((img) => img._id);
 
-                const category = await Category.findOneAndUpdate(
-                    { name: item.category },
-                    { $setOnInsert: { name: item.category } },
-                    { new: true, upsert: true }
-                );
-                let sizes = JSON.parse(item.sizes)
-                let product = await Product.create({
-                    title: item.title,
-                    category: category._id,
-                    gender: item.gender,
-                    description: item.description,
-                    images,
-                    sizes
-                })
-                productId.push(product._id)
+                    const category = await Category.findOneAndUpdate(
+                        { name: item.category },
+                        { $setOnInsert: { name: item.category } },
+                        { new: true, upsert: true }
+                    );
+                    let sizes = JSON.parse(item.sizes)
+                    // let product = await Product.create({
+                    //     title: item.title,
+                    //     category: category._id,
+                    //     gender: item.gender,
+                    //     description: item.description,
+                    //     images,
+                    //     sizes
+                    // })
+                    product.push({
+                        title: item.title,
+                        category: category._id,
+                        gender: item.gender,
+                        description: item.description,
+                        images,
+                        sizes
+                    })
+                } catch (error) {
+                    // console.log()
+                }
             }))
-            fs.unlinkSync(file.path)
-            const results = await Product.find({ _id: { $in: productId } }).populate('category').populate('images')
-            return { results, totalItems: results.length }
+            fs.unlinkSync(file?.path)
+            let results = await Product.insertMany(product)
+            // const results = await Product.find({ _id: { $in: productId } }).populate('category').populate('images')
+            return {
+                results, totalItems: results.length
+            }
         } catch (error) {
-            console.log(error)
+            // throw error
+            // console.log(error)
         }
     },
     getProducts: async (filter = {}, option = {}) => {

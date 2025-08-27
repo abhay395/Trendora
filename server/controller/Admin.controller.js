@@ -66,12 +66,9 @@ export default {
         sendSuccessMessage(res, 200, "Product created successfully", result)
     },
     bulkUpload: async (req, res) => {
-        // const { body } = req;
-        console.log(req)
         if (!req.file) {
             throw new ApiError(400, "Csv Is requierd", null)
         }
-        // const { body, files } = req;
         const result = await adminService.bulkUpload(req.file);
         sendSuccessMessage(res, 200, "Product created successfully", result)
     },

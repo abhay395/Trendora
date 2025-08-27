@@ -4,6 +4,6 @@ const imageSchema = new mongoose.Schema({
     url: String,
 })
 
-const Image = mongoose.model('Images', imageSchema)
+const image = mongoose.model('Images', imageSchema)
 
-export default Image
+export default image

@@ -1,4 +1,5 @@
 import Category from "../models/Category.model.js";
+import image from "../models/image.model.js";
 import Product from "../models/Product.model.js"
 import Review from "../models/Review.modle.js";
 import ApiError from "../utils/ApiError.js";
@@ -45,7 +46,7 @@ export default {
                     }
                 }
                 else query.sizes.$elemMatch.price = {
-                    
+
                 }
                 if (filter.minPrice) query.sizes.$elemMatch.price.$gte = Number(filter.minPrice);
                 if (filter.maxPrice) query.sizes.$elemMatch.price.$lte = Number(filter.maxPrice);
@@ -90,7 +91,17 @@ export default {
                 .sort(sortOption)
                 .skip(skip)
                 .limit(limit).populate('category').populate('images');
-            // let results = await mongoQuery;
+            // // let images = [];
+            // // results.forEach((item) => {
+            // //     item.images.forEach(img => images.push(img)) //? for image quality
+            // // })
+            // // images = await Promise.all(images.map(async (item) => {
+            // //     let url = item.url.split("n_320w$&wid=317")
+            // //     url = url.join("n_750w$&wid=750")
+            // //     let res = await image.findByIdAndUpdate(item._id, { url }, { new: true })
+            // //     return res
+            // // }))
+            // // console.log(images)
             return { results, totalProduct, totalPages, page, limit, priceStats };
         } catch (error) {
             throw error

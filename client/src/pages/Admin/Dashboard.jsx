@@ -49,7 +49,7 @@ export default function Dashboard() {
   const salesData = statics?.saleGraph || [];
   const categoryData =
     statics?.topCategory?.map((item) => ({
-      name: item._id,
+      name: item.name,
       value: item.totalRevenue,
     })) || [];
   return (

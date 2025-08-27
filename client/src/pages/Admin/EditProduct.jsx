@@ -10,7 +10,7 @@ function EditProduct() {
   const fetchProductsInAdminById = useAdminStore(s => s.fetchProductsInAdminById)
   const { selecetedProduct, isProductLoading } = useAdminStore()
   const categories = useAdminStore(s => s?.categories);
-  const { register, handleSubmit, formState: { dirtyFields }, control, reset } = useForm({
+  const { register, handleSubmit, formState: { dirtyFields }, control, getValues, reset } = useForm({
     defaultValues: {
       title: "",
       category: "",
@@ -23,13 +23,25 @@ function EditProduct() {
   const onSubmit = (data) => {
     const updatedFields = {};
 
-    // only take values from dirty fields
     console.log(dirtyFields)
+    // only take values from dirty fields
+    const values = getValues();
+    const changed = {};
+    console.log(values)
     Object.keys(dirtyFields).forEach((key) => {
-      updatedFields[key] = data[key];
+      if (dirtyFields[key]) {
+        changed[key] = values[key];
+      }
+       
     });
 
-    console.log("Changed Data:", updatedFields);
+    // console.log("Changed fields:", changed);
+    let replacedImage = []
+    updatedFields.images?.forEach((item, idx) => {
+      if (item[0] instanceof File && selecetedProduct.images[idx]?._id) {
+        replacedImage.push({ file: item[0], _id: selecetedProduct.images[idx]?._id })
+      }
+    })
   }
   useEffect(() => {
     if (selecetedProduct) {
@@ -117,7 +129,7 @@ function EditProduct() {
               Product Images <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-              {selecetedProduct.images.map((_, idx) => (
+              {selecetedProduct?.images?.map((_, idx) => (
                 <Controller
                   key={idx}
                   control={control}
