@@ -7,7 +7,7 @@ import uploadToCloudinary from '../utils/cloudinary.js'
 import fs from 'fs'
 import csv from 'csv-parser'
 import Category from '../models/Category.model.js'
-import Image from '../models/image.model.js'
+import Image from '../models/Image.model.js'
 import path from 'path'
 
 
