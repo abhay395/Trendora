@@ -1,7 +1,3 @@
-Got it 👍 I’ll give you a **refined and professional version** of your README with all the improvements I suggested. Here’s the updated version:
-
----
-
 # Trendora
 
 Trendora is a full-stack eCommerce web application built to provide a seamless online shopping experience. It was developed to practice modern MERN stack development, including backend APIs, frontend interactivity, and cloud integrations. Trendora allows users to browse products, add them to a cart, checkout securely, and track their orders, all in a responsive and user-friendly interface.
