@@ -41,23 +41,23 @@ function ProductList() {
       <ProductFilter {...filters} />
       {filterdProduct.length == 0 && !isLoading ?
         <ProductNotFoundForFilter /> : <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-18 gap-x-6 gap-y-6 px-4 w-full'>
-          {/* {isLoading */}
-          {/* // ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />) */}
-          {/* // : ( */}
-          <AnimatePresence mode='sync'>
-            {filterdProduct?.map((item) => (
-              <motion.div
-                key={item._id}
-                initial={{ opacity: 0, }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <Card product={item} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          {/* // )} */}
+          {isLoading
+            ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
+            : (
+              <AnimatePresence mode='sync'>
+                {filterdProduct?.map((item) => (
+                  <motion.div
+                    key={item._id}
+                    initial={{ opacity: 0, }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <Card product={item} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
         </section>
       }
     </div>
