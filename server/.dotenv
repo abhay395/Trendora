@@ -1,0 +1,12 @@
+JWT_SECRET='Your token'
+JWT_SECRET_KEY=SECRET_KEY
+MONGODB_URL="Your mongodb URL"
+PORT=3000
+#* RazorPay Secret
+RAZORPAY_KEY_ID = "Your RazorPay id"
+RAZORPAY_KEY_SECRET = "Your RazorPay KEY_SECRET"
+
+#* Cloundinary secrete
+CLOUD_NAME = "Your cloud name"
+CLOUD_API_KEY="Cloud Api key"
+CLOUD_API_SECRET = "Cloud Api secret"

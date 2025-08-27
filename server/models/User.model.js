@@ -9,7 +9,13 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: false },
   bio: { type: String, default: "" },
   phone: { type: String, default: "" },
-});
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user"
+  },
+  isDeleted: { type: Boolean, default: false }
+}, { timestamps: true });
 
 userSchema.statics.isEmailTaken = async function (email) {
   const user = await this.findOne({ email }).select('_id');

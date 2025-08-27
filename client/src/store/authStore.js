@@ -5,7 +5,7 @@ import { loginUserApi, logoutApi, signupUserApi } from "../api/authApi";
 import toast from "react-hot-toast";
 
 const useAuthStore = create((set) => ({
-    isLoading: false,
+    isLoading: true,
     error: null,
     loginUser: async (data) => {
         set({ isLoading: true, error: null });

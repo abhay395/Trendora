@@ -1,6 +1,5 @@
-import ProductService from "../service/Product.service.js";
-import { sendSuccessMessage } from "../utils/helper.js";
-import { pick } from "../utils/pick.js";
+import ProductService from "../services/Product.service.js";
+import { sendSuccessMessage, pick } from "../utils/helper.js";
 export default {
     addMultipleProduct: async (req, res) => {
         const result = await ProductService.addMultipleProduct(req.body);
@@ -30,5 +29,24 @@ export default {
         const { id } = req.params;
         const result = await ProductService.updateProduct(id, req.body);
         sendSuccessMessage(res, 200, "Product Updated Successfully", result)
+    },
+    createReview: async (req, res) => {
+        const { body, files } = req
+        body.userId = req.user._id
+        const result = await ProductService.createReview(files, body);
+        sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
+    },
+    getReview: async (req, res) => {
+        const { productId } = req.params
+        const option = pick(req.query, ['sortBy', 'page', 'limit'])
+        const result = await ProductService.getReview(productId, option);
+        sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
+    },
+    addHelpfulUser: async (req, res) => {
+        const { reviewId } = req.params
+        const userId = req.user._id
+        const option = pick(req.query, ['sortBy', 'page', 'limit'])
+        const result = await ProductService.addHelpfulUser(reviewId, userId);
+        sendSuccessMessage(res, 200, "Reviwe Fetched Successfully", result)
     }
 }

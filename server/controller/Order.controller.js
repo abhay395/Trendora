@@ -1,4 +1,4 @@
-import OrderService from "../service/Order.service.js"
+import OrderService from "../services/Order.service.js"
 import { sendSuccessMessage } from "../utils/helper.js"
 export default {
     checkoutProduct: async (req, res) => {
@@ -17,5 +17,8 @@ export default {
         console.log(req.params,orderId)
         const result = await OrderService.getOrderById(orderId)
         sendSuccessMessage(res, 200, "Order history fetched successfully", result);
+    },
+    createOrder:async(req,res)=>{
+        
     }
 }

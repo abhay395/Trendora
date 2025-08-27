@@ -1,4 +1,4 @@
-import UserService from "../service/User.service.js"
+import UserService from "../services/User.service.js"
 import { sendSuccessMessage } from "../utils/helper.js";
 
 export default {

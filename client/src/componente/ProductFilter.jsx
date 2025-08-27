@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { FaStar } from "react-icons/fa6";
+import { FaChevronDown, FaStar } from "react-icons/fa6";
 import { AnimatePresence, motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import useProductStore from '../store/productStore';
@@ -20,7 +20,7 @@ const AnimateContent = ({ children }) => (
 );
 
 const FilterSection = ({ title, isOpen, onToggle, items, children, register }) => (
-    <div className="mb-6">
+    (title != 'Category') ? (<div className="mb-6">
         <h3
             className="font-semibold text-gray-800 mb-2 cursor-pointer select-none flex items-center justify-between"
             onClick={onToggle}
@@ -42,7 +42,29 @@ const FilterSection = ({ title, isOpen, onToggle, items, children, register }) =
                 </AnimateContent>
             )}
         </AnimatePresence>
-    </div>
+    </div>) : (<div className="mb-6">
+        <h3
+            className="font-semibold text-gray-800 mb-2 cursor-pointer select-none flex items-center justify-between"
+            onClick={onToggle}
+        >
+            {title}
+            {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        </h3>
+        <AnimatePresence initial={false}>
+            {isOpen && (
+                <AnimateContent>
+                    {items
+                        ? items.map(item => (
+                            <label key={item.name} className="flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-gray-800 cursor-pointer hover:bg-gray-200 transition">
+                                <input {...register(title.toLowerCase())} type="checkbox" className="mr-2 accent-black" value={item._id} />
+                                {item.name}
+                            </label>
+                        ))
+                        : children}
+                </AnimateContent>
+            )}
+        </AnimatePresence>
+    </div>)
 );
 
 const initialState = {
@@ -93,6 +115,8 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
 
     const buildQuery = (data, sort) => {
         let query = '';
+        console.log(data)
+        console.log(genders)
         if (data?.gender) query += `gender=${data.gender.join(",")}&`;
         if (data?.category) query += `category=${data.category.join(",")}&`;
         if (data?.size) query += `size=${data.size.join(",")}&`;
@@ -105,7 +129,7 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
 
     const onSubmit = (data) => {
         dispatch({ type: 'SET_QUERY', payload: data });
-        console.log(data)
+        // console.log(data)
         const query = buildQuery(data, state.sortBy);
         fetchFilterdProduct(query);
     };
@@ -142,22 +166,39 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
             (watchedFields.maxPrice && watchedFields.maxPrice !== priceStats?.maxPrice)
         );
     };
-    // console.warn(hasActiveFilters(watch()))
     return (
         <div>
             {/* Sort Dropdown */}
             <div className="absolute right-4 top-4">
-                <select
-                    value={state.sortBy}
-                    onChange={(e) => onSortChange(e.target.value)}
-                    className="bg-white text-gray-800 border-2 border-gray-200 rounded-2xl px-6 py-3 pr-12 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 text-sm font-medium transition-all duration-300 ease-in-out appearance-none relative cursor-pointer hover:border-gray-300 hover:shadow-xl transform hover:scale-105"
+                <label
+                    htmlFor="sort-select"
+                    className="sr-only"
                 >
-                    <option value="priceAsc">Price - Asc</option>
-                    <option value="priceDesc">Price - Desc</option>
-                    <option value="ratingAsc">Rating - Asc</option>
-                    <option value="ratingDesc">Rating - Desc</option>
-                </select>
+                    Sort products
+                </label>
+                <div className="relative">
+                    <select
+                        id="sort-select"
+                        value={state.sortBy}
+                        onChange={(e) => onSortChange(e.target.value)}
+                        className="bg-white text-gray-800 border border-gray-300 rounded-xl pl-4 pr-10 py-2.5 shadow-md 
+                 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 
+                 text-sm font-medium transition-all duration-200 appearance-none cursor-pointer 
+                 hover:border-gray-400 hover:shadow-lg"
+                    >
+                        <option value="price:asc">Price: Low → High</option>
+                        <option value="price:desc">Price: High → Low</option>
+                        <option value="rating:asc">Rating: Low → High</option>
+                        <option value="rating:desc">Rating: High → Low</option>
+                    </select>
+
+                    {/* Custom dropdown arrow */}
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                        <FaChevronDown />
+                    </span>
+                </div>
             </div>
+
 
             <form onSubmit={handleSubmit(onSubmit)} className="w-full md:w-72 p-6 pt-3 bg-white border h-full border-gray-200">
                 <h2 className="text-2xl font-bold mb-10 text-gray-900 tracking-tight">Filters</h2>
@@ -167,7 +208,8 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
                     isOpen={state.toggles.gender}
                     onToggle={() => dispatch({ type: 'TOGGLE', payload: 'gender' })}
                     register={register}
-                    items={genders}
+                    // items={genders}
+                    items={["Men", "Women"]} //? Change later
                 />
 
                 <FilterSection

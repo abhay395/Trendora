@@ -1,5 +1,5 @@
 import { sendSuccessMessage } from "../utils/helper.js"
-import AddressService from "../service/Address.service.js"
+import AddressService from "../services/Address.service.js"
 export default {
     getAllAddress: async (req, res) => {
         const { _id } = req.user

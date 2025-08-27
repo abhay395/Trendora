@@ -24,7 +24,8 @@ const orderSchema = new mongoose.Schema({
         image: { type: String },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
-        size: { type: String }
+        size: { type: String },
+        category: { type: mongoose.Types.ObjectId, ref: "Category" },
     }],
     status: {
         type: String,

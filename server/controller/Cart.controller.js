@@ -1,4 +1,4 @@
-import CartService from "../service/Cart.service.js"
+import CartService from "../services/Cart.service.js"
 import { sendSuccessMessage } from "../utils/helper.js"
 
 export default {

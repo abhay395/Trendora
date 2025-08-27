@@ -162,13 +162,13 @@ export default function Cart() {
                       <img src={item.productId.images[0].url} alt={item.productId.title} className="w-45 h-30 object-cover object-top" />
                     </div>
                     <div className='h-full space-y-1'>
-                      <h4 className="font-semibold text-lg text-gray-800">{item.productId.title}</h4>
+                      <h4 className="font-semibold text-lg text-gray-800">{item.productId.title.slice(0, 30)}...</h4>
                       <p className="text-md font-semibold text-gray-500 flex items-center space-x-1"><span>{item.productId.gender} </span> <span><LuDot />
                       </span>{<TbTruckDelivery className='text-xl' />
                         }
                         <span>Express delivery in <span className='text-gray-700 font-bold'> 3 days</span></span></p>
                       <p className='font-semibold text-gray-600'>Size : <span className='font-bold text-gray-800'>{item.size}</span></p>
-                      <p className="mt-4 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{item.productId.price.toFixed(2)}</p>
+                      <p className="mt-4 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{[...item.productId.sizes].find((size) => size.size != item.size)?.price}</p>
                     </div>
                   </div>
                   <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' onClick={() => removeProduct(item._id)} />
@@ -231,8 +231,8 @@ export default function Cart() {
                     {
                       selectedProduct.map((item) => {
                         return <div key={item._id} className="flex justify-between">
-                          <span>{item.quantity} X {item.productId.title}</span>
-                          <span>₹{item.totalPrice}</span>
+                          <span>{item.quantity} X {item.productId.title.slice(0, 20)}...</span>
+                          <span>₹{[...item.productId.sizes].find((size) => size.size == item.size).price}</span>
                         </div>
                       })
                     }
@@ -248,7 +248,7 @@ export default function Cart() {
                     <div className='border border-gray-300 my-5'></div>
                     <div className="flex justify-between text-[1rem] text-gray-700 font-semibold">
                       <span>Total Amount</span>
-                      <span>${(selectedProduct.reduce((sum, item) => sum + item.totalPrice, 0)).toFixed(2)}</span>
+                      <span>${(selectedProduct.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price, 0)).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

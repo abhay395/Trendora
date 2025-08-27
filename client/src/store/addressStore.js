@@ -7,7 +7,7 @@ const useAddressStore = create(
     persist(
         (set, get) => ({
             addresses: [],
-            isLoading: false,
+            isLoading: true,
             error: null,
             fetchAddress: async () => {
                 try {
