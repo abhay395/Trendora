@@ -5,7 +5,7 @@ import cors from 'cors';
 import connectDb from '../db/connectdb.js';
 import router from '../routes/index.routes.js';
 import serverless from 'serverless-http';
-
+import rateLimit from "express-rate-limit";
 dotenv.config();
 
 const app = express();
@@ -31,6 +31,12 @@ app.use(cors({
 }));
 
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests from this IP, please try again later.",
+})
+app.use(limiter)
 app.use(express.json());
 
 app.use(async (req, res, next) => {
