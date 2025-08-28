@@ -23,8 +23,10 @@ function ProductList() {
       await fetchProductFilters()
       await fetchFilterdProduct()
     }
-    loadData()
-  }, [])
+    if (!filters && filterdProduct.length == 0) {
+      loadData()
+    }
+  }, [filters ,filterdProduct])
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
