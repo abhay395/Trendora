@@ -20,15 +20,14 @@ const ProductDetail = () => {
     const [selectedImage, setSelectedImage] = useState(0);
     const [isOutOfStock, setIsOutOfStock] = useState(false);
     const [sortBy, setSortBy] = useState('createdAt:asc')
-
+    useEffect(() => {
+        fetchProductReview(id, sortBy);
+    }, [sortBy, id])
     useEffect(() => {
         clearSelectedProduct();
         fetchProductById(id);
         setIsOutOfStock(false);
     }, [id]);
-    useEffect(() => {
-        fetchProductReview(id, sortBy);
-    }, [sortBy, id])
     const addToCart = () => {
         if (selectedSize) {
             addProductCart({ productId: id, quantity, size: selectedSize });
