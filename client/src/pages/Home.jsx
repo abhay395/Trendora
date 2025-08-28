@@ -13,8 +13,8 @@ function Home() {
   const location = useLocation();
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (products.length == 0) fetchProducts()
+  }, [products]);
 
   // Loader for better UX
   if (isLoading && location.pathname === '/') {
