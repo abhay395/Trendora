@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCartStore from '../store/cartStore';
 import useOrderStore from '../store/orderStore';
@@ -15,6 +15,7 @@ const Profile = () => {
   const { cart, totalPrice, totalProduct, fetchCart, isLoading: cartLoading } = useCartStore();
   const { order, fetchOrderList, isLoading: orderLoading } = useOrderStore();
   const { user, fetchUserProfile, isLoading: userLoading, updateUserProfile } = useUserStore();
+  const [selectedAddress, setSelectedAdress] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const Profile = () => {
       </motion.div>
       {/* 3. 🚚 Address Book */}
       <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
-        <AddressSection />
+        <AddressSection select={selectedAddress} setSelect={setSelectedAdress} />
       </motion.div>
       {/* 4. 🛒 Cart Overview */}
       <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
