@@ -232,7 +232,7 @@ export default function Cart() {
                       selectedProduct.map((item) => {
                         return <div key={item._id} className="flex justify-between">
                           <span>{item.quantity} X {item.productId.title.slice(0, 20)}...</span>
-                          <span>₹{[...item.productId.sizes].find((size) => size.size == item.size).price}</span>
+                          <span>₹{[...item?.productId?.sizes].find((size) => size.size == item.size).price * item.quantity}</span>
                         </div>
                       })
                     }
@@ -248,7 +248,7 @@ export default function Cart() {
                     <div className='border border-gray-300 my-5'></div>
                     <div className="flex justify-between text-[1rem] text-gray-700 font-semibold">
                       <span>Total Amount</span>
-                      <span>${(selectedProduct.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price, 0)).toFixed(2)}</span>
+                      <span>₹{(selectedProduct?.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity, 0)).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

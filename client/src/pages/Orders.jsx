@@ -88,7 +88,7 @@ const Orders = () => {
                                     <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-3">
                                         <FaShoppingCart className="text-black" />
                                         <span className="text-gray-900 font-medium">
-                                            Items: <strong>{o.items.length}</strong>
+                                            {o.items.length > 1? 'Items:':'Item'} <strong>{o.items.length}</strong>
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-3">
@@ -103,12 +103,12 @@ const Orders = () => {
                                             Status:
                                             <span
                                                 className={`ml-2 px-3 py-1 text-xs font-semibold rounded-full ${o.status === "Delivered"
-                                                        ? "bg-green-600 text-white"
-                                                        : o.status === "Shipped"
-                                                            ? "bg-blue-600 text-white"
-                                                            : o.status === "Cancelled"
-                                                                ? "bg-red-600 text-white"
-                                                                : "bg-yellow-500 text-black"
+                                                    ? "bg-green-600 text-white"
+                                                    : o.status === "Shipped"
+                                                        ? "bg-blue-600 text-white"
+                                                        : o.status === "Cancelled"
+                                                            ? "bg-red-600 text-white"
+                                                            : "bg-yellow-500 text-black"
                                                     }`}
                                             >
                                                 {o.status}

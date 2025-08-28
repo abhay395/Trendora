@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
 import useCartStore from '../store/cartStore';
-import { MoonLoader } from 'react-spinners';
 import AddressSection from '../componente/AddressSection';
 import PaymentSection from '../componente/PaymentSection';
 import useOrderStore from '../store/orderStore';
@@ -14,7 +13,7 @@ export default function Checkout() {
 
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
-    let totalPrice = selectedProduct.reduce((sum, item) => sum + item.totalPrice, 0)
+    let totalPrice = selectedProduct.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity, 0)
 
     let checkOutHandler = async () => {
         const id = await checkoutProduct()
@@ -56,7 +55,7 @@ export default function Checkout() {
                                         <img src={item.productId.images[0].url} alt={item.productId.title} className="object-cover object-top h-full w-full " />
                                     </div>
                                     <div className='h-full space-y-2 relative min-h-30  w-full '>
-                                        <h4 className="font-bold text-[0.94rem] text-gray-800">{item.productId.title.slice(0,30)}...</h4>
+                                        <h4 className="font-bold text-[0.94rem] text-gray-800">{item.productId.title.slice(0, 30)}...</h4>
                                         <p className="text-sm font-medium text-gray-500 flex items-center space-x-1">
                                             <span>Estimated delivery by <span className='text-gray-700 text-sm font-bold'>14 July 2025</span></span></p>
                                         <div className='flex items-center justify-between left-0 absolute bottom-2 right-4'>
@@ -90,7 +89,7 @@ export default function Checkout() {
                                         <div className='space-y-3 font-medium'>
                                             {selectedProduct.map((item) => (<div className="flex justify-between" key={item._id}>
                                                 <span>{item.quantity} X {item.productId.title} </span>
-                                                <span>${item?.totalPrice?.toFixed(2)}</span>
+                                                <span>${[...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity}</span>
                                             </div>))}
                                             <div className="flex justify-between">
                                                 <span>Coupon discount</span>
