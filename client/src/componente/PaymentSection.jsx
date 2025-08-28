@@ -1,6 +1,6 @@
 import React from 'react'
 
-function PaymentSection() {
+function PaymentSection({ paymentMode, setPaymentMode }) {
     return (
         <div className='w-full'>
             <div className='mb-4  text-left w-full'>
@@ -9,7 +9,9 @@ function PaymentSection() {
             <div className="flex flex-col w-full items-center justify-center space-y-4 ">
                 <div className='w-full space-y-2 py-3 flex  flex-col border rounded-xl border-gray-200 px-5'>
                     <div className='flex items-center space-x-3'>
-                        <input type="radio" name='payment' value='cash' className='w-5 h-5  accent-black' id='1' />
+                        <input type="radio" name='payment' value='cash' onChange={e => setPaymentMode('cash')} className='w-5 h-5  accent-black' id='1'
+                            checked={paymentMode == 'cash'}
+                        />
                         <label htmlFor='1' className='space-y-2'>
                             <p className='font-semibold text-[1.02rem] text-gray-800'>Cash On devlivery</p>
                         </label>
@@ -18,7 +20,9 @@ function PaymentSection() {
                 </div>
                 <div className='w-full space-y-2  pt-4 flex  flex-col border rounded-xl border-gray-200 px-5'>
                     <div className='flex items-center space-x-3'>
-                        <input type="radio" name='payment' value='debit-card' className='w-5 h-5  accent-black' id='2' />
+                        <input type="radio" name='payment'
+                            checked={paymentMode == 'debit'}
+                            value='debit' onChange={e => setPaymentMode('debit')} className='w-5 h-5  accent-black' id='2' />
                         <label htmlFor='2' className='space-y-2'>
                             <p className='font-semibold text-[1.02rem] text-gray-800'>Debit/Card</p>
                         </label>

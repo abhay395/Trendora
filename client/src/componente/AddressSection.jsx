@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 const emptyForm = { name: "", phone: "", pincode: "", state: "", city: "", fullAddress: "" };
 
-export default function AddressSection() {
+export default function AddressSection({ select, setSelect }) {
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -18,8 +18,10 @@ export default function AddressSection() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
   const selectedAddressId = addresses.find((item) => item.selected)?._id;
-  const [select, setSelect] = useState(selectedAddressId);
-
+  // const [select, setSelect] = useState(selectedAddressId);
+  useEffect(() => {
+    setSelect(selectedAddressId)
+  }, [])
   const onSubmit = async (data) => {
     if (editMode) {
       await updateAddress(editId, data);
@@ -91,7 +93,7 @@ export default function AddressSection() {
               name="address"
               id={addr._id}
               className="w-5 h-5 mt-1 accent-black cursor-pointer"
-              checked={addr._id === select || addr.selected}
+              checked={addr?._id === select}
               onChange={() => {
                 setSelect(addr._id);
                 selectedAddresses(addr._id);

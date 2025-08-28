@@ -13,7 +13,7 @@ export default {
                 .lean();
 
             if (!selectedAddress) {
-                throw new ApiError("Please select or add an address!");
+                throw new ApiError(400,"Please select or add an address!");
             }
             // 2. Get selected cart items with product info
             const cartItems = await Cart.find({ userId, selected: true })

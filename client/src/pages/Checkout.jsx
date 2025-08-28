@@ -6,16 +6,23 @@ import PaymentSection from '../componente/PaymentSection';
 import useOrderStore from '../store/orderStore';
 import { motion } from 'framer-motion'
 import useProductStore from '../store/productStore';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
 export default function Checkout() {
     const { cart } = useCartStore()
     const { checkoutProduct } = useOrderStore();
     const { fetchProducts } = useProductStore();
-
+    const [selectedAddress, setSelectedAdress] = useState(null);
+    const [selectedPaymentMode, setPaymentMode] = useState('cash')
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
     let totalPrice = selectedProduct.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity, 0)
 
     let checkOutHandler = async () => {
+        if (!selectedAddress) {
+            toast.error("Please select Address")
+            return
+        }
         const id = await checkoutProduct()
         if (id) {
             fetchProducts()
@@ -25,11 +32,6 @@ export default function Checkout() {
     const navigate = useNavigate();
     return (
         <motion.div
-            // initial={{ opacity: 0, y: 20 }}
-            // animate={{ opacity: 1, y: 0 }}
-            // exit={{ opacity: 0, y: 20 }}
-            // transition={{ duration: 0.4, ease: "easeOut" }}
-
             className=" bg-white min-h-screen my-8 pt-17">
             <div className='mb-7'>
                 <Stepper currentStep={2} />
@@ -38,8 +40,8 @@ export default function Checkout() {
                 {/* Left Section */}
                 <div className="col-span-2 space-y-5 flex items-center flex-col w-[90%]">
                     {/* <h2 className="text-xl font-semibold mb-7">Cart</h2> */}
-                    <AddressSection />
-                    <PaymentSection />
+                    <AddressSection select={selectedAddress} setSelect={setSelectedAdress} />
+                    <PaymentSection paymentMode={selectedPaymentMode} setPaymentMode={setPaymentMode} />
                 </div>
 
                 {/* Right Section */}
