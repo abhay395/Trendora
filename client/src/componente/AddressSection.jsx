@@ -31,6 +31,7 @@ export default function AddressSection({ select, setSelect }) {
   };
 
   const deleteHandler = (addressId) => {
+    if (select == addressId) setSelect(null)
     deleteAddress(addressId);
   };
 
