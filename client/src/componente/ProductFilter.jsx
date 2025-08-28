@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaChevronDown, FaStar } from "react-icons/fa6";
 import { AnimatePresence, motion } from 'framer-motion';
@@ -99,7 +99,7 @@ function reducer(state, action) {
 const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
     const { fetchFilterdProduct } = useProductStore();
     const [state, dispatch] = useReducer(reducer, initialState);
-
+    const [query, setQuery] = useState('')
     const {
         register,
         handleSubmit,
@@ -115,11 +115,9 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
 
     const buildQuery = (data, sort) => {
         let query = '';
-        console.log(data)
-        console.log(genders)
-        if (data?.gender) query += `gender=${data.gender.join(",")}&`;
-        if (data?.category) query += `category=${data.category.join(",")}&`;
-        if (data?.size) query += `size=${data.size.join(",")}&`;
+        if (data?.gender?.length > 0) query += `gender=${data.gender.join(",")}&`;
+        if (data?.category?.length > 0) query += `category=${data.category.join(",")}&`;
+        if (data?.size?.length > 0) query += `size=${data.size.join(",")}&`;
         if (data?.minPrice && data.minPrice !== priceStats.minPrice) query += `minPrice=${data.minPrice}&`;
         if (data?.maxPrice && data.maxPrice !== priceStats.maxPrice) query += `maxPrice=${data.maxPrice}&`;
         if (data?.rating) query += `rating=${data.rating}&`;
@@ -129,9 +127,10 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
 
     const onSubmit = (data) => {
         dispatch({ type: 'SET_QUERY', payload: data });
-        // console.log(data)
-        const query = buildQuery(data, state.sortBy);
-        fetchFilterdProduct(query);
+        const newQuery = buildQuery(data, state.sortBy);
+        if (newQuery == query || newQuery.split('=').length <= 2) return
+        setQuery(newQuery)
+        fetchFilterdProduct(newQuery);
     };
 
     const onSortChange = (value) => {
