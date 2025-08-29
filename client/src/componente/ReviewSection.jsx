@@ -81,6 +81,7 @@ function ReviewSection({ productId }) {
   };
 
   const markHelpful = (reviewId) => {
+    setLocalReviews((prev) => prev.map(item => reviewId == item._id ? { ...item, helpful: [user._id] } : item))
     mutateForHelpfull(reviewId)
   };
 
