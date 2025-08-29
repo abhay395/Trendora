@@ -8,24 +8,20 @@ import { MoonLoader } from "react-spinners";
 import useCartStore from "../store/cartStore";
 import toast from "react-hot-toast";
 import ReviewSection from "../componente/ReviewSection";
+import { useProductById, useProductReviews } from "../hooks/useProducts";
 
 const ProductDetail = () => {
     const { id } = useParams();
-    const { selectedProduct, isLoading, fetchProductById, clearSelectedProduct, fetchProductReview, review, reviewLoading } =
+    const { fetchProductById, clearSelectedProduct, fetchProductReview } =
         useProductStore();
     const { addProductCart } = useCartStore();
-
+    const [sortBy, setSortBy] = useState('createdAt:desc')
+    const { data: product, isLoading, error } = useProductById(id)
     const [selectedSize, setSelectedSize] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [isOutOfStock, setIsOutOfStock] = useState(false);
-    const [sortBy, setSortBy] = useState('createdAt:asc')
     useEffect(() => {
-        fetchProductReview(id, sortBy);
-    }, [sortBy, id])
-    useEffect(() => {
-        clearSelectedProduct();
-        fetchProductById(id);
         setIsOutOfStock(false);
     }, [id]);
     const addToCart = () => {
@@ -38,8 +34,8 @@ const ProductDetail = () => {
 
     // 🔥 Auto-select first available size
     useEffect(() => {
-        if (selectedProduct?.sizes?.length) {
-            const available = selectedProduct.sizes.find((s) => s.quantity > 0);
+        if (product?.sizes?.length) {
+            const available = product.sizes.find((s) => s.quantity > 0);
             if (available) {
                 setSelectedSize(available.size);
                 setIsOutOfStock(false);
@@ -47,13 +43,13 @@ const ProductDetail = () => {
                 setIsOutOfStock(true);
             }
         }
-    }, [selectedProduct]);
+    }, [product]);
 
     useEffect(() => {
         setQuantity(1);
     }, [selectedSize]);
 
-    const currentSizeObj = selectedProduct?.sizes?.find(
+    const currentSizeObj = product?.sizes?.find(
         (s) => s.size === selectedSize
     );
 
@@ -73,7 +69,7 @@ const ProductDetail = () => {
         }
     };
 
-    if (isLoading || !selectedProduct) {
+    if (isLoading || !product) {
         return (
             <div className="h-screen flex items-center justify-center">
                 <MoonLoader color="#000" />
@@ -101,7 +97,7 @@ const ProductDetail = () => {
                         </button>
                         <button
                             disabled={
-                                selectedImage === selectedProduct?.images.length - 1
+                                selectedImage === product?.images.length - 1
                             }
                             className="absolute disabled:opacity-70 right-1 top-1/2 bg-white p-1 rounded-sm text-xl cursor-pointer"
                             onClick={() => setSelectedImage(selectedImage + 1)}
@@ -109,13 +105,13 @@ const ProductDetail = () => {
                             <IoIosArrowForward />
                         </button>
                         <img
-                            src={selectedProduct?.images?.[selectedImage]?.url}
+                            src={product?.images?.[selectedImage]?.url}
                             alt="Product"
                             className="w-full h-[470px] object-top object-cover rounded-md"
                         />
                     </div>
                     <div className="w-full h-[150px] mt-2 overflow-hidden grid grid-cols-4 gap-1">
-                        {selectedProduct?.images?.map((item, index) => (
+                        {product?.images?.map((item, index) => (
                             <img
                                 key={index}
                                 src={item?.url}
@@ -137,16 +133,16 @@ const ProductDetail = () => {
 
                     <div className="space-y-4">
                         <h1 className="text-4xl text-gray-700 font-bold">
-                            {selectedProduct.title}
+                            {product.title}
                         </h1>
                         <div className="flex items-center gap-1 text-yellow-500 text-xl">
-                            {[...Array(Math.floor(selectedProduct?.rating?.average))].map(
+                            {[...Array(Math.floor(product?.rating?.average))].map(
                                 (_, i) => (
                                     <FaStar key={i} />
                                 )
                             )}
                             <span className="text-sm text-gray-600 ml-1 mt-1">
-                                ({selectedProduct?.rating?.average})
+                                ({product?.rating?.average})
                             </span>
                         </div>
                     </div>
@@ -156,7 +152,7 @@ const ProductDetail = () => {
                         {currentSizeObj?.price} ₹
                     </p>
                     <p className="text-md font-semibold text-gray-800">
-                        {selectedProduct.description}
+                        {product.description}
                     </p>
 
                     {/* Sizes + Colors */}
@@ -164,7 +160,7 @@ const ProductDetail = () => {
                         <div>
                             <h3 className="mb-2 font-bold text-gray-700">Available Size</h3>
                             <div className="flex gap-2">
-                                {selectedProduct?.sizes.map((item) => (
+                                {product?.sizes.map((item) => (
                                     <button
                                         key={item.size}
                                         onClick={() => setSelectedSize(item.size)}
@@ -228,7 +224,7 @@ const ProductDetail = () => {
             </motion.div>
             {/* Review */}
             <div className="max-w-7xl mx-auto mt-10 px-4 md:px-0">
-                {!reviewLoading && <ReviewSection productId={id} productTitle={selectedProduct?.title} sortBy={sortBy} setSortBy={setSortBy} reviews={review?.results} />}
+                <ReviewSection productId={id} />
             </div>
         </section>
     );
