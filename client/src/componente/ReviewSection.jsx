@@ -19,7 +19,7 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews, sortB
   });
 
   useEffect(() => {
-    setLocalReviews(initialReviews || []);
+    setLocalReviews(initialReviews);
   }, [initialReviews]);
   const averageRating = useMemo(() => {
     if (!localReviews?.length) return 0;
