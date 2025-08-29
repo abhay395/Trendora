@@ -5,13 +5,11 @@ import AddressSection from '../componente/AddressSection';
 import PaymentSection from '../componente/PaymentSection';
 import useOrderStore from '../store/orderStore';
 import { motion } from 'framer-motion'
-import useProductStore from '../store/productStore';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 export default function Checkout() {
     const { cart } = useCartStore()
     const { checkoutProduct } = useOrderStore();
-    const { fetchProducts } = useProductStore();
     const [selectedAddress, setSelectedAdress] = useState(null);
     const [selectedPaymentMode, setPaymentMode] = useState('cash')
     const discount = 2.5;
@@ -25,7 +23,6 @@ export default function Checkout() {
         }
         const id = await checkoutProduct()
         if (id) {
-            fetchProducts()
             navigate(`/payment-done/${id}`)
         }
     }

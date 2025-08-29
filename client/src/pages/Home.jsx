@@ -4,7 +4,6 @@ import { MoveRight } from 'lucide-react';
 import Card from '../componente/Card';
 import FeatureSection from '../componente/FeatureSection';
 import { Link, useLocation } from 'react-router-dom';
-import useProductStore from '../store/productStore';
 import { motion } from 'framer-motion'
 import { MoonLoader } from 'react-spinners'
 import { useProducts } from '../hooks/useProducts';

@@ -11,16 +11,6 @@ const useProductStore = create((set, get) => ({
     review: null,
     reviewLoading: true,
     clearSelectedProduct: () => set({ selectedProduct: null, reiview: null }),
-
-    fetchFilterdProduct: async (filter) => {
-        set({ isLoading: true, error: null })
-        try {
-            const res = await fetchProductApi(filter)
-            set({ isLoading: false, filterdProduct: res.data.result.results })
-        } catch (error) {
-            set({ error: error.message, isLoading: false })
-        }
-    },
 }))
 
 export default useProductStore

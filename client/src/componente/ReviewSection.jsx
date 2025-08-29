@@ -3,7 +3,6 @@ import { FaStar } from "react-icons/fa";
 import { FiUploadCloud, FiThumbsUp } from "react-icons/fi";
 import useUserStore from "../store/userStore";
 import { RxCross2 } from "react-icons/rx";
-import useProductStore from "../store/productStore";
 import { useAddHelpfullInReview, useAddReview, useProductReviews } from "../hooks/useProducts";
 
 

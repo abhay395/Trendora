@@ -2,11 +2,18 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/re
 import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi, fetchProductReviewApi, addProductReviewApi, addhelpfulInReviewApi } from '../api/productApi'
 
 
-export const useProducts = (filter) =>
+export const useProducts = () =>
     useQuery({
-        queryKey: ["products", filter],
+        queryKey: ["products"],
+        queryFn: () => fetchProductApi({}).then(res => res.data.result.results),
+    });
+export const useProductsFilterd = (filter) =>
+    useQuery({
+        queryKey: ["filteredProduct", filter],
         queryFn: () => fetchProductApi(filter).then(res => res.data.result.results),
     });
+
+
 
 export const useProductById = (id) =>
     useQuery({

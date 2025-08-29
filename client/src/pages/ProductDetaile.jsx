@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FaMinus, FaPlus, FaStar } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useParams } from "react-router-dom";
-import useProductStore from "../store/productStore";
 import { motion } from "framer-motion";
 import { MoonLoader } from "react-spinners";
 import useCartStore from "../store/cartStore";
@@ -12,8 +11,6 @@ import { useProductById, useProductReviews } from "../hooks/useProducts";
 
 const ProductDetail = () => {
     const { id } = useParams();
-    const { fetchProductById, clearSelectedProduct, fetchProductReview } =
-        useProductStore();
     const { addProductCart } = useCartStore();
     const [sortBy, setSortBy] = useState('createdAt:desc')
     const { data: product, isLoading, error } = useProductById(id)
