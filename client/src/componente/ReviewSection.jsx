@@ -4,14 +4,19 @@ import { FiUploadCloud, FiThumbsUp } from "react-icons/fi";
 import useUserStore from "../store/userStore";
 import { RxCross2 } from "react-icons/rx";
 import useProductStore from "../store/productStore";
+import { useAddHelpfullInReview, useAddReview, useProductReviews } from "../hooks/useProducts";
 
 
-function ReviewSection({ productId, productTitle, reviews: initialReviews, sortBy, setSortBy }) {
+function ReviewSection({ productId }) {
   const formatDate = (date) => date.toISOString().split("T")[0];
-  const { addProductReview, addhelpfulInReviewApi } = useProductStore()
+  const [sortBy, setSortBy] = useState('createdAt:desc')
+  const { data: initialReviews, isLoading: reviewLoading, error: reviewError } = useProductReviews(productId, sortBy)
   const user = useUserStore((s) => s.user)
   const [prview, setPreview] = useState([]);
   const [localReviews, setLocalReviews] = useState(initialReviews || [])
+  const { mutate, isPending } = useAddReview();
+  const { mutate: mutateForHelpfull, isPending: isPendingForhelpfull } = useAddHelpfullInReview();
+
   const [newReview, setNewReview] = useState({
     rating: 0,
     comment: "",
@@ -72,21 +77,17 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews, sortB
         form.append(key, value)
       }
     }
-    addProductReview(form)
+    mutate(form)
   };
 
   const markHelpful = (reviewId) => {
-
-    addhelpfulInReviewApi(reviewId, user._id)
+    mutateForHelpfull(reviewId)
   };
 
   return (
     <div className="bg-white shadow-md rounded-2xl p-6 mt-10 mb-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
-        <h2 className="text-xl font-bold">
-          Reviews {productTitle ? `for ${productTitle}` : ""}
-        </h2>
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1">
             {[...Array(Math.floor(averageRating))].map((_, i) => (
@@ -96,7 +97,7 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews, sortB
               {averageRating}
             </span>
             <span className="text-gray-500">
-              ({localReviews.length} {localReviews.length === 1 ? "review" : "reviews"})
+              ({localReviews?.length} {localReviews?.length === 1 ? "review" : "reviews"})
             </span>
           </div>
           <select
@@ -157,7 +158,6 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews, sortB
                 className="absolute top-2 left-2 bg-black text-xl text-white rounded-full p-1 cursor-pointer"
                 onClick={() =>
                   setPreview((prev) => prev.filter((_, idx) => idx != index))
-                  // console.log(index)
                 }
               />
               <img
@@ -179,10 +179,10 @@ function ReviewSection({ productId, productTitle, reviews: initialReviews, sortB
 
       {/* Reviews List */}
       <div className="space-y-6">
-        {localReviews.length === 0 && (
+        {localReviews?.length === 0 && !reviewLoading && (
           <p className="text-gray-600">No reviews yet. Be the first to review.</p>
         )}
-        {localReviews?.map((review) => (
+        {!reviewLoading && localReviews?.map((review) => (
           <div
             key={review?._id}
             className="bg-gray-50 rounded-xl p-4 border border-gray-100"

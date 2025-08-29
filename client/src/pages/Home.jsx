@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import myImage from '../assets/HeroSectionImage.png';
 import { MoveRight } from 'lucide-react';
 import Card from '../componente/Card';
@@ -7,17 +7,18 @@ import { Link, useLocation } from 'react-router-dom';
 import useProductStore from '../store/productStore';
 import { motion } from 'framer-motion'
 import { MoonLoader } from 'react-spinners'
+import { useProducts } from '../hooks/useProducts';
 
 function Home() {
-  const { fetchProducts, products, isLoading } = useProductStore();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (products.length == 0) fetchProducts()
-  }, [products]);
+  const { data: products, isLoading, error } = useProducts({}, {
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  })
 
   // Loader for better UX
-  if (isLoading && location.pathname === '/') {
+  if (isLoading) {
     return (
       <div className='h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100'>
         <MoonLoader color='#111' size={60} />
@@ -90,12 +91,12 @@ function Home() {
         </div>
         <section className='grid grid-cols-1 px-5 md:px-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6'>
           {
-            products.length === 0 ? (
+            products?.length === 0 ? (
               <div className="col-span-full flex justify-center items-center py-10">
                 <span className="text-gray-400 text-lg">No products found.</span>
               </div>
             ) : (
-              products.slice(0, 10).map((item) => <Card product={item} key={item._id} />)
+              products?.slice(0, 10).map((item) => <Card product={item} key={item._id} />)
             )
           }
         </section>
@@ -113,12 +114,12 @@ function Home() {
         </div>
         <section className='grid grid-cols-1 px-5 md:px-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6'>
           {
-            products.length === 0 ? (
+            products?.length === 0 ? (
               <div className="col-span-full flex justify-center items-center py-10">
                 <span className="text-gray-400 text-lg">No best sellers found.</span>
               </div>
             ) : (
-              products.slice(0, 5).map((item) => <Card product={item} key={item._id + '-best'} />)
+              products?.slice(0, 5).map((item) => <Card product={item} key={item._id + '-best'} />)
             )
           }
         </section>
