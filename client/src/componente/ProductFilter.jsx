@@ -3,7 +3,6 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaChevronDown, FaStar } from "react-icons/fa6";
 import { AnimatePresence, motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
-import useProductStore from '../store/productStore';
 import { RiResetLeftFill } from "react-icons/ri";
 
 const AnimateContent = ({ children }) => (
@@ -96,10 +95,8 @@ function reducer(state, action) {
     }
 }
 
-const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
-    const { fetchFilterdProduct } = useProductStore();
+const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const [query, setQuery] = useState('')
     const {
         register,
         handleSubmit,
@@ -130,22 +127,21 @@ const ProductFilter = ({ sizes, categories, genders, priceStats }) => {
         const newQuery = buildQuery(data, state.sortBy);
         if (newQuery == query || newQuery.split('=').length <= 2) return
         setQuery(newQuery)
-        fetchFilterdProduct(newQuery);
     };
 
     const onSortChange = (value) => {
         dispatch({ type: 'SET_SORT', payload: value });
         const query = buildQuery(state.queryData, value);
-        fetchFilterdProduct(query);
+        setQuery(query)
     };
 
     const resetHandler = () => {
         dispatch({ type: 'RESET' });
+        setQuery('')
         reset({
             minPrice: priceStats?.minPrice || 0,
             maxPrice: priceStats?.maxPrice || 6000,
         });
-        fetchFilterdProduct('');
     };
 
     // Update price range when priceStats change
