@@ -113,8 +113,8 @@ const ProductDetail = () => {
                         />
                     </div>
                     <div className="w-full h-[150px] mt-2 overflow-hidden grid grid-cols-4 gap-1">
-                        {product?.images?.map((item, index) => (
-                            <div className="rounded-md overflow-hidden">
+                        {product?.images?.map((item, index) => {
+                            if (index != 4) return <div className="rounded-md overflow-hidden">
                                 <LazyLoadImage
                                     key={index}
                                     src={item?.url}
@@ -124,7 +124,7 @@ const ProductDetail = () => {
                                     onClick={() => setSelectedImage(index)}
                                 />
                             </div>
-                        ))}
+                        })}
                     </div>
                 </div>
 
