@@ -8,6 +8,8 @@ import useCartStore from "../store/cartStore";
 import toast from "react-hot-toast";
 import ReviewSection from "../componente/ReviewSection";
 import { useProductById, useProductReviews } from "../hooks/useProducts";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -87,7 +89,7 @@ const ProductDetail = () => {
                     <div className="w-full relative">
                         <button
                             disabled={selectedImage === 0}
-                            className="absolute disabled:opacity-70 left-1 top-1/2 bg-white p-1 rounded-sm text-xl cursor-pointer"
+                            className="absolute disabled:opacity-70 left-1 z-50 top-1/2 bg-white p-1 rounded-sm text-xl cursor-pointer"
                             onClick={() => setSelectedImage(selectedImage - 1)}
                         >
                             <IoIosArrowBack />
@@ -96,26 +98,32 @@ const ProductDetail = () => {
                             disabled={
                                 selectedImage === product?.images.length - 1
                             }
-                            className="absolute disabled:opacity-70 right-1 top-1/2 bg-white p-1 rounded-sm text-xl cursor-pointer"
+                            className="absolute disabled:opacity-70 z-50 right-1 top-1/2 bg-white p-1 rounded-sm text-xl cursor-pointer"
                             onClick={() => setSelectedImage(selectedImage + 1)}
                         >
                             <IoIosArrowForward />
                         </button>
-                        <img
+                        <LazyLoadImage
                             src={product?.images?.[selectedImage]?.url}
                             alt="Product"
                             className="w-full h-[470px] object-top object-cover rounded-md"
+                            effect="blur"
+                            wrapperClassName="w-full h-[470px]"
+                        // wrapperClassName="w-full h-[470px] object-top object-cover rounded-md"
                         />
                     </div>
                     <div className="w-full h-[150px] mt-2 overflow-hidden grid grid-cols-4 gap-1">
                         {product?.images?.map((item, index) => (
-                            <img
-                                key={index}
-                                src={item?.url}
-                                alt={`Preview ${index + 1}`}
-                                className={`w-full object-cover object-top  cursor-pointer`}
-                                onClick={() => setSelectedImage(index)}
-                            />
+                            <div className="rounded-md overflow-hidden">
+                                <LazyLoadImage
+                                    key={index}
+                                    src={item?.url}
+                                    alt={`Preview ${index + 1}`}
+                                    className={`w-full object-cover object-top  cursor-pointer`}
+                                    wrapperClassName=""
+                                    onClick={() => setSelectedImage(index)}
+                                />
+                            </div>
                         ))}
                     </div>
                 </div>

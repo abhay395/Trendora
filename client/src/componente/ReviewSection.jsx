@@ -4,6 +4,8 @@ import { FiUploadCloud, FiThumbsUp } from "react-icons/fi";
 import useUserStore from "../store/userStore";
 import { RxCross2 } from "react-icons/rx";
 import { useAddHelpfullInReview, useAddReview, useProductReviews } from "../hooks/useProducts";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 
 function ReviewSection({ productId }) {
@@ -160,10 +162,12 @@ function ReviewSection({ productId }) {
                   setPreview((prev) => prev.filter((_, idx) => idx != index))
                 }
               />
-              <img
+              <LazyLoadImage
                 src={img}
                 alt={`preview-${index}`}
                 className="w-28 h-28 object-cover rounded-lg"
+                wrapperClassName="w-28 h-28"
+                effect="blur"
               />
             </div>
           ))}
@@ -199,10 +203,12 @@ function ReviewSection({ productId }) {
             <p className="text-gray-700">{review?.comment}</p>
             <div className="flex flex-wrap gap-x-4">
               {review?.images.length > 0 && (
-                review?.images.map((img) => <img
+                review?.images.map((img) => <LazyLoadImage
                   src={img.url}
                   alt="review"
                   className="mt-3 w-32 h-32 object-cover rounded-lg"
+                  wrapperClassName=" w-32 h-32"
+                  effect="blur"
                 />)
               )}</div>
             <div className="mt-3 flex items-center gap-2">

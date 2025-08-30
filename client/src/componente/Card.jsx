@@ -2,10 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
-
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 function Card({ product, index }) {
-  // Calculate average rating (if available)
-  // const rating = product?.rating;
   const isOutOfStock = Object.values(product?.sizes || {}).every(qty => qty === 0);
 
   return (
@@ -19,10 +18,12 @@ function Card({ product, index }) {
       <Link to={`/product/${product._id}`}>
         <div className="w-full  xs:max-w-sm md:max-w-md bg-white shadow-lg rounded-3xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer flex flex-col  group border border-gray-100">
           <div className="relative flex items-center justify-center bg-gradient-to-t from-gray-50 via-white to-gray-100">
-            <img
-              className="h-[360px] xs:h-[300px] md:h-[340px] w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+            <LazyLoadImage
+              className={"h-[360px] xs:h-[300px] md:h-[340px] w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"}
               src={product?.images?.[0]?.url}
               alt={product?.title}
+              effect='blur'
+              width={400}
             />
             {isOutOfStock && (
               <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">

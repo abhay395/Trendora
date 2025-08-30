@@ -1,10 +1,11 @@
-
+import { LazyLoadImage } from "react-lazy-load-image-component"
+import 'react-lazy-load-image-component/src/effects/blur.css';
 function CardForCheckout({ item, index, length }) {
     return (
         <div className='w-full' key={index}>
             <div className="flex items-start py-4 pl-4  gap-4 w-full relative ">
                 <div className='h-28 w-[15rem]  rounded-lg overflow-hidden'>
-                    <img src={item.productId.images[0].url} alt={item.productId.title} className="object-cover object-top h-full w-full " />
+                    <LazyLoadImage src={item.productId.images[0].url} alt={item.productId.title} className="object-cover object-top h-full w-full " effect="blur" wrapperClassName="w-full h-full" />
                 </div>
                 <div className='h-full space-y-2 relative min-h-30  w-full '>
                     <h4 className="font-bold text-[0.94rem] text-gray-800">{item.productId.title}</h4>

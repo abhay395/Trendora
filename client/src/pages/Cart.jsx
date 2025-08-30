@@ -12,6 +12,8 @@ import useCartStore from '../store/cartStore';
 import CartEmpty from './CartEmpty';
 import { AnimatePresence, motion } from 'framer-motion'
 import toast from 'react-hot-toast';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 export default function Cart() {
   const [allSelected, setAllSelected] = useState(false);
@@ -159,7 +161,9 @@ export default function Cart() {
                           </svg>
                         </div>
                       </label>
-                      <img src={item.productId.images[0].url} alt={item.productId.title} className="w-45 h-30 object-cover object-top" />
+                      <LazyLoadImage src={item.productId.images[0].url} alt={item.productId.title} className="w-45 h-30 object-cover object-top"
+                        wrapperClassName='w-45 h-30'
+                      />
                     </div>
                     <div className='h-full space-y-1'>
                       <h4 className="font-semibold text-lg text-gray-800">{item.productId.title.slice(0, 30)}...</h4>
