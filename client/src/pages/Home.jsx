@@ -1,11 +1,8 @@
-import { useEffect, useMemo } from 'react'
-import myImage from '../assets/HeroSectionImage.png';
 import { MoveRight } from 'lucide-react';
 import Card from '../componente/Card';
 import FeatureSection from '../componente/FeatureSection';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion'
-import { MoonLoader } from 'react-spinners'
 import { useProducts } from '../hooks/useProducts';
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/blur.css';
@@ -62,11 +59,12 @@ function Home() {
             <div className="relative">
               <LazyLoadImage
                 alt="product"
+                src="https://res.cloudinary.com/dhcszkydc/image/upload/v1756402078/pbws8l78ssf0ldaa2z4c.png"
                 className="w-[400px] sm:w-[480px] md:w-[550px] lg:w-[580px] xl:w-[600px] h-auto object-cover rounded-3xl shadow-2xl border-4 border-white"
                 wrapperClassName="w-[400px] sm:w-[480px] md:w-[550px] lg:w-[580px] xl:w-[600px]"
-                style={{ boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}
-                src="https://res.cloudinary.com/dhcszkydc/image/upload/v1756402078/pbws8l78ssf0ldaa2z4c.png"
-                effect="blur"   // blur, opacity, or black-and-white
+                style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)" }}
+                effect="blur"
+                visibleByDefault  // 👈 This makes it load immediately, no delay
               />
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2   bg-white/80 backdrop-blur-md w-50 md:w-60 md:text-sm flex items-center justify-center py-2 rounded-full shadow-md text-xs font-semibold text-gray-700">
                 100% Cotton • Free Shipping
