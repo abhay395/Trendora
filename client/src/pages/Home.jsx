@@ -1,14 +1,12 @@
-import { useEffect, useMemo } from 'react'
-import myImage from '../assets/HeroSectionImage.png';
 import { MoveRight } from 'lucide-react';
 import Card from '../componente/Card';
 import FeatureSection from '../componente/FeatureSection';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion'
-import { MoonLoader } from 'react-spinners'
 import { useProducts } from '../hooks/useProducts';
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import SkeletonCard from '../componente/SkeletonCard';
 
 
 function Home() {
@@ -19,14 +17,6 @@ function Home() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
 
-  // Loader for better UX
-  if (isLoading) {
-    return (
-      <div className='h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100'>
-        <MoonLoader color='#111' size={60} />
-      </div>
-    );
-  }
 
   return (
     <motion.div
@@ -69,10 +59,12 @@ function Home() {
             <div className="relative">
               <LazyLoadImage
                 alt="product"
-                className="w-[400px] sm:w-[480px] md:w-[550px] lg:w-[580px] xl:w-[600px] h-auto object-cover rounded-3xl shadow-2xl border-4 border-white"
-                style={{ boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}
                 src="https://res.cloudinary.com/dhcszkydc/image/upload/v1756402078/pbws8l78ssf0ldaa2z4c.png"
-                effect="blur"   // blur, opacity, or black-and-white
+                className="w-[400px] sm:w-[480px] md:w-[550px] lg:w-[580px] xl:w-[600px] h-auto object-cover rounded-3xl shadow-2xl border-4 border-white"
+                wrapperClassName="w-[400px] sm:w-[480px] md:w-[550px] lg:w-[580px] xl:w-[600px]"
+                style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)" }}
+                effect="blur"
+                visibleByDefault  // 👈 This makes it load immediately, no delay
               />
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2   bg-white/80 backdrop-blur-md w-50 md:w-60 md:text-sm flex items-center justify-center py-2 rounded-full shadow-md text-xs font-semibold text-gray-700">
                 100% Cotton • Free Shipping
@@ -94,10 +86,8 @@ function Home() {
         </div>
         <section className='grid grid-cols-1 px-5 md:px-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6'>
           {
-            products?.length === 0 ? (
-              <div className="col-span-full flex justify-center items-center py-10">
-                <span className="text-gray-400 text-lg">No products found.</span>
-              </div>
+            isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
             ) : (
               products?.slice(0, 10).map((item) => <Card product={item} key={item._id} />)
             )
@@ -117,12 +107,10 @@ function Home() {
         </div>
         <section className='grid grid-cols-1 px-5 md:px-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6'>
           {
-            products?.length === 0 ? (
-              <div className="col-span-full flex justify-center items-center py-10">
-                <span className="text-gray-400 text-lg">No best sellers found.</span>
-              </div>
+            isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
             ) : (
-              products?.slice(0, 5).map((item) => <Card product={item} key={item._id + '-best'} />)
+              products?.slice(0, 8).map((item) => <Card product={item} key={item._id + '-best'} />)
             )
           }
         </section>
