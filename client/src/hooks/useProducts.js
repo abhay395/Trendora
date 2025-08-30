@@ -5,16 +5,13 @@ import { fetchProductApi, fetchProductByIdApi, fetchProductFiltersApi, fetchProd
 export const useProducts = () =>
     useQuery({
         queryKey: ["products"],
-        queryFn: () => fetchProductApi({}).then(res => res.data.result.results),
+        queryFn: () => fetchProductApi().then(res => res.data.result.results),
     });
 export const useProductsFilterd = (filter) =>
     useQuery({
         queryKey: ["filteredProduct", filter],
         queryFn: () => fetchProductApi(filter).then(res => res.data.result.results),
     });
-
-
-
 export const useProductById = (id) =>
     useQuery({
         queryKey: ["product", id],
