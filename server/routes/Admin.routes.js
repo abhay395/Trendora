@@ -27,7 +27,7 @@ adminRoute.post('/product/create', upload.array('images', 5), asyncWrapper(admin
 adminRoute.post('/product/bulk-upload', uploadForCsv.single('file'), asyncWrapper(adminController.bulkUpload))
 adminRoute.get('/product/', asyncWrapper(adminController.getProducts))
 adminRoute.get('/product/:id', asyncWrapper(adminController.getProductById))
-adminRoute.patch('/product/update/:id', asyncWrapper(adminController.updateProductId))
+adminRoute.patch('/product/update/:id', upload.array("images"), asyncWrapper(adminController.updateProductId))
 adminRoute.delete('/product/:id', asyncWrapper(adminController.deleteProduct))
 adminRoute.delete('/product/soft-delete/:id', asyncWrapper(adminController.softDelteProduct))
 
