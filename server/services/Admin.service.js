@@ -320,10 +320,23 @@ export default {
             throw error
         }
     },
-    updateProductId: async (id, updateBody) => {
+    updateProductId: async (id, updateBody, files) => {
         try {
             if (!await Product.findById(id)) {
                 throw new ApiError(404, "Product not found", null)
+            }
+            // console.log(Object.entries(updateBody.recordOfId))
+            if (files) {
+                // console.log(updateBody.recordOfId)
+                await Promise.all(updateBody.recordOfId.map(async (item) => {
+                    try {
+                        let img = await uploadToCloudinary({ file: files[item.idx] })
+                        if (img) await Image.findByIdAndUpdate(item.oldId, { url: img?.secure_url })
+                    } catch (error) {
+                        throw error
+                    }
+                }))
+                delete updateBody.recordOfId
             }
             let result = await Product.findByIdAndUpdate(id, updateBody, { new: true }).populate('category').populate('images');
             return result

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi, getcategoryAdminApi, uploadBulkProductApi, softDeleteAdminProductApi, deleteAdminProductPermanently, getproductByIdAdminApi } from "../api/adminApi";
+import { getordersAdminApi, createproductAdminApi, getdashBoardStaticsAdminApi, getproductAdminApi, getcategoryAdminApi, uploadBulkProductApi, softDeleteAdminProductApi, deleteAdminProductPermanently, getproductByIdAdminApi, updateProductAdminApi } from "../api/adminApi";
 
 const useAdminStore = create((set, get) => ({
     isStaticsLoading: true,
@@ -172,6 +172,16 @@ const useAdminStore = create((set, get) => ({
                 }
             }))
             await deleteAdminProductPermanently(id);
+        } catch (error) {
+            const message = error?.data?.message || error?.message || "Something went wrong"
+            set({ error: message })
+            toast.error(message)
+        }
+    },
+    updateProduct: async (id, productData) => {
+        try {
+            let response = await updateProductAdminApi(id, productData)
+            console.log(response)
         } catch (error) {
             const message = error?.data?.message || error?.message || "Something went wrong"
             set({ error: message })

@@ -85,8 +85,8 @@ export default {
     },
     updateProductId: async (req, res) => {
         const { id } = req.params;
-        const { body } = req;
-        const result = await adminService.updateProductId(id, body);
+        const { body, files } = req;
+        const result = await adminService.updateProductId(id, body, files);
         sendSuccessMessage(res, 200, "Product updated successfully", result);
     },
     deleteProduct: async (req, res) => {

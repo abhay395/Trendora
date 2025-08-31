@@ -8,40 +8,60 @@ function EditProduct() {
   const { id } = useParams();
   const [previews, setPreviews] = useState([null, null, null, null]);
   const fetchProductsInAdminById = useAdminStore(s => s.fetchProductsInAdminById)
-  const { selecetedProduct, isProductLoading } = useAdminStore()
+  const { selecetedProduct, isProductLoading, updateProduct } = useAdminStore()
   const categories = useAdminStore(s => s?.categories);
-  const { register, handleSubmit, formState: { dirtyFields }, control, getValues, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, control, reset, trigger } = useForm({
     defaultValues: {
       title: "",
       category: "",
       gender: "",
       description: "",
       images: [null, null, null, null],
-      sizes: {}
+      sizes: []
     }
   })
   const onSubmit = (data) => {
-    const updatedFields = {};
-
-    console.log(dirtyFields)
-    // only take values from dirty fields
-    const values = getValues();
-    const changed = {};
-    console.log(values)
-    Object.keys(dirtyFields).forEach((key) => {
-      if (dirtyFields[key]) {
-        changed[key] = values[key];
+    // const updatedFields = {};
+    const changed = {}
+    Object.keys(data).forEach((key) => {
+      if (JSON.stringify(data[key]) !== JSON.stringify(selecetedProduct[key])) {
+        changed[key] = data[key];
       }
-       
     });
-
-    // console.log("Changed fields:", changed);
-    let replacedImage = []
-    updatedFields.images?.forEach((item, idx) => {
-      if (item[0] instanceof File && selecetedProduct.images[idx]?._id) {
-        replacedImage.push({ file: item[0], _id: selecetedProduct.images[idx]?._id })
+    let updatedImage = []
+    if (changed?.images) {
+      changed.images?.forEach((item, idx) => {
+        if (item[0] instanceof File && selecetedProduct.images[idx]?._id) {
+          updatedImage.push({ file: item[0], _id: selecetedProduct.images[idx]?._id })
+        }
+      })
+      changed.images = updatedImage
+    }
+    const form = new FormData()
+    for (let [key, value] of Object.entries(changed)) {
+      if (key != 'images' && key != 'sizes') {
+        form.append(key, value)
       }
-    })
+    }
+    console.log(changed)
+    // let recordOfid = []
+    if (changed.images) {
+      changed.images.forEach((img, idx) => {
+        form.append(`images`, img.file)
+        form.append(`recordOfId[${idx}][oldId]`,img._id)
+        form.append(`recordOfId[${idx}][idx]`,idx)
+      })
+      // changed.recordOfid = recordOfid
+    }
+    if (changed?.sizes) {
+      changed?.sizes.forEach((s, idx) => {
+        form.append(`sizes[${idx}][size]`, s.size);
+        form.append(`sizes[${idx}][quantity]`, s.quantity);
+        form.append(`sizes[${idx}][price]`, s.price);
+      });
+    }
+    console.log(changed)
+    if (Object.entries(changed).length > 0) updateProduct(selecetedProduct._id, form)
   }
   useEffect(() => {
     if (selecetedProduct) {
@@ -180,7 +200,7 @@ function EditProduct() {
               Upload up to 4 images (JPG, PNG, GIF) — Max 2MB each.
             </p>
           </div>
-          <SizeInput register={register} control={control} />
+          <SizeInput register={register} control={control} trigger={trigger} />
           {/* Submit */}
           <button
             type="submit"
