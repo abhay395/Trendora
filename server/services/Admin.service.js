@@ -326,7 +326,7 @@ export default {
                 throw new ApiError(404, "Product not found", null)
             }
             // console.log(Object.entries(updateBody.recordOfId))
-            if (files) {
+            if ( files&& files.length > 0) {
                 // console.log(updateBody.recordOfId)
                 await Promise.all(updateBody.recordOfId.map(async (item) => {
                     try {

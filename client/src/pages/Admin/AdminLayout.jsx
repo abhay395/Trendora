@@ -2,16 +2,9 @@ import React, { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import AdminNavbar from './componente/AdminNavbar'
 import AdminSidebar from './componente/AdminSideBar'
-import useAdminStore from '../../store/adminStore'
 import { Toaster } from 'react-hot-toast'
+import { useAdminCategories } from '../../hooks/useAdmin'
 function AdminLayout() {
-  const fetchStaticsInDashboard = useAdminStore((state) => state.fetchStaticsInDashboard);
-  const fetchCategoriesInAdmin = useAdminStore((state) => state.fetchCategoriesInAdmin)
-
-  useEffect(() => {
-    fetchCategoriesInAdmin()
-    fetchStaticsInDashboard(); // optional chaining prevents crash if undefined
-  }, [fetchStaticsInDashboard, fetchCategoriesInAdmin]);
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}

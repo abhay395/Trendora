@@ -1,22 +1,12 @@
-import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useAdminStore from "../../store/adminStore";
+import { useAdminProducts, useDeleteProductPermanently, useSoftDeleteProduct } from "../../hooks/useAdmin";
+import SkeletonCard from "../../componente/SkeletonCard";
 
 function AdminProduct() {
   const navigate = useNavigate();
-  const {
-    fetchProductsInAdmin,
-    productData,
-    isProductLoading,
-    softDeleteProduct,
-    deleteProductPermanently,
-  } = useAdminStore();
-
-  useEffect(() => {
-    fetchProductsInAdmin?.();
-  }, []);
-
-  if (isProductLoading) return <div className="text-center py-10">...Loading</div>;
+  const { data: productData, isLoading: isProductLoading } = useAdminProducts()
+  const { mutate: softDeleteProduct } = useSoftDeleteProduct()
+  const { mutate: deleteProductPermanently } = useDeleteProductPermanently()
 
   return (
     <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
@@ -33,7 +23,7 @@ function AdminProduct() {
 
       {/* Product Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
-        {productData?.product?.map((p) => (
+        {!isProductLoading ? productData?.results?.map((p) => (
           <div
             key={p._id}
             className="flex flex-col bg-gray-50 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group"
@@ -80,11 +70,10 @@ function AdminProduct() {
                   {p.gender}
                 </span>
                 <span
-                  className={`text-xs px-2 py-0.5 rounded font-medium ${
-                    p.isOutOfStock
-                      ? "bg-red-100 text-red-600"
-                      : "bg-green-100 text-green-600"
-                  }`}
+                  className={`text-xs px-2 py-0.5 rounded font-medium ${p.isOutOfStock
+                    ? "bg-red-100 text-red-600"
+                    : "bg-green-100 text-green-600"
+                    }`}
                 >
                   {p.isOutOfStock ? "Out of Stock" : "In Stock"}
                 </span>
@@ -109,11 +98,10 @@ function AdminProduct() {
                 {p.sizes.map((el) => (
                   <span
                     key={el.size}
-                    className={`text-xs px-2 py-0.5 rounded border ${
-                      el.quantity === 0
-                        ? "bg-gray-100 text-gray-400 border-gray-200"
-                        : "bg-blue-100 text-blue-700 border-blue-200"
-                    }`}
+                    className={`text-xs px-2 py-0.5 rounded border ${el.quantity === 0
+                      ? "bg-gray-100 text-gray-400 border-gray-200"
+                      : "bg-blue-100 text-blue-700 border-blue-200"
+                      }`}
                   >
                     {el.size}
                   </span>
@@ -143,11 +131,11 @@ function AdminProduct() {
               </div>
             </div>
           </div>
-        ))}
+        )) : [...new Array(4)].map((_, idx) => <SkeletonCard key={idx} />)}
       </div>
 
       {/* No products case */}
-      {productData?.product?.length === 0 && (
+      {productData?.results?.length === 0 && (
         <div className="text-center text-gray-500 py-10">
           No products found.
         </div>
