@@ -17,8 +17,8 @@ import {
   AlertTriangle,
   IndianRupee,
 } from "lucide-react";
-import useAdminStore from "../../store/adminStore";
 import { useNavigate } from "react-router-dom";
+import { useAdminOrders, useAdminStatics } from "../../hooks/useAdmin";
 
 const COLORS = ["#4F46E5", "#22C55E", "#F59E0B", "#EF4444"];
 
@@ -28,21 +28,11 @@ const lowStockProducts = [
 ];
 
 export default function Dashboard() {
-  const { statics, isStaticsLoading, recentOrder } = useAdminStore();
-  const orders = useMemo(() => {
-    return recentOrder?.map((item) => ({
-      id: item._id,
-      user: item.userId?.name || "Unknown",
-      total: item.totalPrice,
-      status: item.status,
-      city: item.address?.city || "-",
-      phone: item.address?.phone || "-",
-      date: item.createdAt,
-    })) || [];
-  }, [recentOrder]);
-  const recentOrderToShow = orders.slice(0, 5);
+  const { data: statics, isLoading: isStaticsLoading } = useAdminStatics()
+  const { data: orders, isLoading: isOrderLoading } = useAdminOrders()
+  const recentOrderToShow = orders?.results?.slice(0, 5);
   const navigate = useNavigate()
-  if (isStaticsLoading) return <div>...Loading</div>;
+  // if (isStaticsLoading) return <div>...Loading</div>;
 
   // Dashboard stats
   const stats = statics?.stats || {};
@@ -69,9 +59,9 @@ export default function Dashboard() {
             <div className="p-3 rounded-lg bg-gray-100">{card.icon}</div>
             <div>
               <h3 className="text-sm text-gray-500">{card.label}</h3>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
-                {card.value ?? 0}
-              </p>
+              <div className="text-2xl font-bold text-gray-900 mt-1">
+                {!isStaticsLoading ? card.value : <p className="w-44 h-[18px] md:max-w-md bg-gray-200 shadow animate-pulse"></p>}
+              </div>
             </div>
           </div>
         ))}
@@ -179,31 +169,60 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {recentOrderToShow.map((order) => (
-                <tr
-                  key={order.id}
-                  className="border-t hover:bg-gray-50 transition"
-                >
-                  <td className="px-6 py-4">{String(order.id).slice(0, 7)}</td>
-                  <td className="px-6 py-4">{order.user}</td>
-                  <td className="px-6 py-4">{order.phone}</td>
-                  <td className="px-6 py-4">{order.city}</td>
-                  <td className="px-6 py-4">₹{order.total}</td>
-                  <td
-                    className={`px-6 py-4 font-medium ${order.status === "Delivered"
-                      ? "text-green-500"
-                      : order.status === "Shipped"
-                        ? "text-blue-500"
-                        : "text-yellow-500"
-                      }`}
+              {
+                !isStaticsLoading ? recentOrderToShow?.map((order) => (
+                  <tr
+                    key={order.id}
+                    className="border-t hover:bg-gray-50 transition"
                   >
-                    {order.status}
-                  </td>
-                  <td className="px-6 py-4">
-                    {new Date(order.date).toLocaleTimeString()}
-                  </td>
-                </tr>
-              ))}
+                    <td className="px-6 py-4">{String(order._id).slice(0, 7)}</td>
+                    <td className="px-6 py-4">{order.address.name}</td>
+                    <td className="px-6 py-4">{order.address.phone}</td>
+                    <td className="px-6 py-4">{order.address.city}</td>
+                    <td className="px-6 py-4">₹{order.totalPrice}</td>
+                    <td
+                      className={`px-6 py-4 font-medium ${order.status === "Delivered"
+                        ? "text-green-500"
+                        : order.status === "Shipped"
+                          ? "text-blue-500"
+                          : "text-yellow-500"
+                        }`}
+                    >
+                      {order.status}
+                    </td>
+                    <td className="px-6 py-4">
+                      {new Date(order.estimateDeliveryDate).toLocaleDateString()}
+                    </td>
+                  </tr>
+                )) : [...new Array(5)].map((_, idx) => {
+                  return <tr
+                    key={idx}
+                    className="border-t hover:bg-gray-50 transition"
+                  >
+                    <td className="px-2 py-2">
+                      <div className="w-30 h-[18px]  bg-gray-200 shadow animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 ">
+                      <div className="w-30 h-[18px]  bg-gray-200 shadow animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 ">
+                      <div className="w-30 h-[18px]  bg-gray-200 shadow animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 ">
+                      <div className="w-30 h-[18px]  bg-gray-200 shadow animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 ">
+                      <div className="w-30 h-[18px]  bg-gray-200 shadow animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 ">
+                      <div className="w-30 h-[18px]  bg-gray-200 shadow animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 ">
+                      <div className="w-30 h-[18px]  bg-gray-200 shadow animate-pulse"></div>
+                    </td>
+                  </tr>
+                })
+              }
             </tbody>
           </table>
         </div>

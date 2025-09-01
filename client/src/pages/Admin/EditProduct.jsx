@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import useAdminStore from '../../store/adminStore';
 import { useForm, Controller } from 'react-hook-form';
 import { FiUploadCloud } from "react-icons/fi";
 import SizeInput from "../../componente/SizeInput";
+import { useAdminCategories, useAdminProductById, useUpdateProduct } from '../../hooks/useAdmin';
 function EditProduct() {
   const { id } = useParams();
   const [previews, setPreviews] = useState([null, null, null, null]);
-  const fetchProductsInAdminById = useAdminStore(s => s.fetchProductsInAdminById)
-  const { selecetedProduct, isProductLoading, updateProduct } = useAdminStore()
-  const categories = useAdminStore(s => s?.categories);
+  const { data: categories } = useAdminCategories()
+  const { mutate: updateProduct, status } = useUpdateProduct(id)
+  const { data: product, isLoading } = useAdminProductById(id);
   const { register, handleSubmit, formState: { errors }, control, reset, trigger } = useForm({
     defaultValues: {
       title: "",
@@ -24,15 +24,15 @@ function EditProduct() {
     // const updatedFields = {};
     const changed = {}
     Object.keys(data).forEach((key) => {
-      if (JSON.stringify(data[key]) !== JSON.stringify(selecetedProduct[key])) {
+      if (JSON.stringify(data[key]) !== JSON.stringify(product[key])) {
         changed[key] = data[key];
       }
     });
     let updatedImage = []
     if (changed?.images) {
       changed.images?.forEach((item, idx) => {
-        if (item[0] instanceof File && selecetedProduct.images[idx]?._id) {
-          updatedImage.push({ file: item[0], _id: selecetedProduct.images[idx]?._id })
+        if (item[0] instanceof File && product.images[idx]?._id) {
+          updatedImage.push({ file: item[0], _id: product.images[idx]?._id })
         }
       })
       changed.images = updatedImage
@@ -43,15 +43,12 @@ function EditProduct() {
         form.append(key, value)
       }
     }
-    console.log(changed)
-    // let recordOfid = []
     if (changed.images) {
       changed.images.forEach((img, idx) => {
         form.append(`images`, img.file)
-        form.append(`recordOfId[${idx}][oldId]`,img._id)
-        form.append(`recordOfId[${idx}][idx]`,idx)
+        form.append(`recordOfId[${idx}][oldId]`, img._id)
+        form.append(`recordOfId[${idx}][idx]`, idx)
       })
-      // changed.recordOfid = recordOfid
     }
     if (changed?.sizes) {
       changed?.sizes.forEach((s, idx) => {
@@ -60,19 +57,15 @@ function EditProduct() {
         form.append(`sizes[${idx}][price]`, s.price);
       });
     }
-    console.log(changed)
-    if (Object.entries(changed).length > 0) updateProduct(selecetedProduct._id, form)
+    if (Object.entries(changed).length > 0) updateProduct(form)
   }
   useEffect(() => {
-    if (selecetedProduct) {
-      setPreviews(selecetedProduct.images.map(img => img.url))
-      reset(selecetedProduct)
+    if (product) {
+      setPreviews(product.images.map(img => img.url))
+      reset(product)
     }
-  }, [selecetedProduct])
-  useEffect(() => {
-    fetchProductsInAdminById(id)
-  }, [id])
-  if (!isProductLoading) return (
+  }, [product])
+  if (!isLoading) return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center py-10">
       <div className="w-full max-w-3xl bg-white/90 shadow-xl rounded-3xl p-10 border border-gray-100">
         <form
@@ -90,6 +83,7 @@ function EditProduct() {
                 placeholder="e.g. Classic White Shirt"
                 className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                 {...register("title", { required: true })}
+                disabled={status == "pending"}
               />
             </div>
             <div>
@@ -100,9 +94,10 @@ function EditProduct() {
                 name="category"
                 className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                 {...register("category", { required: true })}
+                disabled={status == "pending"}
               >
                 <option value="">Select category</option>
-                {categories?.map((op) => <option key={op._id} value={op._id} className="outline-none">{op.name}</option>)}
+                {categories?.results?.map((op) => <option key={op._id} value={op._id} className="outline-none">{op.name}</option>)}
               </select>
             </div>
           </div>
@@ -117,6 +112,7 @@ function EditProduct() {
                 name="gender"
                 className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                 {...register("gender", { required: true })}
+                disabled={status == "pending"}
               >
                 <option value="">Select gender</option>
                 <option value="Men">Men</option>
@@ -140,6 +136,7 @@ function EditProduct() {
               rows="4"
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
               required
+              disabled={status == "pending"}
             />
           </div>
 
@@ -149,7 +146,7 @@ function EditProduct() {
               Product Images <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-              {selecetedProduct?.images?.map((_, idx) => (
+              {product?.images?.map((_, idx) => (
                 <Controller
                   key={idx}
                   control={control}
@@ -190,6 +187,7 @@ function EditProduct() {
                             field.onChange(e.target.files);
                           }
                         }}
+                        disabled={status == "pending"}
                       />
                     </label>
                   )}
@@ -200,13 +198,13 @@ function EditProduct() {
               Upload up to 4 images (JPG, PNG, GIF) — Max 2MB each.
             </p>
           </div>
-          <SizeInput register={register} control={control} trigger={trigger} />
+          <SizeInput register={register} control={control} trigger={trigger} disabled={status == "pending"} />
           {/* Submit */}
           <button
             type="submit"
             className="w-full cursor-pointer bg-gray-900 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-700 transition"
           >
-            🚀 Update Product
+            {!(status == "pending") ? '🚀 Update Product' : "...Loading"}
           </button>
         </form>
       </div>

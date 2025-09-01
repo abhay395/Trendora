@@ -2,7 +2,7 @@ import React from "react";
 import { useFieldArray } from "react-hook-form";
 import { FiTrash2, FiPlus } from "react-icons/fi";
 
-function SizeInput({ control, register, trigger }) {
+function SizeInput({ control, register, trigger, disabled }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "sizes",
@@ -39,6 +39,7 @@ function SizeInput({ control, register, trigger }) {
                   placeholder="e.g. M, L, XL"
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition"
                   {...register(`sizes.${index}.size`, { required: true })}
+                  disabled={disabled}
                 />
               </div>
 
@@ -51,6 +52,7 @@ function SizeInput({ control, register, trigger }) {
                   min="0"
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28"
                   {...register(`sizes.${index}.price`, { required: true })}
+                  disabled={disabled}
                 />
               </div>
 
@@ -63,6 +65,7 @@ function SizeInput({ control, register, trigger }) {
                   min="0"
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28"
                   {...register(`sizes.${index}.quantity`, { required: true })}
+                  disabled={disabled}
                 />
               </div>
             </div>
@@ -74,6 +77,7 @@ function SizeInput({ control, register, trigger }) {
                 remove(index);
                 trigger("sizes"); // ✅ refresh dirtyFields after removing
               }}
+              disabled={disabled}
               className="absolute top-2 right-2 md:static md:ml-2 text-red-500 hover:bg-red-100 hover:text-red-700 p-2 rounded-lg transition flex items-center justify-center"
               title="Remove size"
             >

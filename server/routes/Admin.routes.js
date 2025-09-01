@@ -6,7 +6,7 @@ import uploadForCsv from '../middleware/disk.multer.js'
 let adminRoute = express.Router();
 
 
-adminRoute.get('/dashboard', asyncWrapper(adminController.getDashBoard));
+adminRoute.get('/dashboard-statics', asyncWrapper(adminController.getDashBoard));
 //*--------------------------------------------------------------------------USER API---------------------------------------------------------------------------\\
 
 adminRoute.get('/user/', asyncWrapper(adminController.getUser))

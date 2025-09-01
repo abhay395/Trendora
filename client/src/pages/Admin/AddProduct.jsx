@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
-import useAdminStore from "../../store/adminStore";
 import { Controller, useForm } from 'react-hook-form'
 import SizeInput from "../../componente/SizeInput";
+import { useAdminCategories, useCreateProduct, useUploadBulkProduct } from "../../hooks/useAdmin";
 
 function AddProduct() {
   const [previews, setPreviews] = useState([null, null, null, null]);
   const [mode, setMode] = useState("manual"); // 👈 form or csv
-  const categories = useAdminStore(s => s?.categories);
-  const bulkProductUpload = useAdminStore((state) => state?.bulkProductUpload)
-  const AddProductInAdmin = useAdminStore((state) => state?.AddProductInAdmin)
+  const { data: categories } = useAdminCategories()
+
+  const { mutate: bulkProductUpload, status: statusForBulkUpload } = useUploadBulkProduct()
+  const { mutate: AddProductInAdmin, status: statusForSinglUpload } = useCreateProduct()
   const { register, handleSubmit, formState: { errors }, control } = useForm()
 
   const onSubmit = (data) => {
@@ -36,7 +37,7 @@ function AddProduct() {
     const form = new FormData();
     console.log(data)
     form.append('file', data.csv[0])
-    await bulkProductUpload?.(form)
+    bulkProductUpload(form)
   }
   // 🧹 Cleanup URLs when component unmounts
   useEffect(() => {
@@ -82,6 +83,7 @@ function AddProduct() {
                   placeholder="e.g. Classic White Shirt"
                   className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                   {...register("title", { required: true })}
+                  disabled={statusForSinglUpload == 'pending'}
                 />
               </div>
               <div>
@@ -92,9 +94,10 @@ function AddProduct() {
                   name="category"
                   className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                   {...register("category", { required: true })}
+                  disabled={statusForSinglUpload == 'pending'}
                 >
                   <option value="">Select category</option>
-                  {categories?.map((op) => <option key={op._id} value={op._id} className="outline-none">{op.name}</option>)}
+                  {categories?.results?.map((op) => <option key={op._id} value={op._id} className="outline-none">{op.name}</option>)}
                 </select>
               </div>
             </div>
@@ -109,6 +112,7 @@ function AddProduct() {
                   name="gender"
                   className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
                   {...register("gender", { required: true })}
+                  disabled={statusForSinglUpload == 'pending'}
                 >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
@@ -129,7 +133,7 @@ function AddProduct() {
                 {...register("description", { required: true })}
                 rows="4"
                 className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                required
+                disabled={statusForSinglUpload == 'pending'}
               />
             </div>
 
@@ -139,7 +143,7 @@ function AddProduct() {
                 Product Images <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                {[0].map((idx) => (
+                {[...new Array(4)].map((_, idx) => (
                   <Controller
                     key={idx}
                     control={control}
@@ -181,6 +185,7 @@ function AddProduct() {
                               field.onChange(e.target.files);
                             }
                           }}
+                          disabled={statusForSinglUpload == 'pending'}
                         />
                       </label>
                     )}
@@ -191,7 +196,7 @@ function AddProduct() {
                 Upload up to 4 images (JPG, PNG, GIF) — Max 2MB each.
               </p>
             </div>
-            <SizeInput register={register} control={control} />
+            <SizeInput register={register} control={control} disabled={statusForSinglUpload == 'pending'} />
             {/* Submit */}
             <button
               type="submit"
@@ -239,6 +244,7 @@ function AddProduct() {
                               const file = e.target.files?.[0];
                               if (file) field.onChange(e.target.files);
                             }}
+                            disabled={statusForSinglUpload == 'pending'}
                           />
                         </label>
                         <span className="mt-2 text-sm text-gray-700">{fileName}</span>
@@ -250,6 +256,7 @@ function AddProduct() {
                 {/* Submit Button */}
                 <button
                   type="submit"
+                  disabled={statusForSinglUpload == 'pending'}
                   className="mt-2 cursor-pointer w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-xl shadow-md transition duration-200"
                 >
                   Upload CSV
