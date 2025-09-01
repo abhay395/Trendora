@@ -122,6 +122,7 @@ const ProductDetail = () => {
                                     className={`w-full object-cover object-top  cursor-pointer`}
                                     wrapperClassName=""
                                     onClick={() => setSelectedImage(index)}
+                                    effect="blur"
                                 />
                             </div>
                         })}
