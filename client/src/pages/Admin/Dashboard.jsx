@@ -68,9 +68,9 @@ export default function Dashboard() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[300px]">
         {/* Sales Overview */}
-        <div className="bg-white p-5 rounded-xl shadow border border-gray-100">
+        {!isStaticsLoading ? (<div className="bg-white p-5 rounded-xl shadow border border-gray-100">
           <h3 className="text-lg font-semibold mb-4">Sales Overview</h3>
           <ResponsiveContainer width="100%" aspect={2}>
             <LineChart data={salesData}>
@@ -86,10 +86,10 @@ export default function Dashboard() {
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </div>) : <div className="w-full h-full  bg-gray-100 shadow animate-pulse"></div>}
 
         {/* Top Categories */}
-        <div className="bg-white p-5 rounded-xl shadow border border-gray-100">
+        {!isStaticsLoading ? <div className="bg-white p-5 rounded-xl shadow border border-gray-100">
           <h3 className="text-lg font-semibold">Top Categories</h3>
           <ResponsiveContainer width="100%" height={222}>
             <PieChart>
@@ -111,10 +111,10 @@ export default function Dashboard() {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-        </div>
+        </div> : <div className="w-full h-full  bg-gray-100 shadow animate-pulse"></div>}
 
         {/* Low Stock Alerts */}
-        <div className="bg-white p-5 rounded-xl shadow border border-gray-100">
+        {!isStaticsLoading ? <div className="bg-white p-5 rounded-xl shadow border border-gray-100">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <AlertTriangle className="text-red-500" /> Low Stock Alerts
           </h3>
@@ -131,7 +131,7 @@ export default function Dashboard() {
               </li>
             ))}
           </ul>
-        </div>
+        </div> : <div className="w-full h-full  bg-gray-100 shadow animate-pulse"></div>}
       </div>
 
       {/* Recent Orders Table */}
