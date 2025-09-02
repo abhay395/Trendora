@@ -74,25 +74,43 @@ export const useUploadBulkProduct = () => {
 };
 export const useSoftDeleteProduct = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: softDeleteAdminProductApi,
+
     onMutate: async (productId) => {
+      // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ["admin", "products"] });
-      const previousProduct = queryClient.getQueriesData(["admin", "products"]);
-      queryClient.setQueriesData(["admin", "products"], (oldProduct) => {
-        oldProduct.results.map((p) => {
-          if (p._id != productId) return { ...p, isDeleted: true };
-          else return p;
-        });
+
+      // Snapshot the previous data
+      const previousProducts = queryClient.getQueryData(["admin", "products"]);
+
+      // Optimistically update
+      queryClient.setQueryData(["admin", "products"], (oldData) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          results: oldData.results.map((p) =>
+            p._id === productId ? { ...p, isDeleted: true } : p
+          ),
+        };
       });
-      return { previousProduct };
+
+      return { previousProducts };
     },
-    onError: (err, id, context) => {
-      queryClient.setQueriesData(
-        ["admin", "products"],
-        context.previousProduct
-      );
+
+    // Rollback if API fails
+    onError: (err, productId, context) => {
+      if (context?.previousProducts) {
+        queryClient.setQueryData(
+          ["admin", "products"],
+          context.previousProducts
+        );
+      }
     },
+
+    // Always refetch after mutation
     onSettled: () => {
       queryClient.invalidateQueries(["admin", "products"]);
     },
@@ -105,9 +123,13 @@ export const useDeleteProductPermanently = () => {
     mutationFn: deleteAdminProductPermanently,
     onMutate: async (productId) => {
       await queryClient.cancelQueries({ queryKey: ["admin", "products"] });
-      const previousProduct = queryClient.getQueriesData(["admin", "products"]);
-      queryClient.setQueriesData(["admin", "products"], (oldProduct) => {
-        oldProduct.results.filter((p) => p._id != productId);
+      const previousProduct = queryClient.getQueryData(["admin", "products"]);
+      queryClient.setQueryData(["admin", "products"], (oldData) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          results: oldData.results.filter((item) => item._id != productId),
+        };
       });
       return { previousProduct };
     },
