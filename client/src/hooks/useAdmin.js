@@ -76,8 +76,24 @@ export const useSoftDeleteProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: softDeleteAdminProductApi,
-    onSuccess: () => {
-      toast.success("Product Soft deleted");
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: ["admin", "products"] });
+      const previousProduct = queryClient.getQueriesData(["admin", "products"]);
+      queryClient.setQueriesData(["admin", "products"], (oldProduct) => {
+        oldProduct.results.map((p) => {
+          if (p._id != productId) return { ...p, isDeleted: true };
+          else return p;
+        });
+      });
+      return { previousProduct };
+    },
+    onError: (err, id, context) => {
+      queryClient.setQueriesData(
+        ["admin", "products"],
+        context.previousProduct
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(["admin", "products"]);
     },
   });
@@ -87,8 +103,21 @@ export const useDeleteProductPermanently = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteAdminProductPermanently,
-    onSuccess: () => {
-      toast.success("Product deleted");
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: ["admin", "products"] });
+      const previousProduct = queryClient.getQueriesData(["admin", "products"]);
+      queryClient.setQueriesData(["admin", "products"], (oldProduct) => {
+        oldProduct.results.filter((p) => p._id != productId);
+      });
+      return { previousProduct };
+    },
+    onError: (err, id, context) => {
+      queryClient.setQueriesData(
+        ["admin", "products"],
+        context.previousProduct
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(["admin", "products"]);
     },
   });
