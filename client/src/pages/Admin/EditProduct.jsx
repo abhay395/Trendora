@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { FiUploadCloud } from "react-icons/fi";
 import SizeInput from "../../componente/SizeInput";
 import { useAdminCategories, useAdminProductById, useUpdateProduct } from '../../hooks/useAdmin';
@@ -17,9 +17,11 @@ function EditProduct() {
       gender: "",
       description: "",
       images: [null, null, null, null],
-      sizes: []
+      sizes: [{ size: "", price: "", quantity: "" }]
     }
   })
+  const { fields, append, remove } = useFieldArray({ control, name: "sizes" });
+
   const onSubmit = (data) => {
     // const updatedFields = {};
     const changed = {}
@@ -81,7 +83,9 @@ function EditProduct() {
                 type="text"
                 name="name"
                 placeholder="e.g. Classic White Shirt"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+                className="w-full border-2 rounded-xl px-4 py-2 transition 
+                    disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
+                    border-gray-200 focus:ring-2 focus:ring-gray-400 focus:outline-none"
                 {...register("title", { required: true })}
                 disabled={status == "pending"}
               />
@@ -92,7 +96,7 @@ function EditProduct() {
               </label>
               <select
                 name="category"
-                className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+                className="w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:ring-2 focus:ring-gray-400 focus:outline-none"
                 {...register("category", { required: true })}
                 disabled={status == "pending"}
               >
@@ -110,7 +114,7 @@ function EditProduct() {
               </label>
               <select
                 name="gender"
-                className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+                className="w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:ring-2 focus:ring-gray-400 focus:outline-none"
                 {...register("gender", { required: true })}
                 disabled={status == "pending"}
               >
@@ -198,7 +202,7 @@ function EditProduct() {
               Upload up to 4 images (JPG, PNG, GIF) — Max 2MB each.
             </p>
           </div>
-          <SizeInput register={register} control={control} trigger={trigger} disabled={status == "pending"} />
+          <SizeInput register={register} fields={fields} append={append} remove={remove} control={control} trigger={trigger} disabled={status == "pending"} />
           {/* Submit */}
           <button
             type="submit"

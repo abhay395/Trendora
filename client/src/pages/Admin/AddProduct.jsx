@@ -111,7 +111,7 @@ function AddProduct() {
                   placeholder="e.g. Classic White Shirt"
                   className='w-full border-2 rounded-xl px-4 py-2 transition 
                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
-                    border-gray-200 focus:ring-2 focus:ring-gray-400 '
+                    border-gray-200   '
                   {...register("title", { required: "title is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 />
@@ -127,7 +127,7 @@ function AddProduct() {
                 </label>
                 <select
                   name="category"
-                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:ring-2 focus:ring-gray-400'
+                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200  '
                   {...register("category", { required: "category is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 >
@@ -150,7 +150,7 @@ function AddProduct() {
                 </label>
                 <select
                   name="gender"
-                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:ring-2 focus:ring-gray-400'
+                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200  '
                   {...register("gender", { required: "gender is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 >
@@ -177,10 +177,11 @@ function AddProduct() {
                 placeholder="Describe the product..."
                 {...register("description", { required: "description is required" })}
                 rows="4"
-                className={`w-full border-2 rounded-xl px-4 py-2 transition 
-                        ${statusForSinglUpload === "pending"
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "border-gray-200 focus:ring-2 focus:ring-gray-400"}`}
+                className="w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:outline-none"
+                // className={`w-full border-2 rounded-xl px-4 py-2 transition 
+                //         ${statusForSinglUpload === "pending"
+                //     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                //     : "border-gray-200  "}`}
                 disabled={statusForSinglUpload == 'pending'}
               />
               {errors?.description && (
