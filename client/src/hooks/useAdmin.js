@@ -58,7 +58,7 @@ export const useUpdateProduct = (id) => {
     mutationFn: (data) => updateProductAdminApi(id, data),
     onSuccess: () => {
       toast.success("Product updated successfully");
-      queryClient.invalidateQueries(["admin", "product", id]);
+      queryClient.invalidateQueries(["admin", "products"]);
     },
   });
 };
@@ -145,9 +145,23 @@ export const useDeleteProductPermanently = () => {
   });
 };
 
-export const useAdminCategories = () => {
+export const useAdminCategories = (product) => {
   return useQuery({
     queryKey: ["admin", "categories"],
     queryFn: getcategoryAdminApi,
+    staleTime: 5 * 60 * 1000, // 5 min fresh
+    cacheTime: 30 * 60 * 1000, // 30 min memory cache
+    initialData: () => {
+      // If we are editing a product and it has category
+      if (product?.category) {
+        return [
+          {
+            _id: product.category._id,
+            name: product.category.name,
+          },
+        ];
+      }
+      return undefined;
+    },
   });
 };

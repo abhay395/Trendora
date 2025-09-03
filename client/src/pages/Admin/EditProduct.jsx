@@ -7,9 +7,9 @@ import { useAdminCategories, useAdminProductById, useUpdateProduct } from '../..
 function EditProduct() {
   const { id } = useParams();
   const [previews, setPreviews] = useState([null, null, null, null]);
-  const { data: categories } = useAdminCategories()
   const { mutate: updateProduct, status } = useUpdateProduct(id)
   const { data: product, isLoading } = useAdminProductById(id);
+  const { data: categories } = useAdminCategories(product)
   const { register, handleSubmit, formState: { errors }, control, reset, trigger } = useForm({
     defaultValues: {
       title: "",
@@ -186,7 +186,6 @@ function EditProduct() {
                               newPreviews[idx] = objectUrl;
                               return newPreviews;
                             });
-
                             // ✅ update react-hook-form
                             field.onChange(e.target.files);
                           }
