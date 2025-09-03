@@ -1,13 +1,7 @@
-import React from "react";
-import { useFieldArray } from "react-hook-form";
+import toast from "react-hot-toast";
 import { FiTrash2, FiPlus } from "react-icons/fi";
 
-function SizeInput({ control, register, trigger, disabled }) {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "sizes",
-  });
-
+function SizeInput({ register, disabled, fields, append, remove }) {
   return (
     <div className="w-full">
       <label className="block text-gray-800 font-bold mb-4 text-xl tracking-tight">
@@ -37,8 +31,9 @@ function SizeInput({ control, register, trigger, disabled }) {
                 <input
                   type="text"
                   placeholder="e.g. M, L, XL"
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition"
-                  {...register(`sizes.${index}.size`, { required: true })}
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition 
+                    disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  {...register(`sizes.${index}.size`, { required: "size is required" })}
                   disabled={disabled}
                 />
               </div>
@@ -50,10 +45,12 @@ function SizeInput({ control, register, trigger, disabled }) {
                   type="number"
                   placeholder="Price"
                   min="0"
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28"
-                  {...register(`sizes.${index}.price`, { required: true })}
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28
+                    disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  {...register(`sizes.${index}.price`, { required: "Price is required" })}
                   disabled={disabled}
                 />
+
               </div>
 
               {/* Quantity */}
@@ -63,10 +60,12 @@ function SizeInput({ control, register, trigger, disabled }) {
                   type="number"
                   placeholder="Quantity"
                   min="0"
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28"
-                  {...register(`sizes.${index}.quantity`, { required: true })}
+                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none bg-white transition w-28
+                    disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  {...register(`sizes.${index}.quantity`, { required: "quantity is required" })}
                   disabled={disabled}
                 />
+
               </div>
             </div>
 
@@ -74,11 +73,15 @@ function SizeInput({ control, register, trigger, disabled }) {
             <button
               type="button"
               onClick={() => {
+                if (index == 0) {
+                  toast.error("At least one size is required");
+                  return;
+                }
                 remove(index);
-                trigger("sizes"); // ✅ refresh dirtyFields after removing
               }}
               disabled={disabled}
-              className="absolute top-2 right-2 md:static md:ml-2 text-red-500 hover:bg-red-100 hover:text-red-700 p-2 rounded-lg transition flex items-center justify-center"
+              className="absolute top-2 right-2 md:static md:ml-2 text-red-500 hover:bg-red-100 hover:text-red-700 p-2 rounded-lg transition flex items-center justify-center
+                disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed"
               title="Remove size"
             >
               <FiTrash2 className="w-5 h-5" />
@@ -90,7 +93,9 @@ function SizeInput({ control, register, trigger, disabled }) {
         <button
           type="button"
           onClick={() => append({ size: "", price: "", quantity: "" })}
-          className="w-full cursor-pointer md:w-auto mt-2 px-5 py-2 bg-black text-white font-semibold rounded-xl border border-black flex items-center justify-center gap-2 transition hover:bg-gray-900 hover:scale-[1.03] shadow"
+          disabled={disabled}
+          className="w-full md:w-auto mt-2 px-5 py-2 bg-black text-white font-semibold rounded-xl border border-black flex items-center justify-center gap-2 transition hover:bg-gray-900 hover:scale-[1.03] shadow
+            disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-600 disabled:hover:scale-100 disabled:cursor-not-allowed"
         >
           <FiPlus className="w-5 h-5" /> Add Size
         </button>

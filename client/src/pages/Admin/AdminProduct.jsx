@@ -57,7 +57,7 @@ function AdminProduct() {
                   {p.title}
                 </h3>
                 <span className="text-gray-900 font-bold text-base">
-                  ₹{p.sizes[0].price}
+                  ₹{p?.sizes[0]?.price}
                 </span>
               </div>
 

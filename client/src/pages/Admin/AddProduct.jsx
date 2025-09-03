@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import SizeInput from "../../componente/SizeInput";
 import { useAdminCategories, useCreateProduct, useUploadBulkProduct } from "../../hooks/useAdmin";
 
@@ -10,10 +10,22 @@ function AddProduct() {
   const { data: categories } = useAdminCategories()
 
   const { mutate: bulkProductUpload, status: statusForBulkUpload } = useUploadBulkProduct()
-  const { mutate: AddProductInAdmin, status: statusForSinglUpload } = useCreateProduct()
-  const { register, handleSubmit, formState: { errors }, control } = useForm()
+  const { mutate: AddProductInAdmin, status: statusForSinglUpload, isSuccess } = useCreateProduct()
+  const { register, handleSubmit, formState: { errors }, control, reset, setError
+  } = useForm({
+    defaultValues: {
+      title: "",
+      sizes: [{ size: "", price: "", quantity: "" }],
+      category: "",
+      gender: "",
+      description: ""
+    }
+  })
 
-  const onSubmit = (data) => {
+  const { fields, append, remove } = useFieldArray({ control, name: "sizes" });
+
+
+  const onSubmit = async (data) => {
     const form = new FormData();
     data.images.forEach((fileList, idx) => {
       if (fileList?.[0]) {
@@ -39,12 +51,28 @@ function AddProduct() {
     form.append('file', data.csv[0])
     bulkProductUpload(form)
   }
+
   // 🧹 Cleanup URLs when component unmounts
   useEffect(() => {
     return () => {
       previews.forEach((url) => url && URL.revokeObjectURL(url));
     };
   }, [previews]);
+  const [formKey, setFormKey] = useState(0);
+
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset();
+      setPreviews([null, null, null, null]);
+      // setFormKey((prev) => prev + 1); // force rerender to clear file inputs
+    }
+  }, [isSuccess, reset]);
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center py-10">
       <div className="w-full max-w-3xl bg-white/90 shadow-xl rounded-3xl p-10 border border-gray-100">
@@ -70,21 +98,28 @@ function AddProduct() {
           Add New Product
         </h2>
         {
-          mode == 'manual' ? (<form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          mode == 'manual' ? (<form onSubmit={handleSubmit(onSubmit)} key={formKey} className="space-y-8">
             {/* Product Name & Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-gray-700 font-semibold mb-2">
-                  Product Name <span className="text-red-500">*</span>
+                  Product Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  name="name"
+                  name="title"
                   placeholder="e.g. Classic White Shirt"
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                  {...register("title", { required: true })}
+                  className='w-full border-2 rounded-xl px-4 py-2 transition 
+                    disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
+                    border-gray-200 focus:ring-2 focus:ring-gray-400 '
+                  {...register("title", { required: "title is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 />
+                {errors.title && (
+                  <span className="text-red-500 text-sm">
+                    {errors.title.message}
+                  </span>
+                )}
               </div>
               <div>
                 <label className="block text-gray-700 font-semibold mb-2">
@@ -92,13 +127,18 @@ function AddProduct() {
                 </label>
                 <select
                   name="category"
-                  className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                  {...register("category", { required: true })}
+                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:ring-2 focus:ring-gray-400'
+                  {...register("category", { required: "category is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 >
                   <option value="">Select category</option>
                   {categories?.results?.map((op) => <option key={op._id} value={op._id} className="outline-none">{op.name}</option>)}
                 </select>
+                {errors?.category && (
+                  <span className="text-red-500 text-sm">
+                    {errors?.category.message}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -110,8 +150,8 @@ function AddProduct() {
                 </label>
                 <select
                   name="gender"
-                  className="w-full border-2 cursor-pointer border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
-                  {...register("gender", { required: true })}
+                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:ring-2 focus:ring-gray-400'
+                  {...register("gender", { required: "gender is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 >
                   <option value="">Select gender</option>
@@ -119,6 +159,11 @@ function AddProduct() {
                   <option value="female">Female</option>
                   <option value="unisex">Unisex</option>
                 </select>
+                {errors?.gender && (
+                  <span className="text-red-500 text-sm">
+                    {errors?.gender.message}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -130,11 +175,19 @@ function AddProduct() {
               <textarea
                 name="description"
                 placeholder="Describe the product..."
-                {...register("description", { required: true })}
+                {...register("description", { required: "description is required" })}
                 rows="4"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-gray-400 focus:outline-none transition"
+                className={`w-full border-2 rounded-xl px-4 py-2 transition 
+                        ${statusForSinglUpload === "pending"
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "border-gray-200 focus:ring-2 focus:ring-gray-400"}`}
                 disabled={statusForSinglUpload == 'pending'}
               />
+              {errors?.description && (
+                <span className="text-red-500 text-sm">
+                  {errors?.description.message}
+                </span>
+              )}
             </div>
 
             {/* Image Upload with Icon */}
@@ -143,14 +196,16 @@ function AddProduct() {
                 Product Images <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                {[...new Array(4)].map((_, idx) => (
+                {[...new Array(2)].map((_, idx) => (
                   <Controller
                     key={idx}
                     control={control}
                     name={`images.${idx}`}
                     rules={{ required: idx === 0 }}
-                    render={({ field }) => (
-                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-gray-500 transition relative group">
+                    render={({ field, fieldState: { error } }) => (
+                      <label
+                        className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-4 border-gray-400 cursor-pointer transition relative group
+                        ${statusForSinglUpload === "pending" && "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"} hover:border-gray-600`}>
                         {previews[idx] ? (
                           <img
                             src={previews[idx]}
@@ -169,7 +224,6 @@ function AddProduct() {
                           type="file"
                           accept="image/*"
                           className="hidden"
-                          required={idx === 0}
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
@@ -187,6 +241,11 @@ function AddProduct() {
                           }}
                           disabled={statusForSinglUpload == 'pending'}
                         />
+                        {error && (
+                          <span className="text-red-500 text-xs absolute bottom-0">
+                            {error.type === "required" ? "This image is required" : "Invalid file"}
+                          </span>
+                        )}
                       </label>
                     )}
                   />
@@ -196,14 +255,18 @@ function AddProduct() {
                 Upload up to 4 images (JPG, PNG, GIF) — Max 2MB each.
               </p>
             </div>
-            <SizeInput register={register} control={control} disabled={statusForSinglUpload == 'pending'} />
+            <SizeInput register={register} fields={fields} append={append} remove={remove} control={control} disabled={statusForSinglUpload == 'pending'} />
             {/* Submit */}
             <button
               type="submit"
-              className="w-full cursor-pointer bg-gray-900 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-700 transition"
+              disabled={statusForSinglUpload === "pending"} // disable while loading
+              className="w-full cursor-pointer py-3 rounded-xl font-bold text-lg shadow-lg transition
+              disabled:bg-gray-500 disabled:text-gray-900 disabled:cursor-not-allowed disabled:hover:scale-100
+              bg-gray-900 text-white hover:bg-gray-700"
             >
-              🚀 Add Product
+              {statusForSinglUpload === "pending" ? "⏳ Loading..." : "🚀 Add Product"}
             </button>
+
           </form>) : (
             // ✅ CSV Upload Mode
             <form
@@ -230,11 +293,13 @@ function AddProduct() {
                 <Controller
                   control={control}
                   name="csv"
-                  render={({ field }) => {
+                  rules={{ required: "Csv file is required" }}
+                  render={({ field, fieldState: { error } }) => {
+                    console.log(error)
                     const fileName = field.value?.[0]?.name || "No file selected";
                     return (
                       <div className="flex flex-col items-center mb-4">
-                        <label className="cursor-pointer bg-white border border-black hover:bg-gray-100 text-black font-semibold px-6 py-3 rounded-xl shadow-md transition duration-200">
+                        <label className={`cursor-pointer ${statusForBulkUpload === 'pending' && 'opacity-50 pointer-events-none'} bg-white border border-black hover:bg-gray-100 text-black font-semibold px-6 py-3 rounded-xl shadow-md transition duration-200`}>
                           Choose CSV File
                           <input
                             type="file"
@@ -244,9 +309,14 @@ function AddProduct() {
                               const file = e.target.files?.[0];
                               if (file) field.onChange(e.target.files);
                             }}
-                            disabled={statusForSinglUpload == 'pending'}
+                            disabled={statusForBulkUpload == 'pending'}
                           />
                         </label>
+                        {error && (
+                          <span className="text-red-500 text-sm">
+                            {error.message}
+                          </span>
+                        )}
                         <span className="mt-2 text-sm text-gray-700">{fileName}</span>
                       </div>
                     );
@@ -256,10 +326,10 @@ function AddProduct() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={statusForSinglUpload == 'pending'}
+                  disabled={statusForBulkUpload == 'pending'}
                   className="mt-2 cursor-pointer w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-xl shadow-md transition duration-200"
                 >
-                  Upload CSV
+                  {statusForBulkUpload === "pending" ? "⏳ Loading..." : "🚀 Upload CSV"}
                 </button>
 
                 {/* CSV Instructions */}
