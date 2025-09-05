@@ -195,12 +195,14 @@ function ReviewSection({ productId }) {
         )}
 
         {/* Pagination */}
-        <Pagination
-          totalPages={initialReviewsData?.totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
+        {initialReviewsData?.totalItems > 0 && (
+          <Pagination
+            totalPages={initialReviewsData?.totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        )}
       </div>
 
     </div>
