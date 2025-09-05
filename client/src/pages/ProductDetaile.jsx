@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus, FaStar } from "react-icons/fa";
 import { Star, Heart, ShoppingCart, Truck, Shield, RotateCcw } from "lucide-react"
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useParams } from "react-router-dom";
-import { motion } from "framer-motion";
 import { MoonLoader } from "react-spinners";
 import useCartStore from "../store/cartStore";
 import toast from "react-hot-toast";
 import ReviewSection from "../componente/ReviewSection";
-import { useProductById, useProductReviews } from "../hooks/useProducts";
+import { useProductById } from "../hooks/useProducts";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
@@ -274,10 +271,11 @@ const ProductDetail = () => {
                 <div className="space-y-4">
                     {/* Main Image */}
                     <div className="aspect-square bg-white rounded-lg overflow-hidden shadow-sm">
-                        <img
+                        <LazyLoadImage
                             src={productData.images[selectedImage]?.url || "/placeholder.svg"}
                             alt={productData.title}
                             className="w-full h-full object-cover object-top"
+                            effect="blur"
                         />
                     </div>
 
@@ -290,10 +288,11 @@ const ProductDetail = () => {
                                 className={`aspect-square bg-white rounded-lg overflow-hidden shadow-sm border-2 transition-colors ${selectedImage === index ? "border-gray-700" : "border-transparent hover:border-gray-300"
                                     }`}
                             >
-                                <img
+                                <LazyLoadImage
                                     src={image.url || "/placeholder.svg"}
                                     alt={`${productData.title} view ${index + 1}`}
                                     className="w-full h-full object-cover object-top"
+                                    effect="blur"
                                 />
                             </button>
                         ))}
