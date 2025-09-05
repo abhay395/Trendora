@@ -1,22 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { FiUploadCloud, FiThumbsUp } from "react-icons/fi";
+import { FiUploadCloud } from "react-icons/fi";
 import useUserStore from "../store/userStore";
 import { RxCross2 } from "react-icons/rx";
 import { useAddHelpfullInReview, useAddReview, useProductReviews } from "../hooks/useProducts";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import 'react-lazy-load-image-component/src/effects/blur.css';
+import Pagination from "./Pagination";
+import ReviewCard from "./ReviewCard";
+import ReviewSkeleton from "./ReviewSkeleton";
 
 
 function ReviewSection({ productId }) {
   const formatDate = (date) => date.toISOString().split("T")[0];
   const [sortBy, setSortBy] = useState('createdAt:desc')
-  const { data: initialReviews, isLoading: reviewLoading, error: reviewError } = useProductReviews(productId, sortBy)
-  const user = useUserStore((s) => s.user)
   const [prview, setPreview] = useState([]);
-  const [localReviews, setLocalReviews] = useState(initialReviews || [])
-  const { mutate, isPending } = useAddReview();
-  const { mutate: mutateForHelpfull, isPending: isPendingForhelpfull } = useAddHelpfullInReview();
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: initialReviewsData, isLoading } = useProductReviews(productId, sortBy, currentPage);
+  const [localReviews, setLocalReviews] = useState(initialReviewsData?.results || [])
+  const user = useUserStore((s) => s.user)
+  const { mutate } = useAddReview(productId);
+  const { mutate: mutateForHelpfull } = useAddHelpfullInReview();
 
   const [newReview, setNewReview] = useState({
     rating: 0,
@@ -25,8 +27,8 @@ function ReviewSection({ productId }) {
   });
 
   useEffect(() => {
-    setLocalReviews(initialReviews);
-  }, [initialReviews]);
+    setLocalReviews(initialReviewsData?.results);
+  }, [initialReviewsData]);
   const averageRating = useMemo(() => {
     if (!localReviews?.length) return 0;
     const total = localReviews?.reduce((sum, r) => sum + r.rating, 0);
@@ -92,22 +94,25 @@ function ReviewSection({ productId }) {
       <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1">
-            {[...Array(Math.floor(averageRating))].map((_, i) => (
+            {[...Array(Math.floor(initialReviewsData?.average || 0))].map((_, i) => (
               <FaStar key={i} className="text-yellow-400" />
             ))}
             <span className="font-semibold text-gray-800">
-              {averageRating}
+              {initialReviewsData?.average || 0}
             </span>
             <span className="text-gray-500">
-              ({localReviews?.length} {localReviews?.length === 1 ? "review" : "reviews"})
+              ({initialReviewsData?.totalItems} {initialReviewsData?.totalItems === 1 ? "review" : "reviews"})
             </span>
           </div>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => {
+              setSortBy(e.target.value)
+              setCurrentPage(1)
+            }}
             className="border rounded-lg px-2 py-1 text-gray-700 focus:ring-2 focus:ring-black/40 outline-none"
           >
-            <option value="createdAt:asc">Most recent</option>
+            <option value="createdAt:desc">Most recent</option>
             <option value="rating:desc">Highest rated</option>
             <option value="rating:asc">Lowest rated</option>
           </select>
@@ -162,12 +167,10 @@ function ReviewSection({ productId }) {
                   setPreview((prev) => prev.filter((_, idx) => idx != index))
                 }
               />
-              <LazyLoadImage
+              <img
                 src={img}
                 alt={`preview-${index}`}
                 className="w-28 h-28 object-cover rounded-lg"
-                wrapperClassName="w-28 h-28"
-                effect="blur"
               />
             </div>
           ))}
@@ -182,52 +185,24 @@ function ReviewSection({ productId }) {
       </form>
 
       {/* Reviews List */}
-      <div className="space-y-6">
-        {localReviews?.length === 0 && !reviewLoading && (
-          <p className="text-gray-600">No reviews yet. Be the first to review.</p>
+      <div className="space-y-4 ">
+        {isLoading ? (
+          [...Array(5)].map((_, index) => <ReviewSkeleton key={index} />)
+        ) : (
+          localReviews?.map((review) => (
+            <ReviewCard key={review?._id} review={review} user={user} markHelpful={markHelpful} formatDate={formatDate} />
+          ))
         )}
-        {!reviewLoading && localReviews?.map((review) => (
-          <div
-            key={review?._id}
-            className="bg-gray-50 rounded-xl p-4 border border-gray-100"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{review?.userId.name}</h3>
-              <span className="text-sm text-gray-500">{formatDate(new Date(review?.createdAt))}</span>
-            </div>
-            <div className="flex items-center gap-1 mb-2">
-              {[...Array(review?.rating)].map((_, i) => (
-                <FaStar key={i} className="text-yellow-400" />
-              ))}
-            </div>
-            <p className="text-gray-700">{review?.comment}</p>
-            <div className="flex flex-wrap gap-x-4">
-              {review?.images.length > 0 && (
-                review?.images.map((img) => <LazyLoadImage
-                  src={img.url}
-                  alt="review"
-                  className="mt-3 w-32 h-32 object-cover rounded-lg"
-                  wrapperClassName=" w-32 h-32"
-                  effect="blur"
-                />)
-              )}</div>
-            <div className="mt-3 flex items-center gap-2">
-              <button
-                onClick={() => markHelpful(review._id)}
-                className={`flex items-center gap-1 text-sm px-3 py-1 rounded-md border transition 
-                  ${[...review?.helpful].includes(user?._id) || review.userId._id == user?._id
-                    ? "opacity-60 cursor-not-allowed"
-                    : "hover:bg-gray-100"
-                  }`}
-                disabled={[...review?.helpful].includes(user?._id) || review.userId._id == user?._id}
-              >
-                <FiThumbsUp />
-                Helpful ({review?.helpful.length})
-              </button>
-            </div>
-          </div>
-        ))}
+
+        {/* Pagination */}
+        <Pagination
+          totalPages={initialReviewsData?.totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
+
     </div>
   );
 }

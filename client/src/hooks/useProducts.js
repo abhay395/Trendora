@@ -31,11 +31,11 @@ export const useProductById = (id) =>
     enabled: !!id, // only run if id exists
   });
 
-export const useProductReviews = (id, options = "") =>
+export const useProductReviews = (id, options = "", page) =>
   useQuery({
-    queryKey: ["productReviews", id, options],
+    queryKey: ["productReviews", id, options, page],
     queryFn: () =>
-      fetchProductReviewApi(id, options).then((res) => res.data.result.results),
+      fetchProductReviewApi(id, options, page).then((res) => res.data.result),
     enabled: !!id,
   });
 export const useFetchProductFilters = () =>
@@ -43,9 +43,14 @@ export const useFetchProductFilters = () =>
     queryKey: ["filters"],
     queryFn: () => fetchProductFiltersApi().then((res) => res.data.result),
   });
-export const useAddReview = () => {
+export const useAddReview = (id) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (form) => addProductReviewApi(form),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['product', id])
+      queryClient.invalidateQueries(['productReviews', id])
+    }
   });
 };
 

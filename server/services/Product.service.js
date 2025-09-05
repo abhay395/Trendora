@@ -211,7 +211,9 @@ export default {
                 path: "userId",
                 select: 'name'
             });
-            return { results, limit, totalItems, totalPages, page }
+            const product = await Product.findById(id, { rating: 1 }).lean();
+            let average = product.rating.average
+            return { results, limit, totalItems, totalPages, page, average }
         } catch (error) {
             throw error
         }
