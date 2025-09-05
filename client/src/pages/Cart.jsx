@@ -172,7 +172,7 @@ export default function Cart() {
                         }
                         <span>Express delivery in <span className='text-gray-700 font-bold'> 3 days</span></span></p>
                       <p className='font-semibold text-gray-600'>Size : <span className='font-bold text-gray-800'>{item.size}</span></p>
-                      <p className="mt-4 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{[...item.productId.sizes].find((size) => size.size != item.size)?.price}</p>
+                      <p className="mt-4 text-lg font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{[...item.productId.sizes].find((size) => size.size == item.size)?.price}</p>
                     </div>
                   </div>
                   <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' onClick={() => removeProduct(item._id)} />
