@@ -5,8 +5,8 @@ export const getdashBoardStaticsAdminApi = async () => {
     const response = await privateAxios.get('/admin/dashboard-statics');
     return response.data.result;
 }
-export const getordersAdminApi = async () => {
-    const response = await privateAxios.get('/admin/orders');
+export const getordersAdminApi = async (query = '') => {
+    const response = await privateAxios.get(`/admin/orders?${query}`);
     return response.data.result;
 }
 export const getproductAdminApi = async () => {

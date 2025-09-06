@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 
-const Pagination = ({ totalPages, onPageChange, currentPage, setCurrentPage }) => {
+const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
 
     const handleClick = (page) => {
         setCurrentPage(page);
-        onPageChange(page);
     };
 
     const pages = [];

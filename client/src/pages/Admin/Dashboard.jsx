@@ -139,7 +139,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between p-5">
           <h3 className="text-lg font-semibold">Recent Orders</h3>
           <button
-            onClick={() => navigate("/dashboard/orders")}
+            onClick={() => navigate("/admin/orders")}
             className="text-sm px-3 py-1 rounded-md bg-gray-800 text-white hover:bg-gray-50 hover:text-black cursor-pointer border border-gray-400 transition"
           >
             View More
