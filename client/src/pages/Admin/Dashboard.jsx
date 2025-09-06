@@ -99,7 +99,7 @@ export default function Dashboard() {
                 cy="50%"
                 outerRadius={80}
                 dataKey="value"
-                label
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               >
                 {categoryData.map((_, index) => (
                   <Cell
