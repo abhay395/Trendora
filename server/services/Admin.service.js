@@ -176,9 +176,9 @@ export default {
                 query.city = filter.city
             }
             const totalItems = await Order.countDocuments(query);
-            const { skip, totalPages, limit, page } = getPagination({ totalItems, limit: filter?.limit, page: filter?.page })
+            const { skip, totalPages, limit, page } = getPagination({ totalItems, limit: option?.limit, page: option?.page })
             const sortOptions = getSort(option.sortBy)
-            const results = await Order.find(query).sort(sortOptions).skip(skip).limit(limit).populate({ path: 'userId', select: '-password -refreshToken' })
+            const results = await Order.find(query).sort(sortOptions).skip(skip).limit(limit).select('items status totalPrice paymentStatus deliveredAt estimateDeliveryDate createdAt address')
             return { results, totalItems, totalPages, page, limit }
         } catch (error) {
             throw error
@@ -326,7 +326,7 @@ export default {
                 throw new ApiError(404, "Product not found", null)
             }
             // console.log(Object.entries(updateBody.recordOfId))
-            if ( files&& files.length > 0) {
+            if (files && files.length > 0) {
                 // console.log(updateBody.recordOfId)
                 await Promise.all(updateBody.recordOfId.map(async (item) => {
                     try {

@@ -24,10 +24,10 @@ export const useAdminStatics = () =>
     queryFn: getdashBoardStaticsAdminApi,
   });
 
-export const useAdminOrders = () => {
+export const useAdminOrders = (query) => {
   return useQuery({
-    queryKey: ["admin", "orders"],
-    queryFn: getordersAdminApi,
+    queryKey: ["admin", "orders", query],
+    queryFn: () => getordersAdminApi(query),
   });
 };
 export const useAdminProducts = () => {

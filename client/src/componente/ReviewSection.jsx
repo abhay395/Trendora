@@ -198,7 +198,7 @@ function ReviewSection({ productId }) {
         {initialReviewsData?.totalItems > 5 && (
           <Pagination
             totalPages={initialReviewsData?.totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
+            // onPageChange={(page) => setCurrentPage(page)}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
           />

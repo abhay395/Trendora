@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import ReviewSection from "../componente/ReviewSection";
 import { useProductById } from "../hooks/useProducts";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { motion } from 'framer-motion'
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const ProductDetail = () => {
@@ -238,7 +239,8 @@ const ProductDetail = () => {
     //         </div>
     //     </section>
     // );
-    return <div className="min-h-screen bg-white">
+    return <div
+        className="min-h-screen bg-white">
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -265,7 +267,11 @@ const ProductDetail = () => {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Image Gallery */}
                 <div className="space-y-4">
@@ -429,7 +435,7 @@ const ProductDetail = () => {
             </div>
             {/* Review */}
             <ReviewSection productId={id} />
-        </div>
+        </motion.div>
     </div>
 };
 
