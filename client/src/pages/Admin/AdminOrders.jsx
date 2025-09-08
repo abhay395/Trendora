@@ -29,11 +29,15 @@ export default function AdminOrders() {
   })
   const [query, setQuery] = useState(queryGenerater(options, filter))
   const { data: ordersData, isLoading } = useAdminOrders(query)
-  const [orders, setOrders] = useState(ordersData?.results)
-  const totalPages = ordersData?.totalPages
+  const [orders, setOrders] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
-    setOrders(ordersData?.results)
-  }, [ordersData])
+    if (ordersData) {
+      setOrders(ordersData.results || []);
+      setTotalPages(ordersData.totalPages || 1); // ✅ update only when backend gives new value
+    }
+  }, [ordersData]);
   useEffect(() => {
     console.log(query)
     setQuery(queryGenerater(options, filter))
@@ -231,9 +235,9 @@ export default function AdminOrders() {
               </tr>)}
           </tbody>
         </table>
-        {!isLoading && <div className="absolute bottom-4 left-1/3">
+        <div className="absolute bottom-4 left-1/3">
           <Pagination currentPage={options.page} setCurrentPage={(page) => setOptions((prev) => { return { ...prev, page: page } })} totalPages={totalPages} />
-        </div>}
+        </div>
       </div>
     </div >
   );
