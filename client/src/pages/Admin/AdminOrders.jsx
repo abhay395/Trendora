@@ -62,8 +62,8 @@ export default function AdminOrders() {
         <input
           type="text"
           placeholder="Search by ID or Customer..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={filter.search}
+          onChange={(e) => setfilter((prev) => { return { ...prev, search: e.target.value } })}
           className="px-3 py-2 border rounded-lg w-72 focus:ring-2 focus:ring-blue-500 outline-none"
         />
 
@@ -72,7 +72,7 @@ export default function AdminOrders() {
           <select
             id="sort-select"
             value={options.sortBy}
-            onChange={(e) => setOptions((prev) => { return { ...prev, sortBy: e.target.value } })}
+            onChange={(e) => setOptions((prev) => { return { ...prev, sortBy: e.target.value, page: 1 } })}
             className="bg-white text-gray-800 border border-gray-300 rounded-xl pl-4 pr-10 py-2.5 shadow-md
           focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500
           text-sm font-medium transition-all duration-200 appearance-none cursor-pointer
@@ -164,6 +164,7 @@ export default function AdminOrders() {
               <th className="p-3">Customer</th>
               <th className="p-3">Date</th>
               <th className="p-3">Total</th>
+              <th className="p-3">Phone</th>
               <th className="p-3">Payment</th>
               <th className="p-3">Status</th>
               <th className="p-3">Actions</th>
@@ -180,6 +181,7 @@ export default function AdminOrders() {
                   <td className="p-3">{order?.address.name}</td>
                   <td className="p-3">{new Date(order?.createdAt).toLocaleString()}</td>
                   <td className="p-3 font-semibold">₹ {order?.totalPrice}</td>
+                  <td className="p-3 font-semibold"> {order?.address?.phone}</td>
                   <td className={`p-3`}  > <span className={`px-3 py-1 font-semibold text-xs rounded-2xl ${order.paymentStatus == 'unpaid' ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800 "}`}>{String(order?.paymentStatus).toUpperCase()}
                   </span>
                   </td>

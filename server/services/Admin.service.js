@@ -9,6 +9,8 @@ import csv from 'csv-parser'
 import Category from '../models/Category.model.js'
 import Image from '../models/Image.model.js'
 import path from 'path'
+import { Readable } from 'stream'
+import Address from '../models/Address.model.js'
 
 
 
@@ -161,19 +163,17 @@ export default {
         try {
             let query = {}
             if (filter?.search) {
-                let user = await User.find({
-                    $or: [
-                        { name: { $regex: filter.search, $options: "i" } },
-                        { email: { $regex: filter.search, $options: "i" } },
-                        { phone: { $regex: filter.search, $options: "i" } },
-                    ]
-                })
-                query.user = { $in: user.map(u => u._id) }
+                query.$or = [
+                    { "address.name": { $regex: filter.search, $options: "i" } },
+                    { "address.phone": { $regex: filter.search, $options: "i" } },
+                ]
+                // query.user = { $in: user.map(u => u._id) }
             }
-            else if (filter?.status) {
-                query.status = filter.status
-            } else if (filter?.city) {
-                query.city = filter.city
+            for (let [key, value] of Object.entries(filter)) {
+                if (key != 'search' && key != 'startDate' && key != "endDate") query[key] = value
+            }
+            if (filter?.startDate && filter?.endDate) {
+                query["$and"] = [{ createdAt: { $gte: new Date(filter.startDate) } }, { createdAt: { $lte: new Date(filter.endDate) } }]
             }
             const totalItems = await Order.countDocuments(query);
             const { skip, totalPages, limit, page } = getPagination({ totalItems, limit: option?.limit, page: option?.page })
@@ -206,6 +206,13 @@ export default {
             throw error
         }
     },
+    downloadOrderData: async (filter, option) => {
+        try {
+
+        } catch (error) {
+            throw error
+        }
+    },
     createProduct: async (files, body) => {
         try {
             const images = await Promise.all(files.map(async (file) => {
@@ -226,6 +233,7 @@ export default {
         try {
             let data = await readCSV(file.path)
             let product = []
+            // // console.log(data)
             data = await Promise.all(data.map(async (item) => {
                 try {
                     const imageDocs = await Image.insertMany(

@@ -1,6 +1,7 @@
+import { Parser } from "json2csv";
 import adminService from "../services/Admin.service.js"
 import ApiError from "../utils/ApiError.js";
-import { sendSuccessMessage, pick } from "../utils/helper.js"
+import { sendSuccessMessage, pick, sendStream } from "../utils/helper.js"
 export default {
     getDashBoard: async (req, res) => {
         const result = await adminService.getDashBoard();
@@ -40,7 +41,7 @@ export default {
         sendSuccessMessage(res, 200, "User deleted successfully")
     },
     getOrder: async (req, res) => {
-        const filter = pick(req.query, ['search', 'status', 'city'])// pending for city state 
+        const filter = pick(req.query, ['search', 'paymentStatus', 'city', "status", "startDate", "endDate"])// pending for city state 
         const option = pick(req.query, ["sortBy", "limit", "page"])
         const result = await adminService.getOrder(filter, option);
         sendSuccessMessage(res, 200, "Orders fetched successfully", result)
@@ -49,6 +50,15 @@ export default {
         const { id } = req.params;
         const result = await adminService.getOrderById(id);
         sendSuccessMessage(res, 200, "Order fetched successfully", result)
+    },
+    downloadOrder: (req, res) => {
+        // const data = [
+        //     { name: 'Alice', id: 1, age: 30 },
+        //     { id: 2, name: 'Bob', age: 24 },
+        //     { id: 3, name: 'Charlie', age: 35 }
+        // ];
+        const filter = pick(req.query, ['startDate',])
+        sendStream(res, data, "orders.csv", ['id', 'name', 'age']);
     },
     updateOrder: async (req, res) => {
         const { id } = req.params;
