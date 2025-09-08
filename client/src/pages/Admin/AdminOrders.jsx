@@ -30,7 +30,7 @@ export default function AdminOrders() {
   const [query, setQuery] = useState(queryGenerater(options, filter))
   const { data: ordersData, isLoading } = useAdminOrders(query)
   const [orders, setOrders] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     if (ordersData) {
@@ -236,7 +236,7 @@ export default function AdminOrders() {
           </tbody>
         </table>
         <div className="absolute bottom-4 left-1/3">
-          <Pagination currentPage={options.page} setCurrentPage={(page) => setOptions((prev) => { return { ...prev, page: page } })} totalPages={totalPages} />
+          {totalPages > 0 && <Pagination currentPage={options.page} setCurrentPage={(page) => setOptions((prev) => { return { ...prev, page: page } })} totalPages={totalPages} />}
         </div>
       </div>
     </div >
