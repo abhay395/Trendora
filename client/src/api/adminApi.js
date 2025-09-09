@@ -9,6 +9,10 @@ export const getordersAdminApi = async (query = '') => {
     const response = await privateAxios.get(`/admin/orders?${query}`);
     return response.data.result;
 }
+export const updateOrderAdminApi = async (id,updateBody) => {
+    const respons = await privateAxios.patch(`/admin/order/update/${id}`,updateBody)
+    return respons.data.result
+}
 export const getproductAdminApi = async () => {
     const response = await privateAxios.get('/admin/product?limit=100');
     return response.data.result;

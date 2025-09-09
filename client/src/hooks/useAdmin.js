@@ -15,6 +15,7 @@ import {
   deleteAdminProductPermanently,
   getproductByIdAdminApi,
   updateProductAdminApi,
+  updateOrderAdminApi,
 } from "../api/adminApi";
 import toast from "react-hot-toast";
 
@@ -30,6 +31,11 @@ export const useAdminOrders = (query) => {
     queryFn: () => getordersAdminApi(query),
   });
 };
+export const updateAdminOrder = () => {
+  return useMutation({
+    mutationFn: ({ id, updateBody }) => updateOrderAdminApi(id, updateBody),
+  });
+}
 export const useAdminProducts = () => {
   return useQuery({
     queryKey: ["admin", "products"],

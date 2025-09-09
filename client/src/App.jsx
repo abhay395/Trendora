@@ -72,6 +72,7 @@ function App() {
         <Route path="products" element={<AdminProduct />} />
         <Route path="add-product" element={<AddProduct />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="order/:id" element={<OrderDetaile />} />
         <Route path="product/edit/:id" element={<EditProduct />} />
       </Route>
     </Routes>
