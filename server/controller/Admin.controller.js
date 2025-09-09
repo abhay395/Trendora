@@ -1,4 +1,4 @@
-import { Parser } from "json2csv";
+import { json2csv } from 'json-2-csv'
 import adminService from "../services/Admin.service.js"
 import ApiError from "../utils/ApiError.js";
 import { sendSuccessMessage, pick, sendStream } from "../utils/helper.js"
@@ -51,14 +51,17 @@ export default {
         const result = await adminService.getOrderById(id);
         sendSuccessMessage(res, 200, "Order fetched successfully", result)
     },
-    downloadOrder: (req, res) => {
-        // const data = [
-        //     { name: 'Alice', id: 1, age: 30 },
-        //     { id: 2, name: 'Bob', age: 24 },
-        //     { id: 3, name: 'Charlie', age: 35 }
-        // ];
-        const filter = pick(req.query, ['startDate',])
-        sendStream(res, data, "orders.csv", ['id', 'name', 'age']);
+    downloadOrder: async (req, res) => {
+        const filter = pick(req.query, ['startDate', 'endDate'])
+        const option = pick(req.query, ['sortBy']);
+        let result = await adminService.downloadOrderData(filter, option)
+        const csv = await json2csv(result)
+        res.setHeader("Content-Disposition", 'attachment; filename=orders.csv')
+        res.setHeader('Content-Type', 'text/csv')
+        res.status(200).end(csv);
+        // sendSuccessMessage(res, 200, "fetch Order", result)
+        // sendStream(res, data, "orders.csv", ['_id', 'Customer', "Phone", 'Date', "Total", 'Payment', "status"]);
+        // console.log()
     },
     updateOrder: async (req, res) => {
         const { id } = req.params;
