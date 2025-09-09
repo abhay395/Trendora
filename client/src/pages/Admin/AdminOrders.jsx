@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useAdminOrders } from "../../hooks/useAdmin";
+import { updateAdminOrder, useAdminOrders } from "../../hooks/useAdmin";
 import Pagination from "../../componente/Pagination";
 import { queryGenerater } from "../../hooks/useQueryGenerater";
 import { FaChevronDown } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -29,9 +30,10 @@ export default function AdminOrders() {
   })
   const [query, setQuery] = useState(queryGenerater(options, filter))
   const { data: ordersData, isLoading } = useAdminOrders(query)
+  const { mutate, status } = updateAdminOrder()
   const [orders, setOrders] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-
+  const navigate = useNavigate()
   useEffect(() => {
     if (ordersData) {
       setOrders(ordersData.results || []);
@@ -43,9 +45,10 @@ export default function AdminOrders() {
     setQuery(queryGenerater(options, filter))
   }, [options, filter])
   const handleStatusChange = (id, newStatus) => {
+    mutate({ id: id, updateBody: { status: newStatus } })
     setOrders((prev) =>
       prev.map((order) =>
-        order.id === id ? { ...order, status: newStatus } : order
+        order._id === id ? { ...order, status: newStatus } : order
       )
     );
   };
@@ -140,8 +143,6 @@ export default function AdminOrders() {
           type="date"
           value={filter.endDate}
           onChange={(e) => setfilter((prev) => { return { ...prev, endDate: e.target.value } })}
-          // // value={endDate}
-          // // onChange={(e) => setEndDate(e.target.value)}
           className="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
         />
 
@@ -197,7 +198,7 @@ export default function AdminOrders() {
                     <select
                       value={order.status}
                       onChange={(e) =>
-                        handleStatusChange(order.id, e.target.value)
+                        handleStatusChange(order._id, e.target.value)
                       }
                       className="border rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-400"
                     >
@@ -209,13 +210,8 @@ export default function AdminOrders() {
                     </select>
 
                     {/* View Button */}
-                    <button className="px-3 py-1 text-sm rounded-lg border border-gray-300 hover:bg-gray-100">
+                    <button className="px-3 py-1 text-sm rounded-lg border border-gray-300 hover:bg-gray-100" onClick={() => navigate(`/admin/order/${order._id}`)}>
                       View
-                    </button>
-
-                    {/* Delete Button */}
-                    <button className="px-3 py-1 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600">
-                      Delete
                     </button>
                   </td>
                 </tr>
