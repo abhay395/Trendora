@@ -45,4 +45,4 @@ const pick = (object, keys) => {
     }, {});
 };
 
-export { sendSuccessMessage, createToken, getPagination, getSort, pick, sendStream }
+export { sendSuccessMessage, createToken, getPagination, getSort, pick }
