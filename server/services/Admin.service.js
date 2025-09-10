@@ -8,9 +8,6 @@ import fs from 'fs'
 import csv from 'csv-parser'
 import Category from '../models/Category.model.js'
 import Image from '../models/Image.model.js'
-import path from 'path'
-import { Readable } from 'stream'
-import Address from '../models/Address.model.js'
 
 
 
@@ -208,7 +205,28 @@ export default {
     },
     downloadOrderData: async (filter, option) => {
         try {
-
+            let query = {};
+            if (filter?.startDate && filter?.endDate) {
+                query.$and = [{ createdAt: { $gte: new Date(filter?.startDate) } }, { createdAt: { $let: new Date(filter?.endDate) } }]
+            }
+            let result = await Order.aggregate([
+                {
+                    $match: query,
+                },
+                {
+                    $project: {
+                        Customer: "$address.name",
+                        Id: {$toString:"$_id"},
+                        Phone: "$address.phone",
+                        Date: "$createdAt",
+                        Total: "$totalPrice",
+                        Payment:"$paymentStatus",
+                        Status:'$status',
+                        _id:0
+                    }
+                }
+            ])
+            return result
         } catch (error) {
             throw error
         }

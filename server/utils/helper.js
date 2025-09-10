@@ -1,16 +1,8 @@
-import { Parser } from "json2csv";
 import jwt from "jsonwebtoken";
 const sendSuccessMessage = (res, status, message, result = null) => {
     res.status(status).json({ message: message, result: result, success: true })
 }
-const sendStream = (res, data, fileName = "orders.csv", fields) => {
-    // const fields = ['id', 'name', 'age']; // Define the columns for your CSV
-    const json2csvParser = new Parser({ fields });
-    const csv = json2csvParser.parse(data);
-    res.header('Content-Type', 'text/csv');
-    res.attachment(fileName); // Triggers the browser download
-    res.send(csv);
-};
+
 const JWT_SECRET = process.env.JWT_SECRET || "Your Secret Secret Key";
 const createToken = (user) => {
     return jwt.sign(
