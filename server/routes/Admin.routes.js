@@ -17,7 +17,7 @@ adminRoute.delete('/user/hard-delete/:id', asyncWrapper(adminController.hardDele
 
 //*--------------------------------------------------------------------------Order API---------------------------------------------------------------------------\\
 
-adminRoute.get('/orders/download-order-csv', adminController.downloadOrder)
+adminRoute.get('/orders/export', adminController.downloadOrder)
 adminRoute.get('/orders', asyncWrapper(adminController.getOrder))
 adminRoute.get('/orders/:id', asyncWrapper(adminController.getOrderById))
 adminRoute.patch('/order/update/:id', asyncWrapper(adminController.updateOrder))

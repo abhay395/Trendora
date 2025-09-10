@@ -4,6 +4,8 @@ import Pagination from "../../componente/Pagination";
 import { queryGenerater } from "../../hooks/useQueryGenerater";
 import { FaChevronDown } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { downloadOrderRecordApi } from "../../api/adminApi";
+import DownloadModal from "./componente/DownloadModal";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -32,6 +34,7 @@ export default function AdminOrders() {
   const { data: ordersData, isLoading } = useAdminOrders(query)
   const { mutate, status } = updateAdminOrder()
   const [orders, setOrders] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate()
   useEffect(() => {
@@ -52,7 +55,16 @@ export default function AdminOrders() {
       )
     );
   };
+  const downloadHandler = async ({ startDate, endDate }) => {
 
+    const data = await downloadOrderRecordApi(queryGenerater({}, { startDate, endDate }))
+    const url = window.URL.createObjectURL(new Blob([data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "orders.csv"); // file name
+    document.body.appendChild(link);
+    link.click();
+  }
   return (
     <div className="p-6 h-full">
       <h1 className="text-2xl font-bold mb-6">Admin Orders</h1>
@@ -149,9 +161,15 @@ export default function AdminOrders() {
         {/* Reset Button */}
         <button
           onClick={() => { setfilter({ payment: "", search: "", city: "", endDate: "", startDate: "", status: "" }) }}
-          className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm hover:bg-gray-200"
+          className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 cursor-pointer"
         >
           Reset
+        </button>
+        <button
+          onClick={() => setIsOpen(true)}
+          className="px-4 py-2 rounded-lg bg-gray-800 text-gray-100 text-sm cursor-pointer hover:bg-white hover:text-black border-gray-800 border"
+        >
+          Download
         </button>
       </div>
 
@@ -237,6 +255,7 @@ export default function AdminOrders() {
           {totalPages > 0 && <Pagination currentPage={options.page} setCurrentPage={(page) => setOptions((prev) => { return { ...prev, page: page } })} totalPages={totalPages} />}
         </div>
       </div>
+      <DownloadModal openModal={() => setIsOpen(true)} closeModal={() => setIsOpen(false)} isOpen={isOpen} downloadHandler={downloadHandler} setisOpen={setIsOpen} />
     </div >
   );
 }

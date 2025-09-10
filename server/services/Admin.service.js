@@ -207,7 +207,7 @@ export default {
         try {
             let query = {};
             if (filter?.startDate && filter?.endDate) {
-                query.$and = [{ createdAt: { $gte: new Date(filter?.startDate) } }, { createdAt: { $let: new Date(filter?.endDate) } }]
+                query.$and = [{ createdAt: { $gte: new Date(filter?.startDate) } }, { createdAt: { $lte: new Date(filter?.endDate) } }]
             }
             let result = await Order.aggregate([
                 {
