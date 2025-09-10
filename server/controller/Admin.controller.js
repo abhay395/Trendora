@@ -1,7 +1,9 @@
 import { json2csv } from 'json-2-csv'
+import { Readable } from 'stream'
 import adminService from "../services/Admin.service.js"
 import ApiError from "../utils/ApiError.js";
 import { sendSuccessMessage, pick } from "../utils/helper.js"
+import { format } from 'fast-csv';
 export default {
     getDashBoard: async (req, res) => {
         const result = await adminService.getDashBoard();
@@ -55,10 +57,11 @@ export default {
         const filter = pick(req.query, ['startDate', 'endDate'])
         const option = pick(req.query, ['sortBy']);
         let result = await adminService.downloadOrderData(filter, option)
-        const csv = await json2csv(result)
+        // const csv = await json2csv(result)
         res.setHeader("Content-Disposition", 'attachment; filename=orders.csv')
         res.setHeader('Content-Type', 'text/csv')
-        res.status(200).end(csv);
+        const readable = Readable.from(result);
+        readable.pipe(format({ headers: true, escape: "a" })).pipe(res);
     },
     updateOrder: async (req, res) => {
         const { id } = req.params;

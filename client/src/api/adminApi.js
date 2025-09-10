@@ -6,11 +6,19 @@ export const getdashBoardStaticsAdminApi = async () => {
     return response.data.result;
 }
 export const getordersAdminApi = async (query = '') => {
-    const response = await privateAxios.get(`/admin/orders?${query}`);
+    const response = await privateAxios.get(`/admin/orders${query}`);
     return response.data.result;
 }
-export const updateOrderAdminApi = async (id,updateBody) => {
-    const respons = await privateAxios.patch(`/admin/order/update/${id}`,updateBody)
+export const downloadOrderRecordApi = async (query = '') => {
+    try {
+        const response = await privateAxios.get(`/admin/orders/export${query}`, { responseType: 'blob' });
+        return response.data
+    } catch (err) {
+        return err
+    }
+}
+export const updateOrderAdminApi = async (id, updateBody) => {
+    const respons = await privateAxios.patch(`/admin/order/update/${id}`, updateBody)
     return respons.data.result
 }
 export const getproductAdminApi = async () => {
