@@ -1,7 +1,7 @@
 import { json2csv } from 'json-2-csv'
 import adminService from "../services/Admin.service.js"
 import ApiError from "../utils/ApiError.js";
-import { sendSuccessMessage, pick, sendStream } from "../utils/helper.js"
+import { sendSuccessMessage, pick } from "../utils/helper.js"
 export default {
     getDashBoard: async (req, res) => {
         const result = await adminService.getDashBoard();
@@ -59,9 +59,6 @@ export default {
         res.setHeader("Content-Disposition", 'attachment; filename=orders.csv')
         res.setHeader('Content-Type', 'text/csv')
         res.status(200).end(csv);
-        // sendSuccessMessage(res, 200, "fetch Order", result)
-        // sendStream(res, data, "orders.csv", ['_id', 'Customer', "Phone", 'Date', "Total", 'Payment', "status"]);
-        // console.log()
     },
     updateOrder: async (req, res) => {
         const { id } = req.params;
