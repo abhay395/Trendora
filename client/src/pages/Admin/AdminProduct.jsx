@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAdminProducts, useDeleteProductPermanently, useSoftDeleteProduct } from "../../hooks/useAdmin";
 import SkeletonCard from "../../componente/SkeletonCard";
-import ProductCard from "./componente/productCard";
+import ProductCard from "./componente/ProductCard";
 import { AnimatePresence, motion } from "framer-motion";
 
 function AdminProduct() {
