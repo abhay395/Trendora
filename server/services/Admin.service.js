@@ -25,12 +25,11 @@ export default {
     getDashBoard: async () => {
         try {
             let totalProduct = await Product.countDocuments();
-            // let totalOrder = await Order.countDocuments();
             let orders = await Order.find({}).select('totalPrice').lean();
             let saleGraph = await Order.aggregate([
                 {
                     $group: {
-                        _id: { $dateToString: { format: '%Y-%m', date: "$createdAt" } },
+                        _id: { $dateToString: { format: '%m-%d', date: "$createdAt" } },
                         totalSales: { $sum: "$totalPrice" }
                     }
                 }, {
@@ -47,6 +46,31 @@ export default {
                     }
                 }
             ])
+            let stockAlert = await Product.aggregate([
+                {
+                    $project: {
+                        title: 1,
+                        sizes: {
+                            $filter: {
+                                input: "$sizes",
+                                as: "size",
+                                cond: { $lte: ["$$size.quantity", 5] }
+                            }
+                        }
+                    }
+
+                },
+                {
+                    $unwind: "$sizes"
+                },
+                {
+                    $project: {
+                        title: 1,
+                        size: "$sizes.size",
+                        quantity: "$sizes.quantity"
+                    }
+                }
+            ])
             topCategory = await Promise.all(topCategory.map(async (item) => {
                 const category = await Category.findById(item._id);
                 return {
@@ -54,14 +78,6 @@ export default {
                     name: category.name
                 }
             }))
-            let lowStock = await Product.find({
-                $or: [
-                    { 'sizes.S': { $lt: 5 } },
-                    { 'sizes.L': { $lt: 5 } },
-                    { 'sizes.XL': { $lt: 5 } },
-                    { 'sizes.M': { $lt: 5 } },
-                ]
-            }).select('title sizes')
             let totalUser = await User.countDocuments()
             let totalSales = orders.reduce((ac, el) => el.totalPrice + ac, 0);
             let totalOrders = orders.length;
@@ -71,7 +87,7 @@ export default {
             stats.totalSales = totalSales
             stats.totalOrders = totalOrders
             stats.totalUser = totalUser
-            return { stats, currency, saleGraph, topCategory, lowStock }
+            return { stats, currency, saleGraph, topCategory, stockAlert }
         } catch (error) {
             throw error
         }
@@ -216,13 +232,13 @@ export default {
                 {
                     $project: {
                         Customer: "$address.name",
-                        Id: {$toString:"$_id"},
+                        Id: { $toString: "$_id" },
                         Phone: "$address.phone",
                         Date: "$createdAt",
                         Total: "$totalPrice",
-                        Payment:"$paymentStatus",
-                        Status:'$status',
-                        _id:0
+                        Payment: "$paymentStatus",
+                        Status: '$status',
+                        _id: 0
                     }
                 }
             ])
