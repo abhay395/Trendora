@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useAdminProducts, useDeleteProductPermanently, useSoftDeleteProduct } from "../../hooks/useAdmin";
 import SkeletonCard from "../../componente/SkeletonCard";
+import ProductCard from "./componente/productCard";
+import { AnimatePresence, motion } from "framer-motion";
 
 function AdminProduct() {
   const navigate = useNavigate();
-  const { data: productData, isLoading: isProductLoading } = useAdminProducts()
+  const { data: productData, isLoading } = useAdminProducts()
   const { mutate: softDeleteProduct } = useSoftDeleteProduct()
   const { mutate: deleteProductPermanently } = useDeleteProductPermanently()
 
@@ -23,115 +25,22 @@ function AdminProduct() {
 
       {/* Product Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
-        {!isProductLoading ? productData?.results?.map((p) => (
-          <div
-            key={p._id}
-            className="flex flex-col bg-gray-50 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group"
-          >
-            {/* Image Section */}
-            <div className="relative cursor-pointer">
-              <img
-                src={p.images[0]?.url}
-                alt={p.title}
-                className="w-full h-80 object-cover object-top rounded-t-lg"
-              />
-              {p.isOutOfStock && (
-                <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-3 py-1 rounded-full font-semibold shadow">
-                  Out of Stock
-                </span>
-              )}
-              {p.isDeleted && (
-                <span className="absolute top-2 left-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded font-medium">
-                  Deleted
-                </span>
-              )}
-            </div>
-
-            {/* Content Section */}
-            <div className="flex-1 flex flex-col p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3
-                  className="text-lg font-semibold truncate"
-                  title={p.title}
+        {!isLoading ? (
+          <AnimatePresence mode='sync'>
+            {
+              productData?.results?.map((product) => (
+                <motion.div
+                  initial={{ opacity: 0, }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                  key={product._id}
                 >
-                  {p.title}
-                </h3>
-                <span className="text-gray-900 font-bold text-base">
-                  ₹{p?.sizes[0]?.price}
-                </span>
-              </div>
-
-              {/* Tags */}
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
-                  {p.category?.name}
-                </span>
-                <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded">
-                  {p.gender}
-                </span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded font-medium ${p.isOutOfStock
-                    ? "bg-red-100 text-red-600"
-                    : "bg-green-100 text-green-600"
-                    }`}
-                >
-                  {p.isOutOfStock ? "Out of Stock" : "In Stock"}
-                </span>
-              </div>
-
-              {/* Description */}
-              <p
-                className="text-gray-500 text-sm mb-3 line-clamp-2"
-                title={p.description}
-              >
-                {p.description}
-              </p>
-
-              {/* Rating */}
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-yellow-500 font-bold">{p.rating.average} ★</span>
-                <span className="text-xs text-gray-400">/ 5</span>
-              </div>
-
-              {/* Sizes */}
-              <div className="flex flex-wrap gap-2 mb-3">
-                {p.sizes.map((el) => (
-                  <span
-                    key={el.size}
-                    className={`text-xs px-2 py-0.5 rounded border ${el.quantity === 0
-                      ? "bg-gray-100 text-gray-400 border-gray-200"
-                      : "bg-blue-100 text-blue-700 border-blue-200"
-                      }`}
-                  >
-                    {el.size}
-                  </span>
-                ))}
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-2 mt-auto">
-                <button
-                  onClick={() => navigate(`/admin/product/edit/${p._id}`)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-black text-white hover:bg-gray-800 transition"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => softDeleteProduct(p._id)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
-                >
-                  Archive
-                </button>
-                <button
-                  onClick={() => deleteProductPermanently(p._id)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )) : [...new Array(4)].map((_, idx) => <SkeletonCard key={idx} />)}
+                  <ProductCard product={product} softDeleteProduct={softDeleteProduct} deleteProductPermanently={deleteProductPermanently} navigate={navigate} />
+                </motion.div>
+              ))
+            }
+          </AnimatePresence>
+        ) : [...new Array(8)].map((_, idx) => <SkeletonCard key={idx} />)}
       </div>
 
       {/* No products case */}
