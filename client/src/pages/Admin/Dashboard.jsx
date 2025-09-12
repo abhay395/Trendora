@@ -210,7 +210,7 @@ export default function Dashboard() {
 
           </motion.div>
         ) : (
-          <div className="w-full h-40 bg-gray-100 shadow animate-pulse rounded-xl"></div>
+          <div className="w-full h-full bg-gray-100 shadow animate-pulse rounded-xl"></div>
         )}
 
       </div>
