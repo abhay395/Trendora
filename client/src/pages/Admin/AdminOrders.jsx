@@ -237,17 +237,7 @@ export default function AdminOrders() {
                 key={idx}
                 className="border-b hover:bg-gray-50 transition "
               >
-                <td className="p-3 font-medium"> <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div></td>
-                <td className="p-3"> <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div></td>
-                <td className="p-3"> <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div></td>
-                <td className="p-3 font-semibold"> <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div></td>
-                <td className="p-3">
-                  <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div>
-                </td>
-                <td className="p-3 flex gap-2">
-                  {/* Status Select */}
-                  <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div>
-                </td>
+                {[...Array(8)].map((_, idx) => <td key={idx} className="p-3"> <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div></td>)}
               </tr>)}
           </tbody>
         </table>
