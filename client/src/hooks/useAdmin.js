@@ -1,5 +1,4 @@
 import {
-  QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
@@ -16,6 +15,7 @@ import {
   getproductByIdAdminApi,
   updateProductAdminApi,
   updateOrderAdminApi,
+  getUsersAdminApi,
 } from "../api/adminApi";
 import toast from "react-hot-toast";
 
@@ -171,3 +171,7 @@ export const useAdminCategories = (product) => {
     },
   });
 };
+export const useUsersAdmin = (query) => useQuery({
+  queryKey: ["admin", "users", query],
+  queryFn: () => getUsersAdminApi(query),
+});
