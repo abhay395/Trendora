@@ -93,19 +93,23 @@ export default {
         }
     },
     getUser: async (filter, option) => {
-        let query = {}
-        if (filter?.search) {
-            query.$or = [
-                { name: { $regex: filter.search, $options: "i" } },
-                { email: { $regex: filter.search, $options: "i" } },
-                { phone: { $regex: filter.search, $options: "i" } },
-            ]
+        try {
+            let query = {}
+            if (filter?.search) {
+                query.$or = [
+                    { name: { $regex: filter.search, $options: "i" } },
+                    { email: { $regex: filter.search, $options: "i" } },
+                    { phone: { $regex: filter.search, $options: "i" } },
+                ]
+            }
+            const totalItems = await User.countDocuments(query);
+            const { skip, totalPages, limit, page } = getPagination({ totalItems, limit: filter?.limit, page: filter?.page })
+            const sortOptions = getSort(option.sortBy)
+            const results = await User.find(query).sort(sortOptions).skip(skip).limit(limit).select('-refreshToken -password')
+            return { results, totalItems, totalPages, page, limit }
+        } catch (error) {
+            throw error
         }
-        const totalItems = await User.countDocuments(query);
-        const { skip, totalPages, limit, page } = getPagination({ totalItems, limit: filter?.limit, page: filter?.page })
-        const sortOptions = getSort(option.sortBy)
-        const results = await User.find(query).sort(sortOptions).skip(skip).limit(limit).select('-refreshToken -password')
-        return { results, totalItems, totalPages, page, limit }
     },
     getUserById: async (id) => {
         try {
@@ -285,14 +289,6 @@ export default {
                         { new: true, upsert: true }
                     );
                     let sizes = JSON.parse(item.sizes)
-                    // let product = await Product.create({
-                    //     title: item.title,
-                    //     category: category._id,
-                    //     gender: item.gender,
-                    //     description: item.description,
-                    //     images,
-                    //     sizes
-                    // })
                     product.push({
                         title: item.title,
                         category: category._id,
@@ -302,7 +298,7 @@ export default {
                         sizes
                     })
                 } catch (error) {
-                    // console.log()
+                    throw error
                 }
             }))
             fs.unlinkSync(file?.path)
@@ -312,8 +308,7 @@ export default {
                 results, totalItems: results.length
             }
         } catch (error) {
-            // throw error
-            // console.log(error)
+            throw error
         }
     },
     getProducts: async (filter = {}, option = {}) => {

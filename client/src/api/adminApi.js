@@ -67,6 +67,14 @@ export const createUserAdminApi = async (data) => {
     const response = await privateAxios.post('/admin/user/create', data);
     return response.data.result;
 }
+export const softDeleteUserAdminApi = async (id) => {
+    const response = await privateAxios.delete(`/admin/user/soft-delete/${id}`);
+    return response.data.result;
+}
+export const hardDeleteUserAdminApi = async (id) => {
+    const response = await privateAxios.delete(`/admin/user/hard-delete/${id}`);
+    return response.data.result;
+}
 export const updateUserAdminApi = async (id, data) => {
     const response = await privateAxios.patch(`/admin/user/update/${id}`, data);
     return response.data.result;

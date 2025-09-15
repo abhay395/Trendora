@@ -16,6 +16,9 @@ import {
   updateProductAdminApi,
   updateOrderAdminApi,
   getUsersAdminApi,
+  createUserAdminApi,
+  softDeleteUserAdminApi,
+  hardDeleteUserAdminApi,
 } from "../api/adminApi";
 import toast from "react-hot-toast";
 
@@ -175,3 +178,33 @@ export const useUsersAdmin = (query) => useQuery({
   queryKey: ["admin", "users", query],
   queryFn: () => getUsersAdminApi(query),
 });
+export const useUserCreate = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createUserAdminApi,
+    onSuccess: () => {
+      toast.success("User Created successfully");
+      queryClient.invalidateQueries(["admin", "users"]);
+    },
+  })
+}
+export const useUserSoftDelete = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => softDeleteUserAdminApi(id),
+    onSuccess: () => {
+      toast.success("User soft deleted successfully");
+      queryClient.invalidateQueries(["admin", "users"]);
+    },
+  })
+}
+export const useUserHardDelete = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => hardDeleteUserAdminApi(id),
+    onSuccess: () => {
+      toast.success("User hard delete successfully");
+      queryClient.invalidateQueries(["admin", "users"]);
+    },
+  })
+}
