@@ -6,6 +6,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { downloadOrderRecordApi } from "../../api/adminApi";
 import DownloadModal from "./componente/DownloadModal";
+import { FaDownload, FaSearch, FaSyncAlt } from "react-icons/fa";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -16,7 +17,6 @@ const statusColors = {
 };
 
 export default function AdminOrders() {
-  const [search, setSearch] = useState("");
   const [options, setOptions] = useState({
     page: 1,
     sortBy: 'createdAt:desc',
@@ -34,8 +34,8 @@ export default function AdminOrders() {
   const { data: ordersData, isLoading } = useAdminOrders(query)
   const { mutate, status } = updateAdminOrder()
   const [orders, setOrders] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
   useEffect(() => {
     if (ordersData) {
@@ -67,51 +67,56 @@ export default function AdminOrders() {
   }
   return (
     <div className="p-6 h-full">
-      <h1 className="text-2xl font-bold mb-6">Admin Orders</h1>
+      <h1 className="text-3xl font-bold mb-6">Orders</h1>
 
       {/* Search */}
 
-      <div className="mb-4 flex flex-wrap gap-3 items-center">
+      <div className="mb-6 flex flex-wrap gap-3 items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
 
         {/* Search */}
-        <input
-          type="text"
-          placeholder="Search by ID or Customer..."
-          value={filter.search}
-          onChange={(e) => setfilter((prev) => { return { ...prev, search: e.target.value } })}
-          className="px-3 py-2 border rounded-lg w-72 focus:ring-2 focus:ring-blue-500 outline-none"
-        />
+        <div className="relative w-72">
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+          <input
+            type="text"
+            placeholder="Search by ID or Customer..."
+            value={filter.search}
+            onChange={(e) => setfilter((prev) => ({ ...prev, search: e.target.value }))}
+            className="pl-9 pr-3 py-2 w-full border border-gray-300 rounded-lg text-sm text-gray-700
+                 shadow-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
 
         {/* Sort By */}
         <div className="relative">
           <select
-            id="sort-select"
             value={options.sortBy}
-            onChange={(e) => setOptions((prev) => { return { ...prev, sortBy: e.target.value, page: 1 } })}
-            className="bg-white text-gray-800 border border-gray-300 rounded-xl pl-4 pr-10 py-2.5 shadow-md
-          focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500
-          text-sm font-medium transition-all duration-200 appearance-none cursor-pointer
-          hover:border-gray-400 hover:shadow-lg"
+            onChange={(e) =>
+              setOptions((prev) => ({ ...prev, sortBy: e.target.value, page: 1 }))
+            }
+            className="bg-white text-gray-800 border border-gray-300 rounded-lg pl-4 pr-10 py-2.5 
+                 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 
+                 focus:border-blue-500 text-sm font-medium transition-all duration-200 
+                 appearance-none cursor-pointer hover:border-gray-400"
           >
             <option value="createdAt:desc">Date: New → Old</option>
             <option value="createdAt:asc">Date: Old → New</option>
             <option value="totalPrice:asc">Price: Low → High</option>
             <option value="totalPrice:desc">Price: High → Low</option>
           </select>
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-            <FaChevronDown />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+            <FaChevronDown size={14} />
           </span>
         </div>
 
-        {/* Order Status Filter */}
+        {/* Order Status */}
         <div className="relative">
           <select
             value={filter.status}
-            onChange={(e) => setfilter((prev) => { return { ...prev, status: e.target.value } })}
-            className="bg-white border border-gray-300 rounded-xl pl-4 pr-10 py-2.5 shadow-md 
-                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 
-                text-sm font-medium transition-all duration-200 appearance-none cursor-pointer 
-                hover:border-gray-400 hover:shadow-lg"
+            onChange={(e) => setfilter((prev) => ({ ...prev, status: e.target.value }))}
+            className="bg-white border border-gray-300 rounded-lg pl-4 pr-10 py-2.5 
+                 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 
+                 focus:border-blue-500 text-sm font-medium transition-all duration-200 
+                 appearance-none cursor-pointer hover:border-gray-400"
           >
             <option value="">All Status</option>
             <option value="pending">Pending</option>
@@ -120,58 +125,76 @@ export default function AdminOrders() {
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
           </select>
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-            <FaChevronDown />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+            <FaChevronDown size={14} />
           </span>
         </div>
 
-        {/* Payment Status Filter */}
+        {/* Payment Status */}
         <div className="relative">
           <select
             value={filter.paymentStatus}
-            onChange={(e) => setfilter((prev) => { return { ...prev, paymentStatus: e.target.value } })}
-            className="bg-white border border-gray-300 rounded-xl pl-4 pr-10 py-2.5 shadow-md 
-                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 
-                text-sm font-medium transition-all duration-200 appearance-none cursor-pointer 
-                hover:border-gray-400 hover:shadow-lg"
+            onChange={(e) => setfilter((prev) => ({ ...prev, paymentStatus: e.target.value }))}
+            className="bg-white border border-gray-300 rounded-lg pl-4 pr-10 py-2.5 
+                 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 
+                 focus:border-blue-500 text-sm font-medium transition-all duration-200 
+                 appearance-none cursor-pointer hover:border-gray-400"
           >
             <option value="">All Payments</option>
             <option value="paid">Paid</option>
             <option value="unpaid">Unpaid</option>
           </select>
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-            <FaChevronDown />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+            <FaChevronDown size={14} />
           </span>
         </div>
 
         {/* Date Range */}
-        <input
-          type="date"
-          value={filter.startDate}
-          onChange={(e) => setfilter((prev) => { return { ...prev, startDate: e.target.value } })}
-          className="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-        <input
-          type="date"
-          value={filter.endDate}
-          onChange={(e) => setfilter((prev) => { return { ...prev, endDate: e.target.value } })}
-          className="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-        />
+        <div className="flex items-center gap-2">
+          <input
+            type="date"
+            value={filter.startDate}
+            onChange={(e) => setfilter((prev) => ({ ...prev, startDate: e.target.value }))}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 shadow-sm
+                 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 focus:outline-none"
+          />
+          <span className="text-gray-500 text-sm">to</span>
+          <input
+            type="date"
+            value={filter.endDate}
+            onChange={(e) => setfilter((prev) => ({ ...prev, endDate: e.target.value }))}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 shadow-sm
+                 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
 
-        {/* Reset Button */}
-        <button
-          onClick={() => { setfilter({ payment: "", search: "", city: "", endDate: "", startDate: "", status: "" }) }}
-          className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 cursor-pointer"
-        >
-          Reset
-        </button>
-        <button
-          onClick={() => setIsOpen(true)}
-          className="px-4 py-2 rounded-lg bg-gray-800 text-gray-100 text-sm cursor-pointer hover:bg-white hover:text-black border-gray-800 border"
-        >
-          Download
-        </button>
+        {/* Reset + Download */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() =>
+              setfilter({
+                payment: "",
+                search: "",
+                city: "",
+                endDate: "",
+                startDate: "",
+                status: "",
+              })
+            }
+            className="flex items-center gap-2 px-3 cursor-pointer py-2 text-sm rounded-lg border border-gray-300 text-gray-600 bg-gray-50 hover:bg-gray-100 transition"
+          >
+            <FaSyncAlt className="text-gray-500" /> Reset
+          </button>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-sm rounded-lg border border-gray-300 text-gray-700 bg-gray-50 hover:bg-gray-100 transition"
+          >
+            <FaDownload className="text-gray-500" /> Download
+          </button>
+        </div>
       </div>
+
+
 
 
       {/* Orders Table */}
@@ -194,7 +217,7 @@ export default function AdminOrders() {
               orders?.map((order) => (
                 <tr
                   key={order?._id}
-                  className="border-b hover:bg-gray-50 transition"
+                  className="border-b border-gray-300 hover:bg-gray-50 transition"
                 >
                   <td className="p-3 font-medium">{order?._id.slice(0, 9)}</td>
                   <td className="p-3">{order?.address.name}</td>

@@ -6,7 +6,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 function AdminProduct() {
   const navigate = useNavigate();
-  const { data: productData, isLoading } = useAdminProducts()
+  const { data: productData, isLoading, error } = useAdminProducts()
+  console.log(productData, error)
   const { mutate: softDeleteProduct } = useSoftDeleteProduct()
   const { mutate: deleteProductPermanently } = useDeleteProductPermanently()
 

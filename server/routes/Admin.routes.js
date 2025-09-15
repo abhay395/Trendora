@@ -9,11 +9,12 @@ let adminRoute = express.Router();
 adminRoute.get('/dashboard-statics', asyncWrapper(adminController.getDashBoard));
 //*--------------------------------------------------------------------------USER API---------------------------------------------------------------------------\\
 
-adminRoute.get('/user/', asyncWrapper(adminController.getUser))
+adminRoute.get('/users', asyncWrapper(adminController.getUser))
 adminRoute.get('/user/:id', asyncWrapper(adminController.getUserById))
 adminRoute.post('/user/create', asyncWrapper(adminController.createUser))
 adminRoute.patch('/user/update/:id', asyncWrapper(adminController.updateUser))
 adminRoute.delete('/user/hard-delete/:id', asyncWrapper(adminController.hardDeleteUser))
+adminRoute.delete('/user/soft-delete/:id', asyncWrapper(adminController.softeDeleteUser))
 
 //*--------------------------------------------------------------------------Order API---------------------------------------------------------------------------\\
 
@@ -26,7 +27,7 @@ adminRoute.patch('/order/update/:id', asyncWrapper(adminController.updateOrder))
 
 adminRoute.post('/product/create', upload.array('images', 5), asyncWrapper(adminController.createProduct))
 adminRoute.post('/product/bulk-upload', uploadForCsv.single('file'), asyncWrapper(adminController.bulkUpload))
-adminRoute.get('/product/', asyncWrapper(adminController.getProducts))
+adminRoute.get('/products', asyncWrapper(adminController.getProducts))
 adminRoute.get('/product/:id', asyncWrapper(adminController.getProductById))
 adminRoute.patch('/product/update/:id', upload.array("images"), asyncWrapper(adminController.updateProductId))
 adminRoute.delete('/product/:id', asyncWrapper(adminController.deleteProduct))
