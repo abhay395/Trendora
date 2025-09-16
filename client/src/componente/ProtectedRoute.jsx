@@ -3,12 +3,12 @@ import { Navigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import { MoonLoader } from "react-spinners";
 
-export default function ProtectedRoute({ children, allowedRole }) {
+export default function ProtectedRoute({ children, allowedRole = [] }) {
     const token = localStorage.getItem("token");
     const { user, isLoading } = useUserStore();
 
     // Wait until user state is loaded
-    if (isLoading) {
+    if (token && isLoading) {
         return <div className='h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100'>
             <MoonLoader color='#111' size={60} />
         </div>
@@ -20,7 +20,7 @@ export default function ProtectedRoute({ children, allowedRole }) {
     }
 
     // Wrong role → go to unauthorized
-    if (allowedRole && user?.role !== allowedRole) {
+    if (allowedRole && !allowedRole.includes(user?.role)) {
         return <Navigate to="/unauthorized" replace />;
     }
 

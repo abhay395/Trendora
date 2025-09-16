@@ -201,7 +201,7 @@ export const useUserSoftDelete = () => {
 export const useUserHardDelete = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => hardDeleteUserAdminApi(id),
+    mutationFn: (id) => hardDeleteUserAdminApi(id),
     onSuccess: () => {
       toast.success("User hard delete successfully");
       queryClient.invalidateQueries(["admin", "users"]);

@@ -111,7 +111,7 @@ function AddProduct() {
                   placeholder="e.g. Classic White Shirt"
                   className='w-full border-2 rounded-xl px-4 py-2 transition 
                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
-                    border-gray-200   '
+                    border-gray-200'
                   {...register("title", { required: "title is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 />
@@ -127,7 +127,7 @@ function AddProduct() {
                 </label>
                 <select
                   name="category"
-                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200  '
+                  className='w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200'
                   {...register("category", { required: "category is required" })}
                   disabled={statusForSinglUpload == 'pending'}
                 >
