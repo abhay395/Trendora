@@ -8,7 +8,7 @@ export default {
             if (await User.isEmailTaken(reqBody.email)) {
                 throw new ApiError(400, "This Email is Already used");
             }
-            const user = new User(reqBody);
+            const user = new User({ ...reqBody, isActive: true });
             await user.save();
             const result = createToken(user)
             return { token: result }
@@ -20,6 +20,8 @@ export default {
         try {
             const { email, password } = reqBody;
             const user = await User.findOne({ email })
+            user.isActive = true
+            await user.save()
             if (!user) {
                 throw new ApiError(404, "Invalid Credentials");
             }

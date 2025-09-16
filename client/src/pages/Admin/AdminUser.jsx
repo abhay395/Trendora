@@ -5,6 +5,8 @@ import { useSoftDeleteProduct, useUserHardDelete, useUsersAdmin } from "../../ho
 import { FaSearch, FaSyncAlt, FaDownload, FaUserPlus } from "react-icons/fa";
 import Pagination from "../../componente/Pagination";
 import { queryGenerater } from "../../hooks/useQueryGenerater";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function AdminUser() {
   const [users, setUsers] = useState([]);
@@ -22,7 +24,8 @@ export default function AdminUser() {
   const [query, setQuery] = useState(queryGenerater(options, filter))
   const { data: usersData, error } = useUsersAdmin(query)
   const { mutate: softDeleteUser } = useSoftDeleteProduct()
-  const { mutate: hardDeleteUser } = useUserHardDelete()
+  const { mutate: hardDeleteUser, error: hardDeleteError } = useUserHardDelete()
+  const navigate = useNavigate()
   useEffect(() => {
     setUsers(usersData?.results || [])
     setTotalPages(usersData?.totalPages || 1)
@@ -31,6 +34,12 @@ export default function AdminUser() {
     console.log(query)
     setQuery(queryGenerater(options, filter))
   }, [options, filter])
+  useEffect(() => {
+    if (hardDeleteError) {
+      let message = hardDeleteError?.response?.data?.message || "Some thing went wrong"
+      toast.error(message)
+    }
+  }, [hardDeleteError])
   return (
     <div className="p-6 h-full">
       <h1 className="text-3xl font-bold mb-6">Users</h1>
@@ -96,11 +105,11 @@ export default function AdminUser() {
         </div>
 
         {/* Create User */}
-        <button className="flex absolute right-5 items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition">
+        <button onClick={() => navigate('add-user')} className="cursor-pointer flex absolute right-5 items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition">
           <FaUserPlus /> Create User
         </button>
       </div>
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md min-h-[400px] relative">
+      <div className="overflow-x-auto bg-white  rounded-lg shadow-md min-h-[500px] relative">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-100 text-left text-gray-700">
@@ -114,94 +123,95 @@ export default function AdminUser() {
             </tr>
           </thead>
           <tbody>
-              {users.map((user, index) => (
-                <tr
-                  key={user._id}
-                  className="border-b border-gray-300 hover:bg-gray-50 transition"
-                >
-                  {/* User Avatar + Name */}
-                  <td className="p-3 flex items-center gap-3">
-                    {user.isImage && user.image ? (
-                      <img
-                        src={user.image}
-                        alt={user.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold">
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-medium text-gray-800">{user.name}</p>
-                      <p className="text-xs text-gray-500">{user._id.slice(0, 6)}</p>
-                    </div>
-                  </td>
-
-                  {/* Email */}
-                  <td className="p-3 text-gray-700">{user.email}</td>
-
-                  {/* Phone */}
-                  <td className="p-3 text-gray-600">{user.phone || "—"}</td>
-
-                  {/* Role */}
-                  <td className="p-3">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === "admin"
-                        ? "bg-purple-100 text-purple-700"
-                        : "bg-blue-100 text-blue-700"
-                        }`}
-                    >
-                      {user.role}
+            {users.map((user, index) => (
+              <tr
+                key={user._id}
+                className="border-b border-gray-300 hover:bg-gray-50 transition"
+              >
+                {/* User Avatar + Name */}
+                <td className="p-3 flex items-center gap-3">
+                  {user.isImage && user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold">
+                      {user.name.charAt(0).toUpperCase()}
                     </span>
-                  </td>
+                  )}
+                  <span>
+                    <p className="font-medium text-gray-800">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user._id.slice(0, 6)}</p>
+                  </span>
+                </td>
 
-                  {/* Status */}
-                  <td className="p-3">
-                    <button
-                      // onClick={() => handleToggleActive(user._id)}
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${user.isActive
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                        }`}
-                    >
-                      {user.isActive ? "Active" : "Inactive"}
-                    </button>
-                  </td>
+                {/* Email */}
+                <td className="p-3 text-gray-700">{user.email}</td>
 
-                  {/* Joined */}
-                  <td className="p-3 text-gray-600">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </td>
+                {/* Phone */}
+                <td className="p-3 text-gray-600">{user.phone || "—"}</td>
 
-                  {/* Actions */}
-                  <td className="p-3 flex gap-2">
-                    <button
-                      // onClick={() => navigate(`/admin/users/${user._id}`)}
-                      className="p-2 rounded-md border hover:bg-gray-100"
-                    >
-                      <FaEye className="text-blue-500" />
-                    </button>
-                    <button
-                      onClick={() => console.log("Edit user", user._id)}
-                      className="p-2 rounded-md border hover:bg-gray-100"
-                    >
-                      <FaEdit className="text-green-500" />
-                    </button>
-                    <button
-                      // onClick={() => handleDelete(user._id)}
-                      className="p-2 rounded-md border hover:bg-gray-100"
-                    >
-                      <FaTrash className="text-red-500" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                {/* Role */}
+                <td className="p-3">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === "admin"
+                      ? "bg-purple-100 text-purple-700"
+                      : "bg-blue-100 text-blue-700"
+                      }`}
+                  >
+                    {user.role}
+                  </span>
+                </td>
+
+                {/* Status */}
+                <td className="p-3">
+                  <button
+                    // onClick={() => handleToggleActive(user._id)}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${user.isActive
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                      }`}
+                  >
+                    {user.isActive ? "Active" : "Inactive"}
+                  </button>
+                </td>
+
+                {/* Joined */}
+                <td className="p-3 text-gray-600">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
+
+                {/* Actions */}
+                <td className="p-3 flex gap-2">
+                  <button
+                    // onClick={() => navigate(`/admin/users/${user._id}`)}
+                    className="p-2 rounded-md border hover:bg-gray-100"
+                  >
+                    <FaEye className="text-blue-500" />
+                  </button>
+                  <button
+                    onClick={() => console.log("Edit user", user._id)}
+                    className="p-2 rounded-md border hover:bg-gray-100"
+                  >
+                    <FaEdit className="text-green-500" />
+                  </button>
+                  <button
+                    // onClick={() => handleDelete(user._id)}
+                    onClick={() => hardDeleteUser(user._id)}
+                    className="p-2 rounded-md border hover:bg-gray-100"
+                  >
+                    <FaTrash className="text-red-500" />
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
-          <div className="absolute bottom-4 left-1/3">
-            {totalPages > 0 && <Pagination currentPage={options.page} setCurrentPage={(page) => setOptions((prev) => { return { ...prev, page: page } })} totalPages={totalPages} />}
-          </div>
         </table>
+        <div className="absolute bottom-4 left-1/3">
+          {totalPages > 1 && <Pagination currentPage={options.page} setCurrentPage={(page) => setOptions((prev) => { return { ...prev, page: page } })} totalPages={totalPages} />}
+        </div>
       </div>
     </div>
   );

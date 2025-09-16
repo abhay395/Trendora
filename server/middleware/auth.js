@@ -25,9 +25,9 @@ const authenticationMiddleware = async (req, res, next) => {
     next(error)
   }
 };
-export const autherizedRole = (role) => {
+export const autherizedRole = (role = []) => {
   return (req, res, next) => {
-    if (req.user.role != role) {
+    if (!role.includes(req.user.role)) {
       return next(new ApiError(403, "Access denied"))
     }
     next()
