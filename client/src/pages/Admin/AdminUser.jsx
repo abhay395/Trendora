@@ -13,7 +13,7 @@ export default function AdminUser() {
   const [totalPages, setTotalPages] = useState(0);
   const [options, setOptions] = useState({
     page: 1,
-    sortBy: 'createdAt:desc',
+    sortBy: 'createdAt:asc',
     limit: 5,
   })
   const [filter, setfilter] = useState({

@@ -15,7 +15,11 @@ const authenticationMiddleware = async (req, res, next) => {
     }
     try {
       const verified = jwt.verify(token, JWT_SECRET);
+      // console.log(verified)
       let user = await User.findById(verified?._id)
+      if (!user) {
+        return next(new ApiError(401, "No authorized to acces"));
+      }
       req.user = user
       next();
     } catch (error) {
@@ -27,7 +31,7 @@ const authenticationMiddleware = async (req, res, next) => {
 };
 export const autherizedRole = (role = []) => {
   return (req, res, next) => {
-    if (!role.includes(req.user.role)) {
+    if (!req?.user?.role || !role.includes(req.user.role)) {
       return next(new ApiError(403, "Access denied"))
     }
     next()
