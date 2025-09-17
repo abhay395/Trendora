@@ -105,7 +105,26 @@ export default {
             const totalItems = await User.countDocuments(query);
             const { skip, totalPages, limit, page } = getPagination({ totalItems, limit: filter?.limit, page: filter?.page })
             const sortOptions = getSort(option.sortBy)
-            const results = await User.find(query).sort(sortOptions).skip(skip).limit(limit).select('-refreshToken -password')
+            // const results = await User.find(query).sort(sortOptions).skip(skip).limit(limit).select('-refreshToken -password')
+            const results = await User.aggregate([
+                {
+                    $match: query
+                },
+                {
+                    $project: {
+                        password: 0,
+                    }
+                },
+                {
+                    $sort: sortOptions
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: limit
+                },
+            ])
             return { results, totalItems, totalPages, page, limit }
         } catch (error) {
             throw error

@@ -7,13 +7,14 @@ import Pagination from "../../componente/Pagination";
 import { queryGenerater } from "../../hooks/useQueryGenerater";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import UserProfileModel from "./componente/UserProfileModel";
 
 export default function AdminUser() {
   const [users, setUsers] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [options, setOptions] = useState({
     page: 1,
-    sortBy: 'createdAt:desc',
+    sortBy: 'createdAt:asc',
     limit: 5,
   })
   const [filter, setfilter] = useState({
