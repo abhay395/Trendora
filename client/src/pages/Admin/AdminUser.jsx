@@ -7,7 +7,6 @@ import Pagination from "../../componente/Pagination";
 import { queryGenerater } from "../../hooks/useQueryGenerater";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import UserProfileModel from "./componente/UserProfileModel";
 
 export default function AdminUser() {
   const [users, setUsers] = useState([]);
