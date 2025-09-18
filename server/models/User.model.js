@@ -38,7 +38,14 @@ userSchema.pre("save", async function (next) {
     return next(error);
   }
 })
-
+userSchema.pre('find', async function (next) {
+  this.select('-password');
+  next();
+})
+userSchema.pre('aggregate', async function (next) {
+  this.pipeline().unshift({ $project: { password: 0 } });
+  next();
+})
 const User = mongoose.model('User', userSchema);
 
 export default User

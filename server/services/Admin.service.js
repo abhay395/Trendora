@@ -8,6 +8,7 @@ import fs from 'fs'
 import csv from 'csv-parser'
 import Category from '../models/Category.model.js'
 import Image from '../models/Image.model.js'
+import mongoose from 'mongoose'
 
 
 
@@ -105,15 +106,9 @@ export default {
             const totalItems = await User.countDocuments(query);
             const { skip, totalPages, limit, page } = getPagination({ totalItems, limit: filter?.limit, page: filter?.page })
             const sortOptions = getSort(option.sortBy)
-            // const results = await User.find(query).sort(sortOptions).skip(skip).limit(limit).select('-refreshToken -password')
             const results = await User.aggregate([
                 {
                     $match: query
-                },
-                {
-                    $project: {
-                        password: 0,
-                    }
                 },
                 {
                     $sort: sortOptions
@@ -132,10 +127,18 @@ export default {
     },
     getUserById: async (id) => {
         try {
-            let result = await User.findById(id).select('-password -refreshToken');
-            if (!result) {
-                throw new ApiError(404, "User not found", null);
-            }
+            // let result = await User.findById(id).select('-password -refreshToken');
+            let result = await User.aggregate([
+                { $match: { _id: new mongoose.Types.ObjectId(id) } },
+                {
+                    $lookup: {
+                        localField: "_id",
+                        foreignField: "userId",
+                        from: "orders",
+                        as: "orders"
+                    }
+                }
+            ])
             return result
         } catch (error) {
             throw error
