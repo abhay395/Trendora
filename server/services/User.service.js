@@ -1,9 +1,102 @@
+import mongoose from "mongoose"
 import User from "../models/User.model.js"
 
 export default {
     getUserInfo: async (userId) => {
-        const result = await User.findById(userId).select("-password -refreshToken")
+        const result = await User.findById(userId)
         return result
+    },
+    getUserAllInfo: async (userId) => {
+        const result = await User.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(userId)
+                }
+            },
+            {
+                $lookup: {
+                    from: "orders",
+                    localField: "_id",
+                    foreignField: "userId",
+                    as: "orders"
+                }
+            },
+            {
+                $lookup: {
+                    from: "carts",
+                    let: { userId: '$_id' },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$userId", "$$userId"] } } },
+                        {
+                            $lookup: {
+                                from: "products",
+                                let: { pid: "$productId" },
+                                pipeline: [
+                                    { $match: { $expr: { $eq: ["$_id", "$$pid"] } } },
+                                    {
+                                        $lookup: {
+                                            from: "images",
+                                            localField: "images",
+                                            foreignField: "_id",
+                                            as: 'images'
+                                        }
+                                    },
+                                    { $project: { title: 1, price: 1, 'images.url': 1, category: 1, sizes: 1 } }
+                                ],
+                                as: "productId"
+                            }
+                        },
+                        {
+                            $addFields: {
+                                productId: {
+                                    $arrayElemAt: ["$productId", 0]
+                                }
+                            }
+                        }
+                    ],
+                    as: "carts"
+                }
+            },
+            {
+                $lookup: {
+                    from: "addresses",
+                    localField: "_id",
+                    foreignField: "userId",
+                    as: "addresses"
+                }
+            },
+            {
+                $addFields: {
+                    totalSpents: {
+                        $sum: {
+                            $map: {
+                                input: '$orders',
+                                as: 'o',
+                                in: '$$o.totalPrice'
+                            }
+                        }
+                    },
+                    totalProductInCart: {
+                            $size: "$carts"
+                        },
+                        totalProductPriceInCart: {
+                            $reduce: {
+                                input: "$carts",
+                                initialValue: 0,
+                                in: {
+                                    $cond: {
+                                        if: { $eq: ['$$this.selected', true] },
+                                        then: { $add: ['$$value', "$$this.quantity"] },
+                                        else: "$$value"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            
+        ])
+        return result[0]
     },
     updateUserProfile: async (userId, updateBody) => {
         let result = await User.findByIdAndUpdate(userId, updateBody, { new: true });
