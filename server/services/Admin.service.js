@@ -25,72 +25,101 @@ function readCSV(filePath) {
 export default {
     getDashBoard: async () => {
         try {
-            let totalProduct = await Product.countDocuments();
-            let orders = await Order.find({}).select('totalPrice').lean();
-            let saleGraph = await Order.aggregate([
-                {
-                    $group: {
-                        _id: { $dateToString: { format: '%m-%d', date: "$createdAt" } },
-                        totalSales: { $sum: "$totalPrice" }
-                    }
-                }, {
-                    $sort: { _id: 1 }
-                }
-            ])
-            let topCategory = await Order.aggregate([
-                { $unwind: "$items" },
-                {
-                    $group: {
-                        _id: "$items.category",
-                        totalSold: { $sum: "$items.quantity" },
-                        totalRevenue: { $sum: { $multiply: ['$items.price', "$items.quantity"] } }
-                    }
-                }
-            ])
-            let stockAlert = await Product.aggregate([
-                {
-                    $project: {
-                        title: 1,
-                        sizes: {
-                            $filter: {
-                                input: "$sizes",
-                                as: "size",
-                                cond: { $lte: ["$$size.quantity", 5] }
+            // Run queries in parallel
+            const [
+                totalProduct,
+                orders,
+                saleGraph,
+                topCategory,
+                stockAlert,
+                totalUser
+            ] = await Promise.all([
+                Product.countDocuments(),
+                Order.find({}, "totalPrice").lean(),
+                Order.aggregate([
+                    {
+                        $group: {
+                            _id: { $dateToString: { format: "%m-%d", date: "$createdAt" } },
+                            totalSales: { $sum: "$totalPrice" }
+                        }
+                    },
+                    { $sort: { _id: 1 } }
+                ]),
+                Order.aggregate([
+                    { $unwind: "$items" },
+                    {
+                        $group: {
+                            _id: "$items.category",
+                            totalSold: { $sum: "$items.quantity" },
+                            totalRevenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "categories",
+                            localField: "_id",
+                            foreignField: "_id",
+                            as: "categoryInfo"
+                        }
+                    },
+                    { $unwind: "$categoryInfo" },
+                    {
+                        $project: {
+                            _id: 0,
+                            categoryId: "$_id",
+                            name: "$categoryInfo.name",
+                            totalSold: 1,
+                            totalRevenue: 1
+                        }
+                    },
+                    { $sort: { totalRevenue: -1 } } // optional: sort by revenue
+                ]),
+                Product.aggregate([
+                    {
+                        $project: {
+                            title: 1,
+                            sizes: {
+                                $filter: {
+                                    input: "$sizes",
+                                    as: "size",
+                                    cond: { $lte: ["$$size.quantity", 5] }
+                                }
                             }
                         }
+                    },
+                    { $unwind: "$sizes" },
+                    {
+                        $project: {
+                            title: 1,
+                            size: "$sizes.size",
+                            quantity: "$sizes.quantity"
+                        }
                     }
+                ]),
+                User.countDocuments()
+            ]);
 
-                },
-                {
-                    $unwind: "$sizes"
-                },
-                {
-                    $project: {
-                        title: 1,
-                        size: "$sizes.size",
-                        quantity: "$sizes.quantity"
-                    }
-                }
-            ])
-            topCategory = await Promise.all(topCategory.map(async (item) => {
-                const category = await Category.findById(item._id);
-                return {
-                    ...item,
-                    name: category.name
-                }
-            }))
-            let totalUser = await User.countDocuments()
-            let totalSales = orders.reduce((ac, el) => el.totalPrice + ac, 0);
-            let totalOrders = orders.length;
-            let currency = '₹'
-            let stats = {}
-            stats.totalProduct = totalProduct
-            stats.totalSales = totalSales
-            stats.totalOrders = totalOrders
-            stats.totalUser = totalUser
-            return { stats, currency, saleGraph, topCategory, stockAlert }
+            // Total sales + orders from cached orders
+            const totalSales = orders.reduce((acc, o) => acc + (o.totalPrice || 0), 0);
+            const totalOrders = orders.length;
+
+            const stats = {
+                totalProduct,
+                totalSales,
+                totalOrders,
+                totalUser
+            };
+
+            return {
+                stats,
+                currency: "₹",
+                saleGraph,
+                topCategory,
+                stockAlert
+            };
         } catch (error) {
-            throw error
+            console.error("Dashboard Error:", error);
+            throw error;
         }
     },
     getUser: async (filter, option) => {
