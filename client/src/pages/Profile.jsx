@@ -12,17 +12,34 @@ import UserProfileSection from '../componente/UserProfileSection';
 import { motion } from 'framer-motion'
 
 const Profile = () => {
-  const { cart, totalPrice, totalProduct, fetchCart, isLoading: cartLoading } = useCartStore();
-  const { order, fetchOrderList, isLoading: orderLoading } = useOrderStore();
-  const { user, fetchUserProfile, isLoading: userLoading, updateUserProfile } = useUserStore();
+  // const { cart, totalPrice, totalProduct, fetchCart, isLoading: cartLoading } = useCartStore();
+  // const { order, fetchOrderList, isLoading: orderLoading } = useOrderStore();
+  // const { user, fetchUserProfile, isLoading: userLoading, updateUserProfile } = useUserStore();
+  const { userDetails, fetchUserAllDetails, isLoading, updateUserProfile } = useUserStore();
+  const [user, setUser] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [cart, setCart] = useState([])
   const [selectedAddress, setSelectedAdress] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCart();
-    fetchOrderList();
-    fetchUserProfile();
+    fetchUserAllDetails();
   }, []);
+  useEffect(() => {
+    if (userDetails) {
+      setUser({
+        name: userDetails.name,
+        email: userDetails.email,
+        isImage: userDetails.isImage,
+        image: userDetails.image,
+        bio: userDetails.bio,
+        phone: userDetails.phone,
+      })
+      setOrders(userDetails.orders || [])
+      setCart(userDetails.carts || [])
+      setSelectedAdress(userDetails.addresses?.find((item) => item.selected)?._id || null)
+    }
+  }, [userDetails])
   const onEdit = (data) => {
     updateUserProfile(data)
   }
@@ -44,7 +61,7 @@ const Profile = () => {
       </motion.div>
       {/* 2. Order Information */}
       <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
-        <OrderHistorySection orders={order} />
+        <OrderHistorySection orders={orders} />
       </motion.div>
       {/* 3. 🚚 Address Book */}
       <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
@@ -55,15 +72,14 @@ const Profile = () => {
         <section className="my-8 bg-white rounded-xl shadow-lg p-6">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-2">🛒 Your Cart</h2>
 
-          {cartLoading ? (
+          {isLoading ? (
             <div className="text-gray-600">Loading your cart...</div>
           ) : cart.length === 0 ? (
             <ProductNotFound message={"Cart is empty"} />
           ) : (
             <div>
-              <div className="text-gray-800 mb-1">Total Items: <span className="font-medium">{totalProduct}</span></div>
-              <div className="text-gray-800 mb-3">Total Price: <span className="font-medium">₹{totalPrice}</span></div>
-
+              {/* <div className="text-gray-800 mb-1">Total Items: <span className="font-medium">{totalProduct}</span></div>
+              <div className="text-gray-800 mb-3">Total Price: <span className="font-medium">₹{totalPrice}</span></div> */}
               <ul className="space-y-3">
                 {cart.slice(0, 3).map((item, idx) => (
                   <CardForCheckout key={item._id} item={item} index={idx} length={cart.length} />

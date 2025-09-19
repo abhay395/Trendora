@@ -7,6 +7,11 @@ export default {
         let result = await UserService.getUserInfo(_id);
         sendSuccessMessage(res, 200, "User Profile Fetched successfull", result);
     },
+    getUserAllInfo: async (req, res) => {
+        const { _id } = req.user;
+        let result = await UserService.getUserAllInfo(_id);
+        sendSuccessMessage(res, 200, "User Profile All details Fetched successfull", result);
+    },
     updateUserProfile: async (req, res) => {
         const { _id } = req.user;
         const { body } = req
