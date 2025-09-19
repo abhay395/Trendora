@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FiEdit } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const UserProfileSection = ({ user, onEdit }) => {
+const Skeleton = ({ className }) => (
+  <div className={`animate-pulse bg-gray-300 rounded-md ${className}`} />
+);
+
+const UserProfileSection = ({ user, onEdit, isLoading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -19,7 +23,7 @@ const UserProfileSection = ({ user, onEdit }) => {
     onEdit(formData);
     setIsModalOpen(false);
   };
-
+  console.log(isLoading)
   useEffect(() => {
     if (user)
       setFormData({
@@ -50,15 +54,27 @@ const UserProfileSection = ({ user, onEdit }) => {
         <div className="grid sm:grid-cols-2 gap-y-4 gap-x-8 text-sm text-gray-700">
           <div>
             <span className="block text-gray-500 font-medium">Name</span>
-            <span className="text-gray-900">{user?.name || '—'}</span>
+            {isLoading ? (
+              <Skeleton className="h-5 w-32 mt-1" />
+            ) : (
+              <span className="text-gray-900">{user?.name || '—'}</span>
+            )}
           </div>
           <div>
             <span className="block text-gray-500 font-medium">Email</span>
-            <span className="text-gray-900">{user?.email || '—'}</span>
+            {isLoading ? (
+              <Skeleton className="h-5 w-40 mt-1" />
+            ) : (
+              <span className="text-gray-900">{user?.email || '—'}</span>
+            )}
           </div>
           <div>
             <span className="block text-gray-500 font-medium">Phone</span>
-            <span className="text-gray-900">{user?.phone || '—'}</span>
+            {isLoading ? (
+              <Skeleton className="h-5 w-28 mt-1" />
+            ) : (
+              <span className="text-gray-900">{user?.phone || '—'}</span>
+            )}
           </div>
         </div>
       </section>

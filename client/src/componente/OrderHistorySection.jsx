@@ -3,8 +3,22 @@ import ProductNotFound from './ProductNotFound';
 import { FaReceipt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-const OrderHistorySection = ({ orders = [] }) => {
-  let navigate = useNavigate()
+const SkeletonRow = () => (
+  <tr>
+    <td className="p-3"><Skeleton className="h-4 w-20" /></td>
+    <td className="p-3"><Skeleton className="h-4 w-16" /></td>
+    <td className="p-3"><Skeleton className="h-4 w-14" /></td>
+    <td className="p-3"><Skeleton className="h-4 w-20" /></td>
+    <td className="p-3"><Skeleton className="h-8 w-16" /></td>
+  </tr>
+);
+
+const Skeleton = ({ className }) => (
+  <div className={`animate-pulse bg-gray-300 rounded-md ${className}`} />
+);
+
+const OrderHistorySection = ({ orders = [], isLoading = false }) => {
+  let navigate = useNavigate();
   return (
     <section className="mb-8 bg-white rounded-2xl shadow border border-gray-100 p-6  transition-shadow duration-300">
       {/* Heading */}
@@ -14,7 +28,26 @@ const OrderHistorySection = ({ orders = [] }) => {
       </h2>
 
       {/* No Orders */}
-      {orders.length === 0 ? (
+      {isLoading ? (
+        <div className="overflow-x-auto rounded-lg border border-gray-100">
+          <table className="w-full text-sm text-gray-700">
+            <thead className="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
+              <tr>
+                <th className="p-3 text-left">Order ID</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Total</th>
+                <th className="p-3 text-left">order Date</th>
+                <th className="p-3 text-left">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...Array(4)].map((_, idx) => (
+                <SkeletonRow key={idx} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : orders.length === 0 ? (
         <ProductNotFound message={"You haven't ordered yet"} />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-100">
