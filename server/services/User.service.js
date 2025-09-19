@@ -77,24 +77,11 @@ export default {
                         }
                     },
                     totalProductInCart: {
-                            $size: "$carts"
-                        },
-                        totalProductPriceInCart: {
-                            $reduce: {
-                                input: "$carts",
-                                initialValue: 0,
-                                in: {
-                                    $cond: {
-                                        if: { $eq: ['$$this.selected', true] },
-                                        then: { $add: ['$$value', "$$this.quantity"] },
-                                        else: "$$value"
-                                    }
-                                }
-                            }
-                        }
-                    }
+                        $size: "$carts"
+                    },
                 }
-            
+            }
+
         ])
         return result[0]
     },
