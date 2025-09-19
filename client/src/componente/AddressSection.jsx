@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 const emptyForm = { name: "", phone: "", pincode: "", state: "", city: "", fullAddress: "" };
 
-export default function AddressSection({ select, setSelect }) {
+export default function AddressSection({ select, setSelect, title = 'Select A Delivery Address' }) {
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -62,7 +62,7 @@ export default function AddressSection({ select, setSelect }) {
     <div className="w-full px-5 py-6 rounded-xl border border-gray-200 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <span className="font-semibold text-lg text-gray-900">Select A Delivery Address</span>
+        <span className="font-semibold text-lg text-gray-900">{title}</span>
         <motion.span
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
