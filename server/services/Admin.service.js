@@ -158,13 +158,94 @@ export default {
         try {
             // let result = await User.findById(id).select('-password -refreshToken');
             let result = await User.aggregate([
-                { $match: { _id: new mongoose.Types.ObjectId(id) } },
+                { $match: { _id: new mongoose.Types.ObjectId("68c93919b2600be401726235") } },
                 {
                     $lookup: {
-                        localField: "_id",
-                        foreignField: "userId",
                         from: "orders",
+                        let: { userId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ['$userId', "$$userId"] }
+                                }
+                            }, {
+                                $sort: {
+                                    createdAt: -1
+                                }
+                            }
+                        ],
                         as: "orders"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "carts",
+                        let: { userId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: ['$userId', "$$userId"]
+                                }
+                            },
+                            {
+                                $lookup: {
+                                    from: 'products',
+                                    let: { pid: '$productId' },
+                                    pipeline: [
+                                        { $match: { $expr: ['$productId', "$$pid"] } },
+                                        {
+                                            $lookup: {
+                                                from: 'images',
+                                                localField: 'images',
+                                                foreignField: '_id',
+                                                as: 'images'
+                                            }
+                                        },
+                                        {
+                                            $project: {
+                                                image: {
+                                                    $arrayElemAt: ['$images.url', 0]
+                                                },
+                                                title: 1,
+                                                price: 1,
+                                                category: 1, sizes: 1
+                                            }
+                                        }
+                                    ],
+                                    as: 'productId'
+                                }
+                            },
+                            {
+                                $unwind: "$productId"
+                            }
+                        ],
+                        as: "carts"
+                    }
+                },
+                {
+                    $addFields: {
+                        totalOrder: {
+                            $size: "$orders"
+                        },
+                        totalSpent: {
+                            $reduce: {
+                                input: "$orders",
+                                initialValue: 0,
+                                in: {
+                                    $cond: {
+                                        if: {
+                                            $and: [{ $eq: ["$$this.paymentStatus", "paid"] },
+                                            { $ne: ["$$this.status", "cancelled"] }]
+                                        },
+                                        then: { $add: ["$$value", "$$this.totalPrice"] },
+                                        else: '$$value'
+                                    }
+                                }
+                            }
+                        },
+                        lastOrderDate: {
+                            $arrayElemAt: ['$orders.createdAt', 0]
+                        }
                     }
                 }
             ])
