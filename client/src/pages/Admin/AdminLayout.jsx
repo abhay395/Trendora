@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Outlet } from 'react-router-dom'
 import AdminNavbar from './componente/AdminNavbar'
 import AdminSidebar from './componente/AdminSideBar'
 import { Toaster } from 'react-hot-toast'
-import { useAdminCategories } from '../../hooks/useAdmin'
 function AdminLayout() {
   return (
     <div className="flex h-screen bg-gray-50">

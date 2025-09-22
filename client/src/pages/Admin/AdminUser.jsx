@@ -22,7 +22,7 @@ export default function AdminUser() {
     endDate: "",
   })
   const [query, setQuery] = useState(queryGenerater(options, filter))
-  const { data: usersData, error } = useUsersAdmin(query)
+  const { data: usersData, error, isLoading } = useUsersAdmin(query)
   const { mutate: softDeleteUser } = useSoftDeleteProduct()
   const { mutate: hardDeleteUser, error: hardDeleteError } = useUserHardDelete()
   const navigate = useNavigate()
@@ -123,7 +123,12 @@ export default function AdminUser() {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
+            {isLoading ? [...Array(5)].map((_, idx) => <tr
+              key={idx}
+              className="border-b hover:bg-gray-50 transition "
+            >
+              {[...Array(7)].map((_, idx) => <td key={idx} className="p-3"> <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div></td>)}
+            </tr>) : users.map((user, index) => (
               <tr
                 key={user._id}
                 className="border-b border-gray-300 hover:bg-gray-50 transition"
@@ -137,7 +142,7 @@ export default function AdminUser() {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <span className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold">
+                    <span className=" w-10 h-10 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold">
                       {user.name.charAt(0).toUpperCase()}
                     </span>
                   )}
@@ -186,7 +191,7 @@ export default function AdminUser() {
                 {/* Actions */}
                 <td className="p-3 flex gap-2">
                   <button
-                    // onClick={() => navigate(`/admin/users/${user._id}`)}
+                    onClick={() => navigate(`/admin/users/${user._id}`)}
                     className="p-2 rounded-md border hover:bg-gray-100"
                   >
                     <FaEye className="text-blue-500" />

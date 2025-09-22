@@ -106,17 +106,17 @@ export default function CreateUser() {
                             disabled={status == 'pending'}
                         />
                         {errors.password && (
-                            <span className="text-red-500 text-sm">{errors.email.message}</span>
+                            <span className="text-red-500 text-sm">{errors.password.message}</span>
                         )}
                     </div>
 
                     {/* Phone (optional) */}
                     <div>
-                        <label className="block text-gray-700 font-semibold mb-2">Phone</label>
+                        <label className="block text-gray-700 font-semibold mb-2">Phone <span className="opacity-50 font-normal text-sm ">(optional)</span></label>
                         <input
                             type="text"
                             placeholder="e.g. +91 9876543210"
-                            className='w-full border-2 rounded-xl px-4 py-2 transition 
+                            className='w-full border-2 rounded-xl px-4 py-2 transition
                             disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
                             border-gray-200'
                             {...register("phone")}
@@ -126,7 +126,7 @@ export default function CreateUser() {
 
                     {/* Bio (optional) */}
                     <div>
-                        <label className="block text-gray-700 font-semibold mb-2">Bio</label>
+                        <label className="block text-gray-700 font-semibold mb-2">Bio <span className="opacity-50 font-normal text-sm ">(optional)</span></label>
                         <textarea
                             placeholder="Write something about user..."
                             className="w-full border-2 rounded-xl px-4 py-2 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border-gray-200 focus:outline-none"

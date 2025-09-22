@@ -32,6 +32,7 @@ import AdminOrders from './pages/Admin/AdminOrders'
 import AdminUser from './pages/Admin/AdminUser'
 import AdminSetting from './pages/Admin/AdminSetting'
 import CreateUser from './pages/Admin/CreateUser'
+import UserDetails from './pages/Admin/UserDetails'
 
 function App() {
   const location = useLocation()
@@ -78,6 +79,7 @@ function App() {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="users" element={<AdminUser />} />
         <Route path="users/add-user" element={<CreateUser />} />
+        <Route path="users/:id" element={<UserDetails />} />
         <Route path="settings" element={<AdminSetting />} />
         <Route path="order/:id" element={<OrderDetaile />} />
         <Route path="product/edit/:id" element={<EditProduct />} />
