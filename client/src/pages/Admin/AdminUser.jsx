@@ -22,7 +22,7 @@ export default function AdminUser() {
     endDate: "",
   })
   const [query, setQuery] = useState(queryGenerater(options, filter))
-  const { data: usersData, error } = useUsersAdmin(query)
+  const { data: usersData, error, isLoading } = useUsersAdmin(query)
   const { mutate: softDeleteUser } = useSoftDeleteProduct()
   const { mutate: hardDeleteUser, error: hardDeleteError } = useUserHardDelete()
   const navigate = useNavigate()
@@ -123,7 +123,12 @@ export default function AdminUser() {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
+            {isLoading ? [...Array(5)].map((_, idx) => <tr
+              key={idx}
+              className="border-b hover:bg-gray-50 transition "
+            >
+              {[...Array(7)].map((_, idx) => <td key={idx} className="p-3"> <div className="w-30 h-[25px]  bg-gray-200 shadow animate-pulse"></div></td>)}
+            </tr>) : users.map((user, index) => (
               <tr
                 key={user._id}
                 className="border-b border-gray-300 hover:bg-gray-50 transition"
