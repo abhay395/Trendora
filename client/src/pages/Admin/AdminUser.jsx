@@ -142,7 +142,7 @@ export default function AdminUser() {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <span className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold">
+                    <span className=" w-10 h-10 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold">
                       {user.name.charAt(0).toUpperCase()}
                     </span>
                   )}
@@ -191,7 +191,7 @@ export default function AdminUser() {
                 {/* Actions */}
                 <td className="p-3 flex gap-2">
                   <button
-                    // onClick={() => navigate(`/admin/users/${user._id}`)}
+                    onClick={() => navigate(`/admin/users/${user._id}`)}
                     className="p-2 rounded-md border hover:bg-gray-100"
                   >
                     <FaEye className="text-blue-500" />

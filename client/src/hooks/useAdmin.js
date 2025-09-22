@@ -19,6 +19,7 @@ import {
   createUserAdminApi,
   softDeleteUserAdminApi,
   hardDeleteUserAdminApi,
+  getUserByIdAdminApi,
 } from "../api/adminApi";
 import toast from "react-hot-toast";
 
@@ -177,6 +178,10 @@ export const useAdminCategories = (product) => {
 export const useUsersAdmin = (query) => useQuery({
   queryKey: ["admin", "users", query],
   queryFn: () => getUsersAdminApi(query),
+});
+export const useUserById = (id) => useQuery({
+  queryKey: ["admin", "user", id],
+  queryFn: () => getUserByIdAdminApi(id),
 });
 export const useUserCreate = () => {
   const queryClient = useQueryClient();

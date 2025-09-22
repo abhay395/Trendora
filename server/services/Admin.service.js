@@ -156,9 +156,8 @@ export default {
     },
     getUserById: async (id) => {
         try {
-            // let result = await User.findById(id).select('-password -refreshToken');
             let result = await User.aggregate([
-                { $match: { _id: new mongoose.Types.ObjectId("68c93919b2600be401726235") } },
+                { $match: { _id: new mongoose.Types.ObjectId(id) } },
                 {
                     $lookup: {
                         from: "orders",
@@ -207,7 +206,6 @@ export default {
                                                     $arrayElemAt: ['$images.url', 0]
                                                 },
                                                 title: 1,
-                                                price: 1,
                                                 category: 1, sizes: 1
                                             }
                                         }
@@ -249,7 +247,7 @@ export default {
                     }
                 }
             ])
-            return result
+            return result[0]
         } catch (error) {
             throw error
         }
