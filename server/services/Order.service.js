@@ -9,9 +9,7 @@ export default {
         try {
             // 1. Get selected address
             const selectedAddress = await Address.findOne({ userId, selected: true })
-                .select("name phone pincode city state fullAddress _id")
                 .lean();
-
             if (!selectedAddress) {
                 throw new ApiError(400,"Please select or add an address!");
             }
@@ -58,7 +56,6 @@ export default {
                     }
                 });
             }
-            // console.log(selectedProduct)
             // 4. Calculate total price
             const totalPrice = selectedProduct.reduce(
                 (sum, item) => sum + item.price * item.quantity,
@@ -84,22 +81,22 @@ export default {
             ]);
 
             // 7. Check for out-of-stock products and update in bulk
-            const productIds = [...new Set(selectedProduct.map(p => p.productId.toString()))];
-            const updatedProducts = await Product.find({ _id: { $in: productIds } }).select("sizes").lean();
+            // const productIds = [...new Set(selectedProduct.map(p => p.productId.toString()))];
+            // const updatedProducts = await Product.find({ _id: { $in: productIds } }).select("sizes").lean();
 
-            const bulkOutOfStockOps = updatedProducts.map(prod => {
-                const totalQty = Object.values(prod.sizes || {}).reduce((sum, q) => sum + q, 0);
-                return {
-                    updateOne: {
-                        filter: { _id: prod._id },
-                        update: { $set: { isOutOfStock: totalQty <= 0 } }
-                    }
-                };
-            });
+            // const bulkOutOfStockOps = updatedProducts.map(prod => {
+            //     const totalQty = Object.values(prod.sizes || {}).reduce((sum, q) => sum + q, 0);
+            //     return {
+            //         updateOne: {
+            //             filter: { _id: prod._id },
+            //             update: { $set: { isOutOfStock: totalQty <= 0 } }
+            //         }
+            //     };
+            // });
 
-            if (bulkOutOfStockOps.length > 0) {
-                await Product.bulkWrite(bulkOutOfStockOps);
-            }
+            // if (bulkOutOfStockOps.length > 0) {
+            //     await Product.bulkWrite(bulkOutOfStockOps);
+            // }
             return order;
         } catch (error) {
             throw error;

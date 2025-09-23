@@ -6,7 +6,7 @@ import { MdEditNote } from "react-icons/md";
 import 'react-loading-skeleton/dist/skeleton.css';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const emptyForm = { name: "", phone: "", pincode: "", state: "", city: "", fullAddress: "" };
+const emptyForm = { name: "", phone: "", pincode: "", state: "", city: "", street: "", landmark: "" };
 
 export default function AddressSection({ select, setSelect, title = 'Select A Delivery Address' }) {
   const [showForm, setShowForm] = useState(false);
@@ -15,7 +15,7 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
 
   const { fetchAddress, addAddress, updateAddress, addresses, error, deleteAddress, selecteAddress } = useAddressStore();
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm(emptyForm);
 
   const selectedAddressId = addresses.find((item) => item.selected)?._id;
   // const [select, setSelect] = useState(selectedAddressId);
@@ -23,6 +23,7 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
     setSelect(selectedAddressId)
   }, [])
   const onSubmit = async (data) => {
+    console.log(data)
     if (editMode) {
       await updateAddress(editId, data);
     } else {
@@ -105,7 +106,7 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
             <label htmlFor={addr._id} className="space-y-1">
               <p className="font-semibold text-[1.02rem] text-gray-800">{addr.name}</p>
               <p className="text-[0.9rem] font-medium text-gray-500">
-                {addr.fullAddress} {addr.city} {addr.pincode} {addr.state}
+                {addr?.street} {addr?.city} {addr?.pincode} {addr?.state}
               </p>
             </label>
             <div className='absolute right-4 flex space-x-4 items-center justify-center'>
@@ -147,7 +148,7 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
             style={{ overflow: "hidden" }}
           >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4 border-t border-gray-300">
-              {/* Fields */}
+              {/* Name */}
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
@@ -159,6 +160,7 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
                 {errors?.name && <p className="font-semibold text-sm text-red-600 mt-2">{errors?.name.message}</p>}
               </div>
 
+              {/* Phone */}
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Phone</label>
                 <input
@@ -168,9 +170,32 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
                   className="w-full border border-gray-300 px-4 py-2 rounded-lg"
                 />
                 {errors?.phone && <p className="font-semibold text-sm text-red-600 mt-2">{errors?.phone.message}</p>}
-                {error && <p className="font-semibold text-sm text-red-600 mt-2">{error}</p>}
               </div>
 
+              {/* Street */}
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 mb-1">Street / Locality</label>
+                <input
+                  type="text"
+                  {...register("street", { required: "Street is required" })}
+                  placeholder="Ex. 1234 Main St"
+                  className="w-full border border-gray-300 px-4 py-2 rounded-lg"
+                />
+                {errors?.street && <p className="font-semibold text-sm text-red-600 mt-2">{errors?.street.message}</p>}
+              </div>
+
+              {/* Landmark (optional) */}
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 mb-1">Landmark (Optional)</label>
+                <input
+                  type="text"
+                  {...register("landmark")}
+                  placeholder="Ex. Near City Mall"
+                  className="w-full border border-gray-300 px-4 py-2 rounded-lg"
+                />
+              </div>
+
+              {/* Pincode */}
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Pincode</label>
                 <input
@@ -182,7 +207,8 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
                 {errors?.pincode && <p className="font-semibold text-sm text-red-600 mt-2">{errors?.pincode.message}</p>}
               </div>
 
-              <div className='grid grid-cols-2 gap-x-4'>
+              {/* City & State */}
+              <div className="grid grid-cols-2 gap-x-4">
                 <div className="flex flex-col">
                   <label className="text-sm font-medium text-gray-700 mb-1">State</label>
                   <input
@@ -206,17 +232,7 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
                 </div>
               </div>
 
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">Full Address</label>
-                <textarea
-                  {...register("fullAddress", { required: "Full Address is required" })}
-                  placeholder="Ex. 1234 Main St"
-                  className="w-full border border-gray-300 px-4 py-2 rounded-lg"
-                />
-                {errors?.fullAddress && <p className="font-semibold text-sm text-red-600 mt-2">{errors?.fullAddress.message}</p>}
-              </div>
-
-              {/* Button */}
+              {/* Submit Button */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const addressSchema = new mongoose.Schema({
     userId: {
@@ -14,9 +14,12 @@ const addressSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    pincode: {
+    street: {           // House number, street, or locality
         type: String,
         required: true
+    },
+    landmark: {         // Optional nearby landmark
+        type: String
     },
     city: {
         type: String,
@@ -26,7 +29,7 @@ const addressSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    fullAddress: {
+    pincode: {
         type: String,
         required: true
     },
@@ -34,7 +37,7 @@ const addressSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     }
-})
+});
 
 const Address = mongoose.model("Address", addressSchema);
-export default Address
+export default Address;

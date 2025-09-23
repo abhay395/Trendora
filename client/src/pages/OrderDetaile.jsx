@@ -10,6 +10,8 @@ import useOrderStore from "../store/orderStore";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MoonLoader } from "react-spinners";
+import OrderTracking from "./OrderProgressBar";
+import OrderProgressBar from "./OrderProgressBar";
 
 const OrderDetaile = () => {
     const [order, setOrder] = useState(null);
@@ -96,7 +98,7 @@ const OrderDetaile = () => {
                     <div>
                         <p className="font-medium text-gray-900">Shipping</p>
                         <p className="text-gray-600">
-                            {order?.address?.fullAddress || "No address provided"}
+                            {order?.address?.street + " " + order?.address?.city + " " + order?.address?.state || "No address provided"}
                         </p>
                     </div>
                 </div>
@@ -159,6 +161,11 @@ const OrderDetaile = () => {
                     </div>
                 )}
             </div>
+            {/* Order Tracking Section */}
+            <div className="mt-10">
+            <OrderProgressBar status={'Delivered'} />
+            </div>
+
         </motion.div>
     );
 };

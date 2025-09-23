@@ -19,11 +19,11 @@ const useAddressStore = create(
                     console.log(error)
                 }
             },
-            addAddress: async ({ name, phone, pincode, city, state, fullAddress }) => {
+            addAddress: async (data) => {
                 try {
                     set({ isLoading: true, error: null })
                     let currentAddress = get().addresses;
-                    let response = await addAddressApi({ name, phone, pincode, city, state, fullAddress })
+                    let response = await addAddressApi({ ...data })
                     set({ addresses: [...currentAddress, response.data.result], isLoading: false })
                     toast.success("Address Added!")
                 } catch (error) {

@@ -2,12 +2,33 @@ import mongoose from 'mongoose'
 
 const orderSchema = new mongoose.Schema({
     address: {
-        name: { type: String, required: true },
-        phone: { type: String, required: true },
-        pincode: { type: String, required: true },
-        city: { type: String, required: true },
-        state: { type: String, required: true },
-        fullAddress: { type: String, required: true }
+        name: {
+            type: String,
+            required: true
+        },
+        phone: {
+            type: String,
+            required: true
+        },
+        street: {           // House number, street, or locality
+            type: String,
+            required: true
+        },
+        landmark: {         // Optional nearby landmark
+            type: String
+        },
+        city: {
+            type: String,
+            required: true
+        },
+        state: {
+            type: String,
+            required: true
+        },
+        pincode: {
+            type: String,
+            required: true
+        },
     },
     userId: {
         type: mongoose.Types.ObjectId,
@@ -29,7 +50,7 @@ const orderSchema = new mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ["pending", "processing", "shipped","delivered", "cancelled",],
+        enum: ["pending", "processing", "shipped", "delivered", "cancelled",],
         default: 'pending'
     },
     totalPrice: {
