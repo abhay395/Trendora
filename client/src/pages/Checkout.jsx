@@ -7,12 +7,14 @@ import useOrderStore from '../store/orderStore';
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast';
 import { useState } from 'react';
+import { ClipLoader } from 'react-spinners'
 import { checkoutProductApi, verifyPaymentApi } from '../api/orderApi';
 const razorPayKey = import.meta.env.RAZORPAY_KEY_ID
 export default function Checkout() {
     const { cart } = useCartStore()
     const [selectedAddress, setSelectedAdress] = useState(null);
     const [paymentMode, setPaymentMode] = useState('COD')
+    const [Loading, setLoading] = useState(false)
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
     let totalPrice = selectedProduct.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity, 0)
@@ -25,6 +27,7 @@ export default function Checkout() {
             }
             console.log(paymentMode)
             // toast.loading("Redircting to Payment Method")
+            setLoading(true)
             const response = await checkoutProductApi({ paymentMethod: paymentMode })
             // return
             if (paymentMode == "COD") {
@@ -55,7 +58,7 @@ export default function Checkout() {
                             selectedAddress: selectedAddress,
                             paymentMethod: paymentMode
                         })
-
+                        setLoading(false)
                         const orderId = res.data.result._id
                         toast.success('Your Payment done successfully')
                         navigate(`/payment-done/${orderId}`)
@@ -73,14 +76,17 @@ export default function Checkout() {
             console.error(error)
         }
     }
-
+    // if (true) return <div className='flex items-center justify-center h-screen bg-transparent'> <CircleLoader /></div>
     return (
         <motion.div
-            className=" bg-white min-h-screen my-8 pt-17">
+            className=" bg-white min-h-screen my-8 pt-17 relative ">
             <div className='mb-7'>
                 <Stepper currentStep={2} />
             </div>
-            <div className="max-w-[90rem] mx-auto grid grid-cols-3 pl-4 min-w-[77rem] ">
+            {
+                Loading && <div className='flex items-center justify-center absolute top-1/2 left-1/2 z-99 bg-transparent'> <ClipLoader size={60} color='black' /> </div>
+            }
+            <div className={`max-w-[90rem] mx-auto grid grid-cols-3 pl-4 min-w-[77rem] ${Loading ? "opacity-50" : ""}`}>
                 {/* Left Section */}
                 <div className="col-span-2 space-y-5 flex items-center flex-col w-[90%]">
                     {/* <h2 className="text-xl font-semibold mb-7">Cart</h2> */}
@@ -155,7 +161,7 @@ export default function Checkout() {
                                     </div>
                                 </div>
 
-                                <button onClick={checkOutHandler} className="w-full bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
+                                <button onClick={checkOutHandler} disabled={Loading} className="w-full  bg-black text-white py-3 rounded-xl font-semibold cursor-pointer">
                                     Place order →
                                 </button>
                             </div>) : null
