@@ -127,8 +127,8 @@ export default {
             items: selectedProduct,
             paymentMethod,
             totalPrice,
-            estimateDeliveryDate
-
+            estimateDeliveryDate,
+            paymentStatus: "paid"
         });
         let bulkStockUpdates = [];
         for (let product of selectedProduct) {
@@ -145,7 +145,7 @@ export default {
         // 6. Update stock and clear cart in parallel
         await Promise.all([
             Product.bulkWrite(bulkStockUpdates),
-            Cart.deleteMany({ userId:userId, selected: true })
+            Cart.deleteMany({ userId: userId, selected: true })
         ]);
         return order
     },
