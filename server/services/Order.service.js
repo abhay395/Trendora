@@ -3,15 +3,17 @@ import Address from '../models/Address.model.js'
 import Cart from '../models/Cart.model.js'
 import ApiError from "../utils/ApiError.js"
 import Product from "../models/Product.model.js"
-import mongoose from "mongoose"
+import razorpay from "../config/RazorConfig.js"
+import crypto from 'crypto'
 export default {
     checkoutProduct: async (userId, paymentMethod) => {
         try {
+
             // 1. Get selected address
             const selectedAddress = await Address.findOne({ userId, selected: true })
                 .lean();
             if (!selectedAddress) {
-                throw new ApiError(400,"Please select or add an address!");
+                throw new ApiError(400, "Please select or add an address!");
             }
             // 2. Get selected cart items with product info
             const cartItems = await Cart.find({ userId, selected: true })
@@ -61,46 +63,91 @@ export default {
                 (sum, item) => sum + item.price * item.quantity,
                 0
             );
-
             // 5. Create order
-            let estimateDeliveryDate = new Date()
-            estimateDeliveryDate.setDate(estimateDeliveryDate.getDate() + 5);
-            const order = await Order.create({
-                address: selectedAddress,
-                userId,
-                items: selectedProduct,
-                paymentMethod,
-                totalPrice,
-                estimateDeliveryDate
-            });
+            if (paymentMethod == "COD") {
+                let estimateDeliveryDate = new Date()
+                estimateDeliveryDate.setDate(estimateDeliveryDate.getDate() + 5);
 
-            // 6. Update stock and clear cart in parallel
-            await Promise.all([
-                Product.bulkWrite(bulkStockUpdates),
-                Cart.deleteMany({ userId, selected: true })
-            ]);
+                const order = await Order.create({
+                    address: selectedAddress,
+                    userId,
+                    items: selectedProduct,
+                    paymentMethod,
+                    totalPrice,
+                    estimateDeliveryDate
+                });
 
-            // 7. Check for out-of-stock products and update in bulk
-            // const productIds = [...new Set(selectedProduct.map(p => p.productId.toString()))];
-            // const updatedProducts = await Product.find({ _id: { $in: productIds } }).select("sizes").lean();
+                // 6. Update stock and clear cart in parallel
+                await Promise.all([
+                    Product.bulkWrite(bulkStockUpdates),
+                    Cart.deleteMany({ userId, selected: true })
+                ]);
 
-            // const bulkOutOfStockOps = updatedProducts.map(prod => {
-            //     const totalQty = Object.values(prod.sizes || {}).reduce((sum, q) => sum + q, 0);
-            //     return {
-            //         updateOne: {
-            //             filter: { _id: prod._id },
-            //             update: { $set: { isOutOfStock: totalQty <= 0 } }
-            //         }
-            //     };
-            // });
-
-            // if (bulkOutOfStockOps.length > 0) {
-            //     await Product.bulkWrite(bulkOutOfStockOps);
-            // }
-            return order;
+                return order;
+            } else if (paymentMethod === 'ONLINE') {
+                const options = {
+                    amount: totalPrice * 100,
+                    currency: "INR",
+                    receipt: "receipt_" + Date.now(),
+                };
+                const razorpayorder = await razorpay.orders.create(options)
+                return {
+                    ...razorpayorder,
+                    selectedProduct,
+                    totalPrice,
+                    address: selectedAddress
+                }
+            }
         } catch (error) {
             throw error;
         }
+    },
+    verifyPayment: async (data) => {
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            userId,
+            selectedProduct,
+            totalPrice,
+            selectedAddress, paymentMethod
+        } = data
+        const body = razorpay_order_id + "|" + razorpay_payment_id
+        const expectedSignature = crypto
+            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+            .update(body.toString())
+            .digest("hex");
+        if (expectedSignature != razorpay_signature) throw new ApiError(400, 'Payment verification failed')
+        let estimateDeliveryDate = new Date()
+        estimateDeliveryDate.setDate(estimateDeliveryDate.getDate() + 5);
+        const fullAddress = await Address.findById(selectedAddress).select('-_id')
+        const order = await Order.create({
+            address: fullAddress,
+            userId,
+            items: selectedProduct,
+            paymentMethod,
+            totalPrice,
+            estimateDeliveryDate
+
+        });
+        let bulkStockUpdates = [];
+        for (let product of selectedProduct) {
+            bulkStockUpdates.push({
+                updateOne: {
+                    filter: { _id: product._id },
+                    update: {
+                        $inc: { "sizes.$[elem].quantity": -product.quantity },
+                    },
+                    arrayFilters: [{ "elem.size": product.size }]
+                }
+            })
+        }
+        // 6. Update stock and clear cart in parallel
+        await Promise.all([
+            Product.bulkWrite(bulkStockUpdates),
+            Cart.deleteMany({ userId:userId, selected: true })
+        ]);
+        return order
     },
     getOrders: async (userId) => {
         try {

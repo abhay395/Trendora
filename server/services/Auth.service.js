@@ -20,8 +20,6 @@ export default {
         try {
             const { email, password } = reqBody;
             const user = await User.findOne({ email })
-            user.isActive = true
-            await user.save()
             if (!user) {
                 throw new ApiError(404, "Invalid Credentials");
             }
@@ -29,6 +27,7 @@ export default {
             if (!passwordCheck) {
                 throw new ApiError(404, "Invalid Credentials");
             }
+            await User.findByIdAndUpdate(user._id, { $set: { isActive: true } })
             const result = createToken(user)
             return { token: result }
         } catch (error) {

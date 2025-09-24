@@ -7,26 +7,71 @@ import useOrderStore from '../store/orderStore';
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast';
 import { useState } from 'react';
+import { checkoutProductApi, verifyPaymentApi } from '../api/orderApi';
 export default function Checkout() {
     const { cart } = useCartStore()
-    const { checkoutProduct } = useOrderStore();
     const [selectedAddress, setSelectedAdress] = useState(null);
-    const [selectedPaymentMode, setPaymentMode] = useState('cash')
+    const [paymentMode, setPaymentMode] = useState('COD')
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
     let totalPrice = selectedProduct.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity, 0)
+    const navigate = useNavigate();
+    async function checkOutHandler() {
+        try {
+            if (!selectedAddress) {
+                toast.error("Please select Address")
+                return
+            }
+            console.log(paymentMode)
+            // toast.loading("Redircting to Payment Method")
+            const response = await checkoutProductApi({ paymentMethod: paymentMode })
+            // return
+            if (paymentMode == "COD") {
+                const orderId = response.data.result._id
+                navigate(`/payment-done/${orderId}`)
+                return;
+            }
+            const razorpayorder = response.data.result
+            const { selectedProduct,
+                totalPrice,
+                amount, currency, id, } = razorpayorder
+            // const order = response.result
+            const options = {
+                key: import.meta.env.RAZORPAY_KEY_ID,
+                amount: amount,
+                currency: currency,
+                name: "Trendora Shop",
+                description: "Payment for your order",
+                order_id: id,
+                handler: async function (response) {
+                    try {
+                        console.log(response)
+                        const res = await verifyPaymentApi({
+                            ...response,
+                            selectedProduct,
+                            totalPrice,
+                            selectedAddress: selectedAddress,
+                            paymentMethod: paymentMode
+                        })
 
-    let checkOutHandler = async () => {
-        if (!selectedAddress) {
-            toast.error("Please select Address")
-            return
-        }
-        const id = await checkoutProduct()
-        if (id) {
-            navigate(`/payment-done/${id}`)
+                        const orderId = res.data.result._id
+                        toast.success('Your Payment done successfully')
+                        navigate(`/payment-done/${orderId}`)
+                    } catch (error) {
+                        toast.error("Payment Faild")
+                    }
+                },
+                theme: {
+                    color: "#FF5733",
+                },
+            };
+            const razor = new window.Razorpay(options)
+            razor.open()
+        } catch (error) {
+            console.error(error)
         }
     }
-    const navigate = useNavigate();
+
     return (
         <motion.div
             className=" bg-white min-h-screen my-8 pt-17">
@@ -38,7 +83,7 @@ export default function Checkout() {
                 <div className="col-span-2 space-y-5 flex items-center flex-col w-[90%]">
                     {/* <h2 className="text-xl font-semibold mb-7">Cart</h2> */}
                     <AddressSection select={selectedAddress} setSelect={setSelectedAdress} />
-                    <PaymentSection paymentMode={selectedPaymentMode} setPaymentMode={setPaymentMode} />
+                    <PaymentSection paymentMode={paymentMode} setPaymentMode={setPaymentMode} />
                 </div>
 
                 {/* Right Section */}

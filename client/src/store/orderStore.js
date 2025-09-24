@@ -1,11 +1,10 @@
 import { create } from "zustand";
-import { checkoutProductApi, fetchOrderById } from "../api/orderApi";
+import { checkoutProductApi, fetchOrderById, verifyPaymentApi } from "../api/orderApi";
 import { fetchOrderHistoryApi } from "../api/orderApi";
-
+// import { window } from 'razorpay'
 
 const useOrderStore = create((set, get) => ({
     order: [],
-    recentOrder: null,
     isLoading: true,
     error: null,
     selectedOrde: null,
@@ -13,15 +12,21 @@ const useOrderStore = create((set, get) => ({
         try {
             set({ isLoading: true, error: null })
             let response = await checkoutProductApi({ paymentMethod })
-            set({ isLoading: false, recentOrder: response?.data?.result })
-            // toast.success("Order Placed Successfully")
-            return response.data.result._id;
+            return response.data.result;
         } catch (error) {
             console.log(error)
             set({
                 error: error.response?.data?.message, isLoading: false
             })
             return false;
+        }
+    },
+    verifyPayment: async (data) => {
+        try {
+            set({ isLoading: true, error: null })
+            let response = await verifyPaymentApi({ ...data })
+        } catch (error) {
+
         }
     },
     fetchOrderList: async () => {
