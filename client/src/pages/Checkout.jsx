@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { checkoutProductApi, verifyPaymentApi } from '../api/orderApi';
+const razorPayKey = import.meta.env.RAZORPAY_KEY_ID
 export default function Checkout() {
     const { cart } = useCartStore()
     const [selectedAddress, setSelectedAdress] = useState(null);
@@ -36,8 +37,9 @@ export default function Checkout() {
                 totalPrice,
                 amount, currency, id, } = razorpayorder
             // const order = response.result
+
             const options = {
-                key: import.meta.env.RAZORPAY_KEY_ID,
+                key: "rzp_test_RL8vVmMkvsQpjg",
                 amount: amount,
                 currency: currency,
                 name: "Trendora Shop",
