@@ -13,7 +13,7 @@ const razorPayKey = import.meta.env.RAZORPAY_KEY_ID
 export default function Checkout() {
     const { cart } = useCartStore()
     const [selectedAddress, setSelectedAdress] = useState(null);
-    const [paymentMode, setPaymentMode] = useState('COD')
+    const [paymentMode, setPaymentMode] = useState('')
     const [Loading, setLoading] = useState(false)
     const discount = 2.5;
     let selectedProduct = cart.filter((item) => item.selected)
@@ -25,7 +25,10 @@ export default function Checkout() {
                 toast.error("Please select Address")
                 return
             }
-            console.log(paymentMode)
+            if (paymentMode == "") {
+                toast.error("Please select Payment method")
+                return
+            }
             // toast.loading("Redircting to Payment Method")
             setLoading(true)
             const response = await checkoutProductApi({ paymentMethod: paymentMode })
@@ -47,10 +50,12 @@ export default function Checkout() {
                 currency: currency,
                 name: "Trendora Shop",
                 description: "Payment for your order",
+
                 order_id: id,
                 handler: async function (response) {
                     try {
                         console.log(response)
+                        setLoading(true)
                         const res = await verifyPaymentApi({
                             ...response,
                             selectedProduct,
@@ -63,6 +68,7 @@ export default function Checkout() {
                         toast.success('Your Payment done successfully')
                         navigate(`/payment-done/${orderId}`)
                     } catch (error) {
+                        setLoading(false)
                         toast.error("Payment Faild")
                     }
                 },
@@ -72,21 +78,42 @@ export default function Checkout() {
             };
             const razor = new window.Razorpay(options)
             razor.open()
+            // setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.error(error)
         }
     }
     // if (true) return <div className='flex items-center justify-center h-screen bg-transparent'> <CircleLoader /></div>
     return (
         <motion.div
-            className=" bg-white min-h-screen my-8 pt-17 relative ">
-            <div className='mb-7'>
+            className=" bg-white min-h-screen my-8 pt-0  relative">
+            <button
+                onClick={() => window.history.back()} // go back
+                className="absolute top-0 left-35 flex items-center space-x-2 px-4 py-2 
+             bg-white border border-gray-200 rounded-lg cursor-pointer 
+             hover:bg-gray-100 transition-all duration-200 
+             text-gray-700 font-medium"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span>Back</span>
+            </button>
+            <div className={`mb-30 ${Loading ? "opacity-50" : ""} `}>
                 <Stepper currentStep={2} />
             </div>
             {
                 Loading && <div className='flex items-center justify-center absolute top-1/2 left-1/2 z-99 bg-transparent'> <ClipLoader size={60} color='black' /> </div>
             }
             <div className={`max-w-[90rem] mx-auto grid grid-cols-3 pl-4 min-w-[77rem] ${Loading ? "opacity-50" : ""}`}>
+
                 {/* Left Section */}
                 <div className="col-span-2 space-y-5 flex items-center flex-col w-[90%]">
                     {/* <h2 className="text-xl font-semibold mb-7">Cart</h2> */}
@@ -99,35 +126,42 @@ export default function Checkout() {
                     <div className='mb-4'>
                         <span className='font-semibold text-lg text-gray-900'>Order Summary</span>
                     </div>
-                    <div className="flex flex-col w-full items-center justify-center pt-2 rounded-xl border border-gray-200 ">
-                        {selectedProduct.map((item, index) => (
-                            <div className='w-full' key={index}>
-                                <div className="flex items-start py-4 pl-4  gap-4 w-full relative ">
-                                    <div className='h-28 w-[15rem]  rounded-lg overflow-hidden'>
-                                        <img src={item.productId.images[0].url} alt={item.productId.title} className="object-cover object-top h-full w-full " />
-                                    </div>
-                                    <div className='h-full space-y-2 relative min-h-30  w-full '>
-                                        <h4 className="font-bold text-[0.94rem] text-gray-800">{item.productId.title.slice(0, 30)}...</h4>
-                                        <p className="text-sm font-medium text-gray-500 flex items-center space-x-1">
-                                            <span>Estimated delivery by <span className='text-gray-700 text-sm font-bold'>14 July 2025</span></span></p>
-                                        <div className='flex items-center justify-between left-0 absolute bottom-2 right-4'>
-                                            <p className="font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{[...item.productId.sizes].find((size) => size.size == item.size).price.toFixed(2)}</p>
-                                            <div className='flex items-center space-x-4 pr-7'>
-                                                <span className='font-semibold text-gray-700'>QTY :</span>
-                                                {/* <div className="flex items-center gap-2 "> */}
-                                                <span className='text-gray-600 font-bold'>{item.quantity}</span>
-                                                {/* </div> */}
+                    <div className="mb-6">
+                        {/* <h3 className="font-semibold text-lg text-gray-900 mb-3">Order Summary</h3> */}
+                        <div
+                            className="flex flex-col w-full pt-2 rounded-xl border border-gray-200 
+                         bg-white shadow-sm overflow-y-auto max-h-[26rem] 
+                         scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+                        >
+                            {selectedProduct.map((item, index) => (
+                                <div className='w-full' key={index}>
+                                    <div className="flex items-start py-4 pl-4  gap-4 w-full relative ">
+                                        <div className='h-28 w-[15rem]  rounded-lg overflow-hidden'>
+                                            <img src={item.productId.images[0].url} alt={item.productId.title} className="object-cover object-top h-full w-full " />
+                                        </div>
+                                        <div className='h-full space-y-2 relative min-h-30  w-full '>
+                                            <h4 className="font-bold text-[0.94rem] text-gray-800">{item.productId.title.slice(0, 30)}...</h4>
+                                            <p className="text-sm font-medium text-gray-500 flex items-center space-x-1">
+                                                <span>Estimated delivery by <span className='text-gray-700 text-sm font-bold'>14 July 2025</span></span></p>
+                                            <div className='flex items-center justify-between left-0 absolute bottom-2 right-4'>
+                                                <p className="font-bold text-gray-800"><span className='text-gray-400 text-xl mr-1'>₹</span>{[...item.productId.sizes].find((size) => size.size == item.size).price.toFixed(2)}</p>
+                                                <div className='flex items-center space-x-4 pr-7'>
+                                                    <span className='font-semibold text-gray-700'>QTY :</span>
+                                                    {/* <div className="flex items-center gap-2 "> */}
+                                                    <span className='text-gray-600 font-bold'>{item.quantity}</span>
+                                                    {/* </div> */}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    {
+                                        index < selectedProduct.length - 1 ? <div className='border-b border-gray-300 mx-5'></div> : null
+                                    }
                                 </div>
-                                {
-                                    index < selectedProduct.length - 1 ? <div className='border-b border-gray-300 mx-5'></div> : null
-                                }
-                            </div>
-                            // </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
+
                     {
                         selectedProduct.length > 0 ?
                             (<div className='space-y-4 mt-4' >
@@ -141,12 +175,12 @@ export default function Checkout() {
                                         <div className='space-y-3 font-medium'>
                                             {selectedProduct.map((item) => (<div className="flex justify-between" key={item._id}>
                                                 <span>{item.quantity} X {item.productId.title} </span>
-                                                <span>${[...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity}</span>
+                                                <span>₹{[...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity}</span>
                                             </div>))}
-                                            <div className="flex justify-between">
+                                            {/* <div className="flex justify-between">
                                                 <span>Coupon discount</span>
                                                 <span className="text-green-600">-₹{discount.toFixed(2)}</span>
-                                            </div>
+                                            </div> */}
                                             <div className="flex justify-between">
                                                 <span>Delivery Charges</span>
                                                 <span className="text-gray-700">Free Delivery</span>

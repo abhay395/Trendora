@@ -7,6 +7,7 @@ import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import './index.css'
 import App from './App.jsx'
+import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ if (typeof window !== "undefined") {
 createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
     <App />
+    <Toaster />
     <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>
 )

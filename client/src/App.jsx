@@ -57,7 +57,6 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="cart" element={<Cart />} />
-        <Route path="checkout" element={<Checkout />} />
         <Route path="logout" element={<Logout />} />
         <Route path="product/:id" element={<ProductDetaile />} />
         <Route path="payment-done/:id" element={<PaymentSuccess />} />
@@ -65,6 +64,7 @@ function App() {
         <Route path="orders" element={<Orders />} />
         <Route path="order/:id" element={<OrderDetaile />} />
       </Route>
+      <Route path="checkout" element={<Checkout />} />
       <Route path="*" element={<PageNotFound />} />
       {/* Admin Routes - Separate from main layout */}
       <Route path="/unauthorized" element={<Unauthorized />} />
@@ -84,6 +84,7 @@ function App() {
         <Route path="order/:id" element={<OrderDetaile />} />
         <Route path="product/edit/:id" element={<EditProduct />} />
       </Route>
+      
     </Routes>
     // </AnimatePresence>
   )
