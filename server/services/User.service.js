@@ -49,13 +49,6 @@ export default {
                         {
                             $unwind:"$productId"
                         }
-                        // {
-                        //     $addFields: {
-                        //         productId: {
-                        //             $arrayElemAt: ["$productId", 0]
-                        //         }
-                        //     }
-                        // }
                     ],
                     as: "carts"
                 }

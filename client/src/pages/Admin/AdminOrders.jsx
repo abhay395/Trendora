@@ -124,11 +124,6 @@ export default function AdminOrders() {
                 <option key={status} value={status}>{status}</option>
               ))
             }
-            {/* <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option> */}
           </select>
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
             <FaChevronDown size={14} />
