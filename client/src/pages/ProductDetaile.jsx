@@ -27,10 +27,10 @@ const ProductDetail = () => {
     useEffect(() => {
         setIsOutOfStock(false);
     }, [id]);
-    const addToCart = () => {
+    const addToCart = async () => {
         if (selectedSize) {
             console.log("Adding to cart:", { productId: id, quantity, size: selectedSize });
-            addProductCart({ productId: id, quantity, size: selectedSize });
+            await addProductCart({ productId: id, quantity, size: selectedSize });
         } else {
             toast.error("Please select a size.");
         }

@@ -9,11 +9,11 @@ import DownloadModal from "./componente/DownloadModal";
 import { FaDownload, FaSearch, FaSyncAlt } from "react-icons/fa";
 
 const statusColors = {
-  pending: "bg-yellow-100 text-yellow-700",
-  processing: "bg-blue-100 text-blue-700",
+  confirmed: "bg-yellow-100 text-yellow-700",
+  packed: "bg-blue-100 text-blue-700",
   shipped: "bg-purple-100 text-purple-700",
+  out_for_delivery: "bg-orange-100 text-orange-700",
   delivered: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
 };
 
 export default function AdminOrders() {
@@ -119,11 +119,16 @@ export default function AdminOrders() {
                  appearance-none cursor-pointer hover:border-gray-400"
           >
             <option value="">All Status</option>
-            <option value="pending">Pending</option>
+            {
+              ["confirmed", "packed", "shipped", "out_for_delivery", "delivered"].map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))
+            }
+            {/* <option value="pending">Pending</option>
             <option value="processing">Processing</option>
             <option value="shipped">Shipped</option>
             <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="cancelled">Cancelled</option> */}
           </select>
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
             <FaChevronDown size={14} />
@@ -241,7 +246,7 @@ export default function AdminOrders() {
                       onChange={(e) =>
                         handleStatusChange(order._id, e.target.value)
                       }
-                      className="border rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-400"
+                      className="border rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-400"
                     >
                       {Object.keys(statusColors).map((s) => (
                         <option key={s} value={s}>

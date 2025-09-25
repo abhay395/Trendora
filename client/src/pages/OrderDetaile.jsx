@@ -163,9 +163,11 @@ const OrderDetaile = () => {
             </div>
             {/* Order Tracking Section */}
             <div className="mt-10">
-            <OrderProgressBar status={'Delivered'} />
+                <OrderProgressBar
+                    currentStep={["confirmed", "packed", "shipped", "out_for_delivery", "delivered"].indexOf(order?.status)}
+                // steps={["Confirmed", "Packed", "Shipped", "Out for Delivery", "Delivered"]}
+                />
             </div>
-
         </motion.div>
     );
 };

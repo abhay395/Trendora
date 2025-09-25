@@ -103,6 +103,7 @@ export default {
         }
     },
     verifyPayment: async (data) => {
+        console.log(data)
         const {
             razorpay_order_id,
             razorpay_payment_id,

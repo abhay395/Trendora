@@ -123,13 +123,7 @@ const Orders = () => {
                                         className="px-6 py-2 rounded-lg bg-black text-white hover:bg-gray-900 transition font-semibold"
                                         onClick={() => navigate(`/order/${o._id}`)}
                                     >
-                                        View Details
-                                    </button>
-                                    <button
-                                        className="px-6 py-2 rounded-lg border border-black text-black bg-white hover:bg-black hover:text-white transition font-semibold"
-                                        onClick={() => navigate(`/order/${o._id}/track`)}
-                                    >
-                                        Track Order
+                                       Track Order
                                     </button>
                                 </div>
                             </motion.div>

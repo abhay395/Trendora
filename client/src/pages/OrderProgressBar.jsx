@@ -1,49 +1,54 @@
+import React from "react";
+import { CheckCircle2, Package, Truck, Home, Clock } from "lucide-react";
 
-import { User, Flag, UserPlus, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
-
-export default function OrderProgressBar() {
+/**
+ * OrderProgress Component
+ * Props:
+ *  currentStep: number (0-based index of current step)
+ */
+export default function OrderProgressBar({ currentStep }) {
+  console.log(currentStep)
+  // Define steps with icons
   const steps = [
-    { title: "Your details", desc: "Name and email", icon: <User className="z-99" />, status: "completed" },
-    { title: "Company details", desc: "Website and location", icon: <Flag />, status: "current" },
-    { title: "Invite your team", desc: "Start collaborating", icon: <UserPlus />, status: "upcoming" },
-    { title: "Add your socials", desc: "Automatic sharing", icon: <Sparkles />, status: "upcoming" },
+    { key: "confirmed", title: "Confirmed", icon: <Clock className="w-5 h-5" /> },
+    { key: "packed", title: "Packed", icon: <Package className="w-5 h-5" /> },
+    { key: "shipped", title: "Shipped", icon: <Truck className="w-5 h-5" /> },
+    { key: "delivered", title: "Delivered", icon: <Home className="w-5 h-5" /> },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="flex items-center justify-between relative bg-transparent">
-        {/* Line connecting steps */}
-        <div className="absolute top-5 left-0 right-0 h-[2px] -z-10 bg-gray-200 " />
-        <div className="absolute top-5 left-0 h-[2px] bg-black -z-10 " style={{ width: "40%" }} />
-        {steps.map((step, index) => (
-          <motion.div
-            key={index}
-            className="flex flex-col items-center z-10"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+    <div className="flex items-center justify-between w-full max-w-3xl mx-auto p-6">
+      {steps.map((step, index) => (
+        <div key={step.key} className="flex flex-col items-center relative">
+          {/* Circle with icon */}
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-white 
+              ${index <= currentStep ? "bg-green-600" : "bg-gray-300"}`}
           >
+            {index < currentStep ? (
+              <CheckCircle2 className="w-6 h-6 text-white" />
+            ) : (
+              step.icon
+            )}
+          </div>
+
+          {/* Label */}
+          <div
+            className={`mt-2 text-center text-sm font-medium 
+              ${index <= currentStep ? "text-green-700" : "text-gray-500"}`}
+          >
+            {step.title}
+          </div>
+
+          {/* Connector line */}
+          {index < steps.length - 1 && (
             <div
-              className={`p-2 rounded-md border-2   ${step.status === "current" || step.status === "completed"
-                ? "border-black text-black"
-                : "border-gray-200 text-gray-400"
-                }`}
-            >
-              {step.icon}
-            </div>
-            <h3
-              className={`mt-3 font-semibold text-sm  ${step.status === "current" || step.status === "completed"
-                ? "text-black"
-                : "text-gray-400"
-                }`}
-            >
-              {step.title}
-            </h3>
-            <p className="text-xs text-gray-400">{step.desc}</p>
-          </motion.div>
-        ))}
-      </div>
+              className={`absolute left-full top-5 -translate-y-1/2 h-0.5 w-full 
+                ${index < currentStep ? "bg-green-600" : "bg-gray-300"}`}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }
