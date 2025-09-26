@@ -7,6 +7,7 @@ import { useProducts } from '../hooks/useProducts';
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import SkeletonCard from '../componente/SkeletonCard';
+import { useEffect } from 'react';
 
 
 function Home() {
@@ -16,8 +17,20 @@ function Home() {
     refetchOnReconnect: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
+  const location = useLocation();
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
 
+    if (token) {
+      // Save token in localStorage (or Zustand/Redux)
+      localStorage.setItem("token", token);
+
+      // Optional: remove token from URL after storing
+      window.history.replaceState({}, document.title, "/");
+    }
+  }, [location]);
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
