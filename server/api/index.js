@@ -6,9 +6,41 @@ import connectDb from '../db/connectdb.js';
 import router from '../routes/index.routes.js';
 import serverless from 'serverless-http';
 import rateLimit from "express-rate-limit";
+import session from 'express-session';
+import passport from 'passport';
+import GoogleStrategy from 'passport-google-oauth20'
 dotenv.config();
 
 const app = express();
+
+
+app.use(session({ secret: "SECRET", resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+passport.use(
+  new GoogleStrategy.Strategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    },
+    (accessToken, refreshToken, profile, done) => {
+      // console.log(profile, profile?.displayName)
+      // const user = new User({ name: profile.displayName, email: profile.emails[0].value, image: [profile.photos[0].value] })
+      // await user.save()
+      return done(null, profile);
+    }
+  )
+);
+
 
 const allowedOrigins = [
   "http://localhost:5173",
