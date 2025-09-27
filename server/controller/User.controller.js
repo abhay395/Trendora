@@ -1,4 +1,5 @@
 import UserService from "../services/User.service.js"
+import uploadToCloudinary from "../utils/cloudinary.js";
 import { sendSuccessMessage } from "../utils/helper.js";
 import axios from 'axios'
 export default {
@@ -21,8 +22,13 @@ export default {
     },
     updateUserProfile: async (req, res) => {
         const { _id } = req.user;
-        const { body } = req
-        let result = await UserService.updateUserProfile(_id, body)
+        const { body, file } = req
+        console.log(file, body)
+        if (file) {
+            const res = await uploadToCloudinary({ file });
+            body.image = res?.secure_url
+        }
+        let result = await UserService.updateUserProfile(body, _id);
         sendSuccessMessage(res, 200, "User Profile Updated successfull", result);
     }
 }

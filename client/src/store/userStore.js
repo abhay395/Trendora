@@ -22,6 +22,7 @@ const useUserStore = create((set) => ({
             let response = await fetchUserProfileAllDetailsApi();
             console.log(response.data.result)
             set({ userDetails: response.data.result, isLoading: false });
+
         } catch (error) {
             set({ error: error.response?.data?.message, isLoading: false });
         }
@@ -30,7 +31,9 @@ const useUserStore = create((set) => ({
         set({ isLoading: true, error: null })
         try {
             let response = await updateProfileApi(updatedData)
-            set({ user: response.data.result, isLoading: false })
+            let userDetails = get().userDetails
+            userDetails = { ...userDetails, ...response.data.result }
+            set({ user: response.data.result, userDetailes: userDetails, isLoading: false })
         } catch (error) {
             set({ error: error.response?.data?.message, isLoading: false });
         }

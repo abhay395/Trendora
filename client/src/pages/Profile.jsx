@@ -43,10 +43,17 @@ const Profile = () => {
       setCart(userDetails.carts || []);
       setSelectedAdress(userDetails.addresses?.find((item) => item.selected)?._id || null);
     }
-  }, [userDetails]);
+  }, [userDetails,isLoading]);
 
   const onEdit = (data) => {
-    updateUserProfile(data);
+    console.log(data)
+    const form = new FormData();
+    for (let [key, value] of Object.entries(data)) {
+      if (key != 'image') {
+        form.append(key, value)
+      }
+    }
+    updateUserProfile(form);
   };
 
   return (

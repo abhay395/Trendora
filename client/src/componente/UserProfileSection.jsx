@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { IoCamera } from "react-icons/io5";
 
 const Skeleton = ({ className }) => (
   <div className={`animate-pulse bg-gray-300 rounded-md ${className}`} />
@@ -8,10 +9,13 @@ const Skeleton = ({ className }) => (
 
 const UserProfileSection = ({ user, onEdit, isLoading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
+    name: '',
+    email: '',
+    phone: '',
+    image: '',
+    file: null
   });
 
   const handleChange = (e) => {
@@ -20,17 +24,23 @@ const UserProfileSection = ({ user, onEdit, isLoading }) => {
   };
 
   const handleSave = () => {
+    // console.log(formData)
     onEdit(formData);
     setIsModalOpen(false);
   };
-  console.log(isLoading)
+  const [previewUrl, setPreviewUrl] = useState(null)
   useEffect(() => {
-    if (user)
+    if (user) {
       setFormData({
         name: user?.name,
         email: user?.email,
         phone: user?.phone,
+        image: user.image ? `${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}` : "https://ui-avatars.com/api/?name=${user.name}&background=f3f4f6&color=111827&size=128",
+        file: null
       });
+      // if (user.image) setPreviewUrl(`${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}`);
+      // else setPreviewUrl(`https://ui-avatars.com/api/?name=${user.name}&background=f3f4f6&color=111827&size=128`);
+    }
   }, [user]);
 
   return (
@@ -58,9 +68,7 @@ const UserProfileSection = ({ user, onEdit, isLoading }) => {
             ) : user?.image ? (
               <img
                 src={
-                  import.meta.env.VITE_API_URL
-                    ? `${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}`
-                    : user.image
+                  `${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}`
                 }
                 alt="Profile"
                 className="h-24 w-24 rounded-full object-cover border-2 border-gray-200 shadow"
@@ -119,6 +127,46 @@ const UserProfileSection = ({ user, onEdit, isLoading }) => {
             >
               <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
               <div className="space-y-4">
+                <div className="w-full flex items-center justify-center">
+                  <div className="relative group">
+                    {/* Profile Image */}
+                    <img
+                      src={
+                        formData.image
+                      }
+                      className="w-28 h-28 rounded-full object-cover border-2 border-gray-200 shadow-lg transition-all duration-300 group-hover:brightness-90"
+                      alt="Profile"
+                    />
+
+                    {/* Overlay on hover */}
+                    <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                      <label className="cursor-pointer flex flex-col items-center">
+                        <IoCamera className="text-white text-3xl mb-1" />
+                        <span className="text-xs text-white font-medium">Change</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              // preview logic
+                              const previewUrl = URL.createObjectURL(file);
+                              // console.log("Preview image:", previewUrl);
+
+                              setFormData({
+                                ...formData,
+                                image: previewUrl,
+                                file: file
+                              });
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-600">
                     Name
