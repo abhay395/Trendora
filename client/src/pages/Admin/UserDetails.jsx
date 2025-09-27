@@ -47,7 +47,7 @@ export default function UserDetails() {
                 {/* Left: User Info */}
                 <div className="lg:col-span-1 bg-white rounded-3xl shadow-xl p-8 flex flex-col items-center gap-6">
                     <div className="relative">
-                        {user.isImage && user.image ? (
+                        {user && user.image ? (
                             <img
                                 src={user.image}
                                 alt={user.name}
@@ -120,8 +120,8 @@ export default function UserDetails() {
                     <div className="flex gap-2  mb-6">
                         <button
                             className={`flex items-center gap-2 px-5 py-2 rounded-t-lg font-medium transition-all ${activeTab === "orders"
-                                    ? "bg-gray-50 text-gray-500 border-b-2 border-gray-500"
-                                    : "text-gray-500 hover:text-gray-500"
+                                ? "bg-gray-50 text-gray-500 border-b-2 border-gray-500"
+                                : "text-gray-500 hover:text-gray-500"
                                 }`}
                             onClick={() => setActiveTab("orders")}
                         >
@@ -130,8 +130,8 @@ export default function UserDetails() {
                         </button>
                         <button
                             className={`flex items-center gap-2 px-5 py-2 rounded-t-lg font-medium transition-all ${activeTab === "carts"
-                                    ? "bg-gray-50 text-gray-500 border-b-2 border-gray-500"
-                                    : "text-gray-500 hover:text-gray-500"
+                                ? "bg-gray-50 text-gray-500 border-b-2 border-gray-500"
+                                : "text-gray-500 hover:text-gray-500"
                                 }`}
                             onClick={() => setActiveTab("carts")}
                         >
@@ -157,10 +157,10 @@ export default function UserDetails() {
                                                 </span>
                                                 <span
                                                     className={`px-2 py-0.5 rounded-full text-xs font-medium ${order.status === "Delivered"
-                                                            ? "bg-green-100 text-green-600"
-                                                            : order.status === "Cancelled"
-                                                                ? "bg-red-100 text-red-600"
-                                                                : "bg-yellow-100 text-yellow-700"
+                                                        ? "bg-green-100 text-green-600"
+                                                        : order.status === "Cancelled"
+                                                            ? "bg-red-100 text-red-600"
+                                                            : "bg-yellow-100 text-yellow-700"
                                                         }`}
                                                 >
                                                     {order.status}
@@ -173,8 +173,8 @@ export default function UserDetails() {
                                                 </span>
                                                 <span
                                                     className={`px-2 py-0.5 rounded-full text-xs font-medium ${order.paymentStatus === "Paid"
-                                                            ? "bg-green-100 text-green-600"
-                                                            : "bg-yellow-100 text-yellow-700"
+                                                        ? "bg-green-100 text-green-600"
+                                                        : "bg-yellow-100 text-yellow-700"
                                                         }`}
                                                 >
                                                     {order.paymentStatus}

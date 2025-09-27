@@ -8,7 +8,9 @@ import { FaBoxOpen, FaUserCircle } from 'react-icons/fa';
 import { FaCartShopping } from "react-icons/fa6";
 import '../Navbar.css'
 import useCartStore from '../store/cartStore';
+import useUserStore from '../store/userStore';
 
+const BASEURL = import.meta.env.VITE_API_URL;
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
@@ -18,7 +20,7 @@ function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { totalProduct } = useCartStore()
-
+  const { user } = useUserStore()
   // Sync searchTerm with URL query param
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -45,7 +47,9 @@ function Navbar() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDropdown]);
-
+  useEffect(() => {
+    if (user) console.log(user)
+  }, [user])
   return (
     <div className=''>
       <nav className="bg-white border-b pb-2 border-gray-200 fixed w-full top-0 font-poppins z-50 shadow-sm">
@@ -110,7 +114,7 @@ function Navbar() {
                     onClick={toggleDropdown}
                     className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
                   >
-                    <CgProfile className="text-2xl text-black" />
+                    {user && user.image ? <img loading='lazy' src={`${BASEURL}/user/avatar?url=${encodeURIComponent(user.image)}`} alt="Profile" className="w-8 h-8 rounded-full" /> : <CgProfile className="text-2xl text-black" />}
                   </button>
 
                   {/* Dropdown Menu */}

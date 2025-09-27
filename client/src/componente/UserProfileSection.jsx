@@ -50,31 +50,53 @@ const UserProfileSection = ({ user, onEdit, isLoading }) => {
           </button>
         </div>
 
-        {/* Profile Details */}
-        <div className="grid sm:grid-cols-2 gap-y-4 gap-x-8 text-sm text-gray-700">
-          <div>
-            <span className="block text-gray-500 font-medium">Name</span>
+        {/* Profile Image + Details */}
+        <div className="flex flex-col sm:flex-row items-center gap-8 mb-4">
+          <div className="flex-shrink-0 mb-4 sm:mb-0">
             {isLoading ? (
-              <Skeleton className="h-5 w-32 mt-1" />
+              <Skeleton className="h-24 w-24 rounded-full" />
+            ) : user?.image ? (
+              <img
+                src={
+                  import.meta.env.VITE_API_URL
+                    ? `${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}`
+                    : user.image
+                }
+                alt="Profile"
+                className="h-24 w-24 rounded-full object-cover border-2 border-gray-200 shadow"
+                loading="lazy"
+              />
             ) : (
-              <span className="text-gray-900">{user?.name || '—'}</span>
+              <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center text-4xl text-gray-500">
+                <span>{user?.name ? user.name[0].toUpperCase() : "?"}</span>
+              </div>
             )}
           </div>
-          <div>
-            <span className="block text-gray-500 font-medium">Email</span>
-            {isLoading ? (
-              <Skeleton className="h-5 w-40 mt-1" />
-            ) : (
-              <span className="text-gray-900">{user?.email || '—'}</span>
-            )}
-          </div>
-          <div>
-            <span className="block text-gray-500 font-medium">Phone</span>
-            {isLoading ? (
-              <Skeleton className="h-5 w-28 mt-1" />
-            ) : (
-              <span className="text-gray-900">{user?.phone || '—'}</span>
-            )}
+          <div className="grid sm:grid-cols-2 gap-y-4 gap-x-8 text-sm text-gray-700 w-full">
+            <div>
+              <span className="block text-gray-500 font-medium">Name</span>
+              {isLoading ? (
+                <Skeleton className="h-5 w-32 mt-1" />
+              ) : (
+                <span className="text-gray-900">{user?.name || '—'}</span>
+              )}
+            </div>
+            <div>
+              <span className="block text-gray-500 font-medium">Email</span>
+              {isLoading ? (
+                <Skeleton className="h-5 w-40 mt-1" />
+              ) : (
+                <span className="text-gray-900">{user?.email || '—'}</span>
+              )}
+            </div>
+            <div>
+              <span className="block text-gray-500 font-medium">Phone</span>
+              {isLoading ? (
+                <Skeleton className="h-5 w-28 mt-1" />
+              ) : (
+                <span className="text-gray-900">{user?.phone || '—'}</span>
+              )}
+            </div>
           </div>
         </div>
       </section>

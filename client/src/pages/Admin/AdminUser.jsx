@@ -135,7 +135,7 @@ export default function AdminUser() {
               >
                 {/* User Avatar + Name */}
                 <td className="p-3 flex items-center gap-3">
-                  {user.isImage && user.image ? (
+                  { user.image ? (
                     <img
                       src={user.image}
                       alt={user.name}
