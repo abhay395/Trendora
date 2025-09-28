@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useCartStore from '../store/cartStore';
-import useOrderStore from '../store/orderStore';
 import useUserStore from '../store/userStore';
 
 import AddressSection from '../componente/AddressSection';
