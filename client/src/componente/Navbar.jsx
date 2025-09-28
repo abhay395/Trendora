@@ -108,7 +108,7 @@ function Navbar() {
             {/* Right side - Auth & Cart */}
             <div className="flex items-center space-x-4">
               {/* User Profile / Login */}
-              {localStorage.getItem('token') ? (
+              {user ? (
                 <div className="relative dropdown-container">
                   <button
                     onClick={toggleDropdown}

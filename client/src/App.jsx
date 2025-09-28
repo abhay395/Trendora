@@ -40,10 +40,8 @@ function App() {
   const { fetchUserProfile } = useUserStore()
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      fetchUserProfile()
-      fetchCart()
-    }
+    fetchUserProfile()
+    fetchCart()
   }, [])
 
   return (
@@ -84,7 +82,7 @@ function App() {
         <Route path="order/:id" element={<OrderDetaile />} />
         <Route path="product/edit/:id" element={<EditProduct />} />
       </Route>
-      
+
     </Routes>
     // </AnimatePresence>
   )

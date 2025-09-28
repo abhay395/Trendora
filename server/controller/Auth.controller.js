@@ -11,19 +11,7 @@ export default {
         sendSuccessMessage(res, 201, "User Created Successfully", result);
     },
     googleCallBack: async (req, res) => {
-        const { displayName, emails, photos } = req.user
-
-        if (await User.isEmailTaken(emails[0].value)) {
-            let user = await User.findOne({ email: emails[0].value })
-            const token = createToken(user)
-            user.isActive = true
-            await user.save()
-            return res.redirect(`${clientUrl}/?token=${token}`)
-        }
-        const user = new User({ name: displayName, email: emails[0].value, image: photos[0].value, isActive: true })
-        await user.save()
-        const token = createToken(user)
-        res.redirect(`${clientUrl}/?token=${token}`)
+        res.redirect(`${clientUrl}`)
     },
     loginUser: async (req, res) => {
         const result = await AuthServer.loginUser(req.body);

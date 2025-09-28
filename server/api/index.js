@@ -9,22 +9,48 @@ import rateLimit from "express-rate-limit";
 import session from 'express-session';
 import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20'
+import User from '../models/User.model.js';
+import MongoStore from 'connect-mongo';
 dotenv.config();
 
 const app = express();
 
 
-app.use(session({ secret: "SECRET", resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URL, // your existing MongoDB
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60 // 1 day
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: true,     // set true if using HTTPS
+    sameSite: 'none', // if frontend is on different domain
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
 app.use(passport.session());
+app.use(passport.initialize());
 
 
 passport.serializeUser((user, done) => {
-  done(null, user);
+  console.log(user)
+  done(null, user._id); // store only user ID in session
 });
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id); // fetch full user from DB
+    // console.log(user)
+    done(null, user); // now req.user will be full user object
+  } catch (err) {
+    done(err);
+  }
 });
+
 passport.use(
   new GoogleStrategy.Strategy(
     {
@@ -32,11 +58,21 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
-    (accessToken, refreshToken, profile, done) => {
-      // console.log(profile, profile?.displayName)
-      // const user = new User({ name: profile.displayName, email: profile.emails[0].value, image: [profile.photos[0].value] })
-      // await user.save()
-      return done(null, profile);
+    async (accessToken, refreshToken, profile, done) => {
+      const { displayName, emails, photos } = profile;
+      let user = await User.findOne({ email: emails[0].value });
+
+      if (!user) {
+        user = new User({
+          name: displayName,
+          email: emails[0].value,
+          image: photos[0].value,
+          isActive: true
+        });
+        await user.save();
+      }
+
+      return done(null, user); // Pass full user object here
     }
   )
 );

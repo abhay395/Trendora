@@ -5,7 +5,8 @@ const privateAxios = axios.create({
     baseURL: BASEURL,
     headers:{
         "Content-Type":"application/json"
-    }
+    },
+    withCredentials:true
 })
 
 privateAxios.interceptors.request.use((config) => {
