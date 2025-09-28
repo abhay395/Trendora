@@ -28,7 +28,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: true,     // set true if using HTTPS
-    sameSite: 'none', // if frontend is on different domain
+    sameSite: 'lax', // if frontend is on different domain
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
