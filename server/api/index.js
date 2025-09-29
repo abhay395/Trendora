@@ -1,57 +1,51 @@
-import express from "express";
-import dotenv from "dotenv";
-import errorHandlerMiddleware from "../middleware/error-handler.js";
-import cors from "cors";
-import connectDb from "../db/connectdb.js";
-import router from "../routes/index.routes.js";
-import serverless from "serverless-http";
+import express from 'express';
+import dotenv from 'dotenv';
+import errorHandlerMiddleware from '../middleware/error-handler.js';
+import cors from 'cors';
+import connectDb from '../db/connectdb.js';
+import router from '../routes/index.routes.js';
+import serverless from 'serverless-http';
 import rateLimit from "express-rate-limit";
-import session from "express-session";
-import passport from "passport";
-import GoogleStrategy from "passport-google-oauth20";
-import User from "../models/User.model.js";
-import MongoStore from "connect-mongo";
-
+import session from 'express-session';
+import passport from 'passport';
+import GoogleStrategy from 'passport-google-oauth20'
+import User from '../models/User.model.js';
+import MongoStore from 'connect-mongo';
 dotenv.config();
 
 const app = express();
-
-// ✅ Connect DB once (not per request)
 await connectDb();
-
-app.set("trust proxy", 1);
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URL,
-      collectionName: "sessions",
-      ttl: 24 * 60 * 60,
-    }),
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    },
-  })
-);
-
-// ✅ Order matters!
+app.set('trust proxy', 1);
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URL, // your existing MongoDB
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60 // 1 day
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: true,     // set true if using HTTPS
+    sameSite: 'none', // if frontend is on different domain
+    // maxAge: 24 * 60 * 60 * 1000
+  }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Passport setup
+
 passport.serializeUser((user, done) => {
-  done(null, user._id);
+  console.log(user)
+  done(null, user._id); // store only user ID in session
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
-    done(null, user);
+    const user = await User.findById(id); // fetch full user from DB
+    // console.log(user)
+    done(null, user); // now req.user will be full user object
   } catch (err) {
     done(err);
   }
@@ -67,54 +61,57 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       const { displayName, emails, photos } = profile;
       let user = await User.findOne({ email: emails[0].value });
+
       if (!user) {
         user = new User({
           name: displayName,
           email: emails[0].value,
           image: photos[0].value,
-          isActive: true,
+          isActive: true
         });
         await user.save();
       }
-      return done(null, user);
+
+      return done(null, user); // Pass full user object here
     }
   )
 );
 
-// CORS
+
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://trendora-i8b9.vercel.app",
+  "https://trendora-i8b9.vercel.app"
 ];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS Not Allowed: " + origin));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow server-to-server or curl
+    const cleanedOrigin = origin.replace(/\/$/, ""); // remove trailing slash
+    if (allowedOrigins.includes(cleanedOrigin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS Not Allowed: " + origin));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 
-// Rate limit
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: "Too many requests from this IP, please try again later.",
-});
-app.use(limiter);
-
+})
+app.use(limiter)
 app.use(express.json());
 
+
 app.get("/", (req, res) => res.send("Hello world"));
-app.use("/api/v1", router);
+
+app.use('/api/v1', router);
+
 app.use(errorHandlerMiddleware);
 
 export default app;
