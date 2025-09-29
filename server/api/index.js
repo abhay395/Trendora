@@ -33,8 +33,8 @@ app.use(session({
     // maxAge: 24 * 60 * 60 * 1000
   }
 }));
-app.use(passport.initialize());
 app.use(passport.session());
+app.use(passport.initialize());
 
 
 passport.serializeUser((user, done) => {
