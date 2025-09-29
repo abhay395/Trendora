@@ -16,6 +16,7 @@ dotenv.config();
 const app = express();
 await connectDb();
 app.set('trust proxy', 1);
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -106,7 +107,11 @@ const limiter = rateLimit({
 })
 app.use(limiter)
 app.use(express.json());
-
+app.use((req, res, next) => {
+  console.log("Session:", req.session);
+  console.log("User:", req.user);
+  next();
+});
 
 app.get("/", (req, res) => res.send("Hello world"));
 

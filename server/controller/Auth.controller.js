@@ -11,6 +11,8 @@ export default {
         sendSuccessMessage(res, 201, "User Created Successfully", result);
     },
     googleCallBack: async (req, res) => {
+        console.log("Session after login:", req.session);
+        console.log("User after login:", req.user);
         res.redirect(`${clientUrl}`)
     },
     loginUser: async (req, res) => {
