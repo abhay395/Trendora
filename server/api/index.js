@@ -24,13 +24,17 @@ app.use(session({
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URL, // your existing MongoDB
     collectionName: 'sessions',
-    ttl: 24 * 60 * 60 // 1 day
+    ttl: 24 * 60 * 60, // 1 day
+    touchAfter: 24 * 60 * 60, // lazy session update (24 hours)
+    autoRemove: 'interval',
+    autoRemoveInterval: 60, // check for expired sessions every 60 minutes
   }),
   cookie: {
     httpOnly: true,
-    secure: true,     // set true if using HTTPS
-    sameSite: 'none', // if frontend is on different domain
-    // maxAge: 24 * 60 * 60 * 1000
+    secure: process.env.NODE_ENV === 'production', // only secure in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    // domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
   }
 }));
 app.use(passport.session());
@@ -107,9 +111,17 @@ const limiter = rateLimit({
 })
 app.use(limiter)
 app.use(express.json());
+
+// Enhanced session debugging middleware
 app.use((req, res, next) => {
-  console.log("Session:", req.session);
+  console.log("=== Session Debug Info ===");
+  console.log("Session ID:", req.sessionID);
+  console.log("Session data:", req.session);
   console.log("User:", req.user);
+  console.log("Is Authenticated:", req.isAuthenticated());
+  console.log("Request Headers:", req.headers);
+  console.log("Cookies:", req.headers.cookie);
+  console.log("==========================");
   next();
 });
 
