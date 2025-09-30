@@ -114,7 +114,13 @@ app.use(cors({
 app.use(limiter)
 app.use(express.json());
 
-
+app.get("/api/v1/debug", (req, res) => {
+  res.json({
+    cookies: req.headers.cookie,
+    session: req.session,
+    user: req.user,
+  });
+});
 app.get("/", (req, res) => res.send("Hello world"));
 
 app.use('/api/v1', router);

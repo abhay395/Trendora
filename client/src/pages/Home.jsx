@@ -8,8 +8,10 @@ import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import SkeletonCard from '../componente/SkeletonCard';
 import { useEffect } from 'react';
+import privateAxios from '../api/instance/privateAxios';
+// import axios from 'axios'
 
-
+const BASEURL = import.meta.env.VITE_API_URL
 function Home() {
   const { data: products, isLoading, error } = useProducts('', {
     refetchOnMount: false,
@@ -18,8 +20,17 @@ function Home() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
   const location = useLocation();
-
   useEffect(() => {
+    async function degbugeConsole() {
+      try {
+        const res = await privateAxios.get(`${BASEURL}/debug`)
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    // call async function from synchronous effect
+    degbugeConsole()
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
 
