@@ -32,7 +32,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: false, // only secure in production
-    sameSite: 'lax',
+    sameSite: 'none',
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     // domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
   }
