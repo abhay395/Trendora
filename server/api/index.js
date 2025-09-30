@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import errorHandlerMiddleware from '../middleware/error-handler.js';
 import cors from 'cors';
-import connectDb from '../db/connectdb.js';
+import '../db/connectdb.js';
 import router from '../routes/index.routes.js';
 import serverless from 'serverless-http';
 import rateLimit from "express-rate-limit";
@@ -16,10 +16,10 @@ dotenv.config();
 const app = express();
 // await connectDb();
 app.set('trust proxy', 1);
-app.use(async (req, res, next) => {
-  await connectDb();
-  next();
-});
+// app.use(async (req, res, next) => {
+//   await connectDb();
+//   next();
+// });
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
