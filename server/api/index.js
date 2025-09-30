@@ -14,9 +14,12 @@ import MongoStore from 'connect-mongo';
 dotenv.config();
 
 const app = express();
-await connectDb();
+// await connectDb();
 app.set('trust proxy', 1);
-
+app.use(async (req, res, next) => {
+  await connectDb();
+  next();
+});
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -88,7 +91,11 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://trendora-i8b9.vercel.app"
 ];
-
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests from this IP, please try again later.",
+})
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true); // allow server-to-server or curl
@@ -104,12 +111,6 @@ app.use(cors({
   credentials: true
 }));
 
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: "Too many requests from this IP, please try again later.",
-})
 app.use(limiter)
 app.use(express.json());
 
