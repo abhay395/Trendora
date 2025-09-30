@@ -9,27 +9,38 @@ import session from 'express-session';
 import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20'
 import User from './models/User.model.js';
+import MongoStore from 'connect-mongo';
 dotenv.config();
 
 const app = express();
 
 
 app.use(session({
-  secret: "SECRET",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URL, // your existing MongoDB
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60, // 1 day
+    touchAfter: 24 * 60 * 60, // lazy session update (24 hours)
+    autoRemove: 'native',
+    autoRemoveInterval: 60, // check for expired sessions every 60 minutes
+  }),
   cookie: {
-    httpOnly: true, // cannot be read by JS
-    secure: false,  // true if using https
-    sameSite: "lax"
+    httpOnly: true,
+    secure: false, // only secure in production
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    // domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
   }
 }));
-app.use(passport.session());
 app.use(passport.initialize());
+app.use(passport.session());
+
 
 
 passport.serializeUser((user, done) => {
-  console.log(user)
   done(null, user._id); // store only user ID in session
 });
 

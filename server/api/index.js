@@ -26,23 +26,23 @@ app.use(session({
     collectionName: 'sessions',
     ttl: 24 * 60 * 60, // 1 day
     touchAfter: 24 * 60 * 60, // lazy session update (24 hours)
-    autoRemove: 'interval',
+    autoRemove: 'native',
     autoRemoveInterval: 60, // check for expired sessions every 60 minutes
   }),
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // only secure in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: false, // only secure in production
+    sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     // domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
   }
 }));
-app.use(passport.session());
 app.use(passport.initialize());
+app.use(passport.session());
+
 
 
 passport.serializeUser((user, done) => {
-  console.log(user)
   done(null, user._id); // store only user ID in session
 });
 
@@ -83,6 +83,7 @@ passport.use(
 );
 
 
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://trendora-i8b9.vercel.app"
@@ -112,18 +113,6 @@ const limiter = rateLimit({
 app.use(limiter)
 app.use(express.json());
 
-// Enhanced session debugging middleware
-app.use((req, res, next) => {
-  console.log("=== Session Debug Info ===");
-  console.log("Session ID:", req.sessionID);
-  console.log("Session data:", req.session);
-  console.log("User:", req.user);
-  console.log("Is Authenticated:", req.isAuthenticated());
-  console.log("Request Headers:", req.headers);
-  console.log("Cookies:", req.headers.cookie);
-  console.log("==========================");
-  next();
-});
 
 app.get("/", (req, res) => res.send("Hello world"));
 
