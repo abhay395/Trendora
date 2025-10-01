@@ -35,7 +35,7 @@ app.use(session({
     secure: true, // required for sameSite: 'none'
     sameSite: 'none', // required for cross-origin requests
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-    // Remove domain setting - let browser handle it automatically
+    // Remove domain setting - .vercel.app is on public suffix list
   }
 }));
 app.use(passport.initialize());
@@ -117,7 +117,7 @@ app.use(express.json());
 app.use((req, res, next) => {
   console.log("Cookies received:", req.headers.cookie);
   console.log("Origin:", req.headers.origin);
-  console.log("User-Agent:", req.headers['user-agent']);
+  console.log("Host:", req.headers.host);
   next();
 });
 app.get("/api/v1/debug", (req, res) => {
@@ -128,9 +128,8 @@ app.get("/api/v1/debug", (req, res) => {
     user: req.user,
     headers: {
       origin: req.headers.origin,
-      'user-agent': req.headers['user-agent'],
       host: req.headers.host,
-      referer: req.headers.referer
+      'user-agent': req.headers['user-agent']
     }
   });
 });
