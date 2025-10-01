@@ -134,4 +134,5 @@ app.use('/api/v1', router);
 app.use(errorHandlerMiddleware);
 
 export default app;
-export const handler = serverless(app);
+
+// export const handler = serverless(app);
