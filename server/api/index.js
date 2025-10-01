@@ -35,8 +35,7 @@ app.use(session({
     secure: true, // only secure in production
     sameSite: 'none',
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-     domain: ".vercel.app"
-    // domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
+    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
   }
 }));
 app.use(passport.initialize());
