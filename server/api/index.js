@@ -114,7 +114,10 @@ app.use(cors({
 
 app.use(limiter)
 app.use(express.json());
-
+app.use((req, res, next) => {
+  console.log("Cookies received:", req.headers.cookie);
+  next();
+});
 app.get("/api/v1/debug", (req, res) => {
   res.json({
     cookie: req.headers.cookie,
