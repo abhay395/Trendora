@@ -32,8 +32,13 @@ export default {
                     return res.status(500).json({ message: 'Session cleanup failed' });
                 }
                 
-                // Clear the session cookie
-                res.clearCookie('connect.sid');
+                // Clear the session cookie with proper options
+                res.clearCookie('connect.sid', {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'none',
+                    path: '/'
+                });
                 sendSuccessMessage(res, 200, 'User Logout Successfully', null);
             });
         });

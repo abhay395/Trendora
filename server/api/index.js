@@ -32,10 +32,10 @@ app.use(session({
   }),
   cookie: {
     httpOnly: true,
-    secure: true, // only secure in production
-    sameSite: 'none',
+    secure: true, // required for sameSite: 'none'
+    sameSite: 'none', // required for cross-origin requests
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
+    // Remove domain setting - let browser handle it automatically
   }
 }));
 app.use(passport.initialize());
@@ -108,7 +108,7 @@ app.use(cors({
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
   credentials: true
 }));
 
@@ -116,6 +116,8 @@ app.use(limiter)
 app.use(express.json());
 app.use((req, res, next) => {
   console.log("Cookies received:", req.headers.cookie);
+  console.log("Origin:", req.headers.origin);
+  console.log("User-Agent:", req.headers['user-agent']);
   next();
 });
 app.get("/api/v1/debug", (req, res) => {
@@ -124,6 +126,12 @@ app.get("/api/v1/debug", (req, res) => {
     session: req.session,
     passport: req.session?.passport,
     user: req.user,
+    headers: {
+      origin: req.headers.origin,
+      'user-agent': req.headers['user-agent'],
+      host: req.headers.host,
+      referer: req.headers.referer
+    }
   });
 });
 
