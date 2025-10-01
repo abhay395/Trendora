@@ -48,14 +48,17 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log("DESERIALIZE CALLED WITH:", id);
   try {
-    const user = await User.findById(id); // fetch full user from DB
-    // console.log(user)
-    done(null, user); // now req.user will be full user object
+    const user = await User.findById(id);
+    console.log("USER FOUND:", user);
+    done(null, user);
   } catch (err) {
+    console.error("DESERIALIZE ERROR:", err);
     done(err);
   }
 });
+
 
 passport.use(
   new GoogleStrategy.Strategy(
@@ -112,13 +115,15 @@ app.use(cors({
 app.use(limiter)
 app.use(express.json());
 
-app.get("/api/v1/debug", (req, res) => {
+app.get("/debug", (req, res) => {
   res.json({
-    cookies: req.headers.cookie,
+    cookie: req.headers.cookie,
     session: req.session,
+    passport: req.session?.passport,
     user: req.user,
   });
 });
+
 app.get("/", (req, res) => res.send("Hello world"));
 
 app.use('/api/v1', router);
