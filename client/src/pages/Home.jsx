@@ -24,24 +24,13 @@ function Home() {
     async function degbugeConsole() {
       try {
         const res = await privateAxios.get(`${BASEURL}/debug`)
-        console.log('Debug response:', res)
+        console.log(res)
       } catch (error) {
-        console.log('Debug error:', error)
+        console.log(error)
       }
     }
-    
-    async function testCookie() {
-      try {
-        const res = await privateAxios.get(`${BASEURL}/test-cookie`)
-        console.log('Test cookie response:', res)
-      } catch (error) {
-        console.log('Test cookie error:', error)
-      }
-    }
-    
     // call async function from synchronous effect
     degbugeConsole()
-    testCookie()
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
 

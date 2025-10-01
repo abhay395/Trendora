@@ -32,10 +32,10 @@ app.use(session({
   }),
   cookie: {
     httpOnly: true,
-    secure: true, // required for sameSite: 'none'
-    sameSite: 'none', // required for cross-origin requests
+    secure: true, // only secure in production
+    sameSite: 'none',
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-    // Remove domain setting - .vercel.app is on public suffix list
+    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
   }
 }));
 app.use(passport.initialize());
@@ -108,7 +108,7 @@ app.use(cors({
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   credentials: true
 }));
 
@@ -116,34 +116,15 @@ app.use(limiter)
 app.use(express.json());
 app.use((req, res, next) => {
   console.log("Cookies received:", req.headers.cookie);
-  console.log("Origin:", req.headers.origin);
-  console.log("Host:", req.headers.host);
   next();
 });
 app.get("/api/v1/debug", (req, res) => {
   res.json({
-    cookie: req.headers.cookie,
+    cookie: req.cookies,
     session: req.session,
     passport: req.session?.passport,
     user: req.user,
-    isAuthenticated: req.isAuthenticated(),
-    headers: {
-      origin: req.headers.origin,
-      host: req.headers.host,
-      'user-agent': req.headers['user-agent']
-    }
   });
-});
-
-// Test endpoint to manually set a cookie
-app.get("/api/v1/test-cookie", (req, res) => {
-  res.cookie('test-cookie', 'test-value', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    maxAge: 24 * 60 * 60 * 1000
-  });
-  res.json({ message: 'Test cookie set', cookies: req.headers.cookie });
 });
 
 app.get("/", (req, res) => res.send("Hello world"));

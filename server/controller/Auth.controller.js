@@ -15,21 +15,7 @@ export default {
     },
     loginUser: async (req, res) => {
         const result = await AuthServer.loginUser(req.body);
-        
-        // Create session for the user
-        const user = await User.findOne({ email: req.body.email });
-        if (user) {
-            req.login(user, (err) => {
-                if (err) {
-                    console.error('Login error:', err);
-                    return res.status(500).json({ message: 'Session creation failed' });
-                }
-                console.log('Session created for user:', user._id);
-                sendSuccessMessage(res, 200, "User Logged in Successfully", result);
-            });
-        } else {
-            sendSuccessMessage(res, 200, "User Logged in Successfully", result);
-        }
+        sendSuccessMessage(res, 200, "User Logged in Successfully", result);
     },
     logoutUser: async (req, res) => {
         await AuthServer.logoutUser(req.user._id);
@@ -46,13 +32,8 @@ export default {
                     return res.status(500).json({ message: 'Session cleanup failed' });
                 }
                 
-                // Clear the session cookie with proper options
-                res.clearCookie('connect.sid', {
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'none',
-                    path: '/'
-                });
+                // Clear the session cookie
+                res.clearCookie('connect.sid');
                 sendSuccessMessage(res, 200, 'User Logout Successfully', null);
             });
         });
