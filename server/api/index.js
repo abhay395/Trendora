@@ -126,12 +126,24 @@ app.get("/api/v1/debug", (req, res) => {
     session: req.session,
     passport: req.session?.passport,
     user: req.user,
+    isAuthenticated: req.isAuthenticated(),
     headers: {
       origin: req.headers.origin,
       host: req.headers.host,
       'user-agent': req.headers['user-agent']
     }
   });
+});
+
+// Test endpoint to manually set a cookie
+app.get("/api/v1/test-cookie", (req, res) => {
+  res.cookie('test-cookie', 'test-value', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000
+  });
+  res.json({ message: 'Test cookie set', cookies: req.headers.cookie });
 });
 
 app.get("/", (req, res) => res.send("Hello world"));

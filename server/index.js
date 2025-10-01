@@ -2,11 +2,11 @@ import express from 'express';
 import dotenv from 'dotenv';
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import cors from 'cors';
-import connectDb from './db/connectdb.js';
 import router from './routes/index.routes.js';
 import rateLimit from "express-rate-limit";
 import session from 'express-session';
 import passport from 'passport';
+import connectDb from  './db/connectdb.js'
 import GoogleStrategy from 'passport-google-oauth20'
 import User from './models/User.model.js';
 import MongoStore from 'connect-mongo';
@@ -110,11 +110,14 @@ app.use(cors({
 app.use(limiter)
 app.use(express.json());
 
-app.use(async (req, res, next) => {
-  await connectDb();
-  next();
-});
 
+app.get("/api/v1/debug", (req, res) => {
+  res.json({
+    cookies: req.headers.cookie,
+    session: req.session,
+    user: req.user,
+  });
+});
 app.get("/", (req, res) => res.send("Hello world"));
 app.use('/api/v1', router);
 

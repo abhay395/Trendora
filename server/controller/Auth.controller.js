@@ -15,7 +15,21 @@ export default {
     },
     loginUser: async (req, res) => {
         const result = await AuthServer.loginUser(req.body);
-        sendSuccessMessage(res, 200, "User Logged in Successfully", result);
+        
+        // Create session for the user
+        const user = await User.findOne({ email: req.body.email });
+        if (user) {
+            req.login(user, (err) => {
+                if (err) {
+                    console.error('Login error:', err);
+                    return res.status(500).json({ message: 'Session creation failed' });
+                }
+                console.log('Session created for user:', user._id);
+                sendSuccessMessage(res, 200, "User Logged in Successfully", result);
+            });
+        } else {
+            sendSuccessMessage(res, 200, "User Logged in Successfully", result);
+        }
     },
     logoutUser: async (req, res) => {
         await AuthServer.logoutUser(req.user._id);
