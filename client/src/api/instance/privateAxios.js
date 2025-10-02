@@ -9,12 +9,12 @@ const privateAxios = axios.create({
     withCredentials:true
 })
 
-// privateAxios.interceptors.request.use((config) => {
-//     // let token = localStorage.getItem("token")
-//     // if (token) {
-//     //     config.headers['Authorization'] = `Bearer ${token}`
-//     // }
-//     return config
-// })
+privateAxios.interceptors.request.use((config) => {
+    let token = localStorage.getItem("token")
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`
+    }
+    return config
+})
 
 export default privateAxios

@@ -21,16 +21,6 @@ function Home() {
   })
   const location = useLocation();
   useEffect(() => {
-    async function degbugeConsole() {
-      try {
-        const res = await privateAxios.get(`${BASEURL}/debug`)
-        console.log(res)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    // call async function from synchronous effect
-    degbugeConsole()
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
 
