@@ -29,7 +29,7 @@ const authenticationMiddleware = async (req, res, next) => {
   // } catch (error) {
   //   next(error)
   // }
-  console.log(req)
+  // console.log(req)
   if (req.isAuthenticated()) {
     return next()
   }
