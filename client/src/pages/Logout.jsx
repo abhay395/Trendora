@@ -1,14 +1,18 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../store/authStore';
+import { useQueryClient } from '@tanstack/react-query';
+
 function Logout() {
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { logoutUser } = useAuthStore()
 
     useEffect(() => {
         const logout = async () => {
-            let res = await logoutUser()
-            if (res) navigate('/')
+            await logoutUser()
+            queryClient.removeQueries({ queryKey: ['user', 'userDetail'] });
+            navigate('/')
         };
         logout();
     }, []);
