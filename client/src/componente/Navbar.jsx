@@ -32,6 +32,7 @@ function Navbar() {
       success: "User logout successfully",
       error: "Some thing went wrong"
     })
+    navigate('/')
   }
   // Sync searchTerm with URL query param
   useEffect(() => {
