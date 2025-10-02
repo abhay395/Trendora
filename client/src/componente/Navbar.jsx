@@ -175,7 +175,7 @@ function Navbar() {
               )}
 
               {/* Cart Button */}
-              <button
+              {user && <button
                 className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
                 onClick={() => navigate('/cart')}
               >
@@ -185,7 +185,7 @@ function Navbar() {
                     {totalProduct}
                   </span>
                 )}
-              </button>
+              </button>}
 
               {/* Mobile Menu Button */}
               <button
