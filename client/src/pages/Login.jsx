@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import { useLogin } from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const BASEURL = import.meta.env.VITE_API_URL;
 const Login = () => {
@@ -11,15 +13,21 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm()
-  // const [error, setError] = useState(true);
   const navigate = useNavigate()
-  const { loginUser } = useAuthStore()
+  const { mutateAsync: loginUser, error, status } = useLogin()
   const onSubmit = async (data) => {
-    let res = await loginUser(data)
-    if (res) {
-      navigate('/')
-    }
+    toast.promise(
+      loginUser(data),
+      {
+        loading: "Loading...",
+        success: "User logged in successfully",
+        error: "Invalid credentials"
+      }
+    )
   }
+  useEffect(() => {
+    if (status == 'success') navigate('/')
+  }, [status])
   const handleGoogleLogin = () => {
     window.location.href = `${BASEURL}/auth/google-login`;
   };

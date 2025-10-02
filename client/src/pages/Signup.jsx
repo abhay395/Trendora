@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form"
 import useAuthStore from "../store/authStore";
+import { useSingup } from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const BASEURL = import.meta.env.VITE_API_URL;
 const Signup = () => {
@@ -13,19 +15,18 @@ const Signup = () => {
   } = useForm()
   const navigate = useNavigate()
   const password = watch('password');
-  const { signupUser, error } = useAuthStore()
+  // const { signupUser, error } = useAuthStore()
+  const { mutateAsync: signupUser, error } = useSingup()
   const onSubmit = async (data) => {
-    let res = await signupUser(data)
-    if (res) {
-      navigate('/')
-    }
+    toast.promise(async () => {
+      await signupUser(data)
+      if (!error) return navigate('/')
+    }, {
+      loading: "Loading...",
+      success: "User signed up successfully",
+      error: "Invalid credentials"
+    })
   }
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      navigate('/')
-    }
-  }, [])
-
   // Handler for Google signup button
   const handleGoogleSignup = () => {
     window.location.href = `${BASEURL}/auth/google-signup`;

@@ -1,9 +1,7 @@
 
-
 import { create } from "zustand";
 import { loginUserApi, logoutApi, signupUserApi } from "../api/authApi";
 import toast from "react-hot-toast";
-
 const useAuthStore = create((set) => ({
     isLoading: true,
     error: null,

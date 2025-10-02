@@ -1,5 +1,13 @@
 import privateAxios from "./instance/privateAxios";
 
-export const loginUserApi = (data) => privateAxios.post('/auth/login', { ...data });
-export const signupUserApi = (data) => privateAxios.post('/auth/signup', { ...data });
-export const logoutApi = () => privateAxios.post('/auth/logout');
+export const loginUserApi = async (data) => {
+    const response = await privateAxios.post('/auth/login', { ...data });
+    return response.data.result
+}
+export const signupUserApi = async (data) => {
+    const response = await privateAxios.post('/auth/signup', { ...data });
+    return response.data.result
+}
+export const logoutApi = async () => {
+    await privateAxios.post('/auth/logout')
+}

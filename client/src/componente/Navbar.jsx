@@ -9,6 +9,8 @@ import { FaCartShopping } from "react-icons/fa6";
 import '../Navbar.css'
 import useCartStore from '../store/cartStore';
 import { useUser } from '../hooks/useUser';
+import { useLogout } from '../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const BASEURL = import.meta.env.VITE_API_URL;
 function Navbar() {
@@ -22,6 +24,15 @@ function Navbar() {
   const { totalProduct } = useCartStore()
   const { data, isLoading } = useUser();
   const [user, setUser] = useState(null)
+  const { mutateAsync: logoutUser } = useLogout()
+  const logoutHandler = async () => {
+    setIsDropdown(false)
+    toast.promise(logoutUser(), {
+      loading: "Loading...",
+      success: "User logout successfully",
+      error: "Some thing went wrong"
+    })
+  }
   // Sync searchTerm with URL query param
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -44,6 +55,8 @@ function Navbar() {
         name: data.name,
         image: data.image
       })
+    } else {
+      setUser(null)
     }
   }, [data, isLoading])
   // Close dropdown when clicking outside
@@ -154,14 +167,14 @@ function Navbar() {
                         <span>Settings</span>
                       </Link>
                       <div className="border-t border-gray-200 my-1"></div>
-                      <Link
-                        to="/logout"
-                        className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors duration-200 font-medium"
-                        onClick={() => setIsDropdown(false)}
+                      <button
+                        // to="/logout"
+                        className="flex items-center space-x-3 px-4 py-3 text-red-600 w-full h-full hover:bg-red-50 transition-colors duration-200 font-medium"
+                        onClick={logoutHandler}
                       >
                         <FiLogOut className="text-red-500" />
                         <span>Logout</span>
-                      </Link>
+                      </button>
                     </div>
                   )}
                 </div>
