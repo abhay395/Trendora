@@ -8,7 +8,7 @@ import { FaBoxOpen, FaUserCircle } from 'react-icons/fa';
 import { FaCartShopping } from "react-icons/fa6";
 import '../Navbar.css'
 import useCartStore from '../store/cartStore';
-import useUserStore from '../store/userStore';
+import { useUser } from '../hooks/useUser';
 
 const BASEURL = import.meta.env.VITE_API_URL;
 function Navbar() {
@@ -20,7 +20,8 @@ function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { totalProduct } = useCartStore()
-  const { user } = useUserStore()
+  const { data, isLoading } = useUser();
+  const [user, setUser] = useState(null)
   // Sync searchTerm with URL query param
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -37,6 +38,14 @@ function Navbar() {
       handleSearch()
     }
   }
+  useEffect(() => {
+    if (data) {
+      setUser({
+        name: data.name,
+        image: data.image
+      })
+    }
+  }, [data, isLoading])
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {

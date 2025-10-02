@@ -1,11 +1,11 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import useUserStore from "../store/userStore";
 import { MoonLoader } from "react-spinners";
+import { useUser } from "../hooks/useUser";
 
 export default function ProtectedRoute({ children, allowedRole = [] }) {
     const token = localStorage.getItem("token");
-    const { user, isLoading } = useUserStore();
+    const { data: user, isLoading } = useUser();
 
     // Wait until user state is loaded
     if (token && isLoading) {

@@ -21,7 +21,6 @@ import Dashbord from './pages/Admin/Dashboard'
 import useCartStore from './store/cartStore'
 import Dashboard from './pages/Admin/Dashboard'
 import PageNotFound from './pages/PageNotFound'
-import useUserStore from './store/userStore'
 import ProtectedRoute from './componente/ProtectedRoute'
 import Unauthorized from './pages/AccessDenied'
 import AdminLayout from './pages/Admin/AdminLayout'
@@ -37,11 +36,9 @@ import UserDetails from './pages/Admin/UserDetails'
 function App() {
   const location = useLocation()
   const { fetchCart } = useCartStore()
-  const { fetchUserProfile } = useUserStore()
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      fetchUserProfile()
       fetchCart()
     }
   }, [])

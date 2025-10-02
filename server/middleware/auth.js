@@ -2,7 +2,9 @@
 import jwt from "jsonwebtoken";
 import ApiError from "../utils/ApiError.js";
 import User from "../models/User.model.js";
-const JWT_SECRET = process.env.JWT_SECRET || "Your Secret Secret Key";
+import { config } from 'dotenv'
+config()
+const JWT_SECRET = process.env.JWT_SECRET || "Your_Secret_Secret_Key";
 const authenticationMiddleware = async (req, res, next) => {
   try {
     const authorization = req.headers["authorization"] || req.headers["Authorization"];
@@ -13,9 +15,10 @@ const authenticationMiddleware = async (req, res, next) => {
     if (!token) {
       return next(new ApiError(401, "No authorized to acces"));
     }
+    console.log(token, "toekn")
     try {
       const verified = jwt.verify(token, JWT_SECRET);
-      // console.log(verified)
+      console.log(token, "toekn")
       let user = await User.findById(verified?._id)
       if (!user) {
         return next(new ApiError(401, "No authorized to acces"));

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Bell, LogOut } from 'lucide-react';
-import useUserStore from '../../../store/userStore';
+import { useUser } from '../../../hooks/useUser';
 
 function AdminNavbar() {
-  const { user } = useUserStore()
+  const { data: user } = useUser()
   return (
     <header className="bg-white shadow-sm px-6 py-3 flex justify-between items-center border-b border-gray-200">
       {/* Left side */}

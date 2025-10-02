@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useUserStore from '../store/userStore';
 
 import AddressSection from '../componente/AddressSection';
 import CardForCheckout from '../componente/CardForCheckout';
@@ -8,6 +6,8 @@ import ProductNotFound from '../componente/ProductNotFound';
 import OrderHistorySection from '../componente/OrderHistorySection';
 import UserProfileSection from '../componente/UserProfileSection';
 import { motion } from 'framer-motion';
+import { useUser, useUserUpdate } from '../hooks/useUser';
+import toast from 'react-hot-toast';
 
 // Skeleton Loader Component
 const Skeleton = ({ className }) => (
@@ -15,17 +15,13 @@ const Skeleton = ({ className }) => (
 );
 
 const Profile = () => {
-  const { userDetails, fetchUserAllDetails, updateUserProfile, isLoading } = useUserStore();
+  const { data: userDetails, isLoading } = useUser();
+  const { mutateAsync: updateUserProfile, status } = useUserUpdate();
   // const isLoading = true
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [cart, setCart] = useState([]);
   const [selectedAddress, setSelectedAdress] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchUserAllDetails();
-  }, []);
 
   useEffect(() => {
     if (userDetails) {
@@ -41,8 +37,7 @@ const Profile = () => {
       setCart(userDetails.carts || []);
       setSelectedAdress(userDetails.addresses?.find((item) => item.selected)?._id || null);
     }
-  }, [userDetails,isLoading]);
-
+  }, [userDetails, isLoading]);
   const onEdit = (data) => {
     console.log(data)
     const form = new FormData();
@@ -51,9 +46,13 @@ const Profile = () => {
         form.append(key, value)
       }
     }
-    updateUserProfile(form);
+    // updateUserProfile(form);
+    toast.promise(updateUserProfile(form), {
+      loading: 'Updating profile...',
+      success: 'Profile updated successfully! 🎉',
+      error: 'Error updating profile ❌',
+    });
   };
-
   return (
     <motion.div
       initial="hidden"
@@ -73,7 +72,7 @@ const Profile = () => {
 
       {/* 1. Basic Profile Info */}
       <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
-        <UserProfileSection user={user} onEdit={onEdit} isLoading={isLoading} />
+        <UserProfileSection user={user} onEdit={onEdit} isLoading={isLoading} status={status} />
       </motion.div>
 
       {/* 2. Order Information */}

@@ -7,7 +7,7 @@ const Skeleton = ({ className }) => (
   <div className={`animate-pulse bg-gray-300 rounded-md ${className}`} />
 );
 
-const UserProfileSection = ({ user, onEdit, isLoading }) => {
+const UserProfileSection = ({ user, onEdit, isLoading, status }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -35,11 +35,9 @@ const UserProfileSection = ({ user, onEdit, isLoading }) => {
         name: user?.name,
         email: user?.email,
         phone: user?.phone,
-        image: user.image ? `${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}` : "https://ui-avatars.com/api/?name=${user.name}&background=f3f4f6&color=111827&size=128",
+        image: user.image ? `${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}` : `https://ui-avatars.com/api/?name=${user.name}&background=f3f4f6&color=111827&size=128`,
         file: null
       });
-      // if (user.image) setPreviewUrl(`${import.meta.env.VITE_API_URL}/user/avatar?url=${encodeURIComponent(user.image)}`);
-      // else setPreviewUrl(`https://ui-avatars.com/api/?name=${user.name}&background=f3f4f6&color=111827&size=128`);
     }
   }, [user]);
 

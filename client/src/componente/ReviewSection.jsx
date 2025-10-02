@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { FiUploadCloud } from "react-icons/fi";
-import useUserStore from "../store/userStore";
 import { RxCross2 } from "react-icons/rx";
 import { useAddHelpfullInReview, useAddReview, useProductReviews } from "../hooks/useProducts";
 import Pagination from "./Pagination";
 import ReviewCard from "./ReviewCard";
 import ReviewSkeleton from "./ReviewSkeleton";
+import { useUser } from "../hooks/useUser";
 
 
 function ReviewSection({ productId }) {
@@ -16,7 +16,7 @@ function ReviewSection({ productId }) {
   const [currentPage, setCurrentPage] = useState(1);
   const { data: initialReviewsData, isLoading } = useProductReviews(productId, sortBy, currentPage);
   const [localReviews, setLocalReviews] = useState(initialReviewsData?.results || [])
-  const user = useUserStore((s) => s.user)
+  const { data: user } = useUser();
   const { mutate } = useAddReview(productId);
   const { mutate: mutateForHelpfull } = useAddHelpfullInReview();
 
