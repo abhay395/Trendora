@@ -53,15 +53,15 @@ function App() {
         <Route path="products" element={<ProductList />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="logout" element={<Logout />} />
+        <Route path="cart" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><Cart /></ProtectedRoute>} />
+        {/* <Route path="logout" element={<Logout />} /> */}
         <Route path="product/:id" element={<ProductDetaile />} />
-        <Route path="payment-done/:id" element={<PaymentSuccess />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="order/:id" element={<OrderDetaile />} />
+        <Route path="payment-done/:id" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><PaymentSuccess /></ProtectedRoute>} />
+        <Route path="profile" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><Profile /></ProtectedRoute>} />
+        <Route path="orders" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><Orders /></ProtectedRoute>} />
+        <Route path="order/:id" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><OrderDetaile /></ProtectedRoute>} />
       </Route>
-      <Route path="checkout" element={<Checkout />} />
+      <Route path="checkout" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><Checkout /></ProtectedRoute>} />
       <Route path="*" element={<PageNotFound />} />
       {/* Admin Routes - Separate from main layout */}
       <Route path="/unauthorized" element={<Unauthorized />} />
