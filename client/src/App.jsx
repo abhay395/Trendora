@@ -40,8 +40,10 @@ function App() {
   const { fetchUserProfile } = useUserStore()
 
   useEffect(() => {
-    fetchUserProfile()
-    fetchCart()
+    if (localStorage.getItem("token")) {
+      fetchUserProfile()
+      fetchCart()
+    }
   }, [])
 
   return (
