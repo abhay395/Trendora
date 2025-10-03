@@ -1,33 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import useAddressStore from '../store/addressStore';
 import { useForm } from 'react-hook-form';
 import { RxCross2 } from 'react-icons/rx';
 import { MdEditNote } from "react-icons/md";
 import 'react-loading-skeleton/dist/skeleton.css';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useAddAddress, useAddress, useDeleteAddress, useSelectAddress, useUpdateAddress } from '../hooks/useAddress';
+import toast from 'react-hot-toast';
+// import Skeleton from './SkeletonCard';
 
 const emptyForm = { name: "", phone: "", pincode: "", state: "", city: "", street: "", landmark: "" };
 
+const Skeleton = ({ className }) => (
+  <div className={`animate-pulse bg-gray-300 rounded-md ${className}`} />
+);
 export default function AddressSection({ select, setSelect, title = 'Select A Delivery Address' }) {
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
 
-  const { fetchAddress, addAddress, updateAddress, addresses, error, deleteAddress, selecteAddress } = useAddressStore();
-
+  const { data: addresses, error, isLoading } = useAddress();
+  const { mutateAsync: addAddress } = useAddAddress();
+  const { mutateAsync: updateAddress } = useUpdateAddress();
+  const { mutateAsync: deleteAddress } = useDeleteAddress();
+  const { mutateAsync: selecteAddress } = useSelectAddress();
   const { register, handleSubmit, formState: { errors }, reset } = useForm(emptyForm);
 
-  const selectedAddressId = addresses.find((item) => item.selected)?._id;
-  // const [select, setSelect] = useState(selectedAddressId);
+  const selectedAddressId = addresses?.find((item) => item.selected)?._id;
   useEffect(() => {
     setSelect(selectedAddressId)
-  }, [])
+  }, [selectedAddressId])
   const onSubmit = async (data) => {
-    console.log(data)
     if (editMode) {
-      await updateAddress(editId, data);
+      console.log(editId, data)
+      toast.promise(updateAddress({ id: editId, updateData: data }), {
+        success: "Address updated",
+        error: (error) => `${error?.response?.data?.message}`,
+        loading: "Updating address..."
+      })
     } else {
-      await addAddress(data);
+      toast.promise(addAddress(data), {
+        success: "Address added",
+        error: (error) => `${error?.response?.data?.message}`,
+        loading: "Adding address..."
+      })
     }
   };
 
@@ -48,23 +63,20 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
   };
 
   useEffect(() => {
-    fetchAddress();
-  }, []);
-  useEffect(() => {
-    if (!error) {
+    if (!error && !isLoading) {
       setShowForm(false);
       setEditMode(false);
       setEditId(null);
       reset(emptyForm);
     }
-  }, [addresses]);
+  }, [addresses, error, isLoading]);
 
   return (
     <div className="w-full px-5 py-6 rounded-xl border border-gray-200 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <span className="font-semibold text-lg text-gray-900">{title}</span>
-        <motion.span
+        <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="font-semibold cursor-pointer text-[1rem] text-gray-600"
@@ -74,59 +86,66 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
             setEditMode(false);
             setEditId(null);
           }}
+          disabled={isLoading}
         >
           {showForm ? 'Cancel' : 'Add Address'}
-        </motion.span>
+        </motion.button>
       </div>
 
       {/* Address list */}
       <AnimatePresence>
-        {addresses.map((addr, index) => (
-          <motion.div
-            key={addr._id}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            className="flex items-start space-x-3 relative bg-gray-50 p-3 rounded-lg"
-          >
-            <motion.input
-              type="radio"
-              name="address"
-              id={addr._id}
-              className="w-5 h-5 mt-1 accent-black cursor-pointer"
-              checked={addr?._id === select}
-              onChange={() => {
-                setSelect(addr._id);
-                selectedAddresses(addr._id);
-              }}
-              whileTap={{ scale: 1.3 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            />
-            <label htmlFor={addr._id} className="space-y-1">
-              <p className="font-semibold text-[1.02rem] text-gray-800">{addr.name}</p>
-              <p className="text-[0.9rem] font-medium text-gray-500">
-                {addr?.street} {addr?.city} {addr?.pincode} {addr?.state}
-              </p>
-            </label>
-            <div className='absolute right-4 flex space-x-4 items-center justify-center'>
-              <motion.span
-                whileHover={{ scale: 1.2, color: "#000" }}
-                className='text-gray-600 cursor-pointer text-2xl'
-                onClick={() => handleEdit(addr)}
-              >
-                <MdEditNote />
-              </motion.span>
-              <motion.span
-                whileHover={{ scale: 1.2, color: "#d11" }}
-                className='text-gray-600 cursor-pointer text-lg'
-                onClick={() => deleteHandler(addr._id)}
-              >
-                <RxCross2 />
-              </motion.span>
-            </div>
-          </motion.div>
-        ))}
+        {isLoading ? (
+          <div className="w-full px-5 py-6 rounded-xl border border-gray-200 space-y-1">
+            <Skeleton className={'w-1/2 h-4'} />
+            <Skeleton className={'w-full h-4'} />
+          </div>
+        ) : (
+          addresses?.map((addr, index) => (
+            <motion.div
+              key={addr._id}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              className="flex items-start space-x-3 relative bg-gray-50 p-3 rounded-lg"
+            >
+              <motion.input
+                type="radio"
+                name="address"
+                id={addr._id}
+                className="w-5 h-5 mt-1 accent-black cursor-pointer"
+                checked={addr?._id === select}
+                onChange={() => {
+                  setSelect(addr._id);
+                  selectedAddresses(addr._id);
+                }}
+                whileTap={{ scale: 1.3 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              />
+              <label htmlFor={addr._id} className="space-y-1">
+                <p className="font-semibold text-[1.02rem] text-gray-800">{addr.name}</p>
+                <p className="text-[0.9rem] font-medium text-gray-500">
+                  {addr?.street} {addr?.city} {addr?.pincode} {addr?.state}
+                </p>
+              </label>
+              <div className='absolute right-4 flex space-x-4 items-center justify-center'>
+                <motion.span
+                  whileHover={{ scale: 1.2, color: "#000" }}
+                  className='text-gray-600 cursor-pointer text-2xl'
+                  onClick={() => handleEdit(addr)}
+                >
+                  <MdEditNote />
+                </motion.span>
+                <motion.span
+                  whileHover={{ scale: 1.2, color: "#d11" }}
+                  className='text-gray-600 cursor-pointer text-lg'
+                  onClick={() => deleteHandler(addr._id)}
+                >
+                  <RxCross2 />
+                </motion.span>
+              </div>
+            </motion.div>
+          )))}
       </AnimatePresence>
 
       {/* Form */}

@@ -49,15 +49,15 @@ function ReviewCard({ review, user, markHelpful, formatDate }) {
             <div className="mt-4 flex items-center gap-3">
                 <button
                     onClick={() => markHelpful(review._id)}
-                    disabled={[...review?.helpful].includes(user?._id) || review.userId._id === user?._id}
+                    disabled={[...review?.helpful].includes(user?._id) || review?.userId._id === user?._id}
                     className={`flex items-center gap-2 px-4 py-1 rounded-lg border text-sm transition 
-               ${[...review?.helpful].includes(user?._id) || review.userId._id === user?._id
+               ${[...review?.helpful].includes(user?._id) || review?.userId._id === user?._id
                             ? "opacity-50 cursor-not-allowed"
                             : "hover:bg-gray-100"
                         }`}
                 >
                     <FiThumbsUp className="text-gray-600" />
-                    Helpful ({review?.helpful.length})
+                    Helpful ({review?.helpful?.length})
                 </button>
             </div>
         </div>

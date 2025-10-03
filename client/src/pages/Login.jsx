@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom";
-import useAuthStore from "../store/authStore";
 import { useLogin } from "../hooks/useAuth";
 import toast from "react-hot-toast";
 

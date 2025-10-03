@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useAuthStore from '../store/authStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLogout } from '../hooks/useAuth';
 
 function Logout() {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    // const { logoutUser } = useAuthStore()
     const { mutateAsync: logoutUser, } = useLogout();
 
     useEffect(() => {

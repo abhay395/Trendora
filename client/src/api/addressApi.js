@@ -1,8 +1,24 @@
 import privateAxios from "./instance/privateAxios";
 
 
-export const fetchAddressApi = () => privateAxios.get('/address/get');
-export const addAddressApi = (data) => privateAxios.post('/address/add', { ...data });
-export const updateAddressApi = (id, data) => privateAxios.put(`/address/update/${id}`, { ...data });
-export const selecteAddressApi = (id) => privateAxios.put(`/address/selecte/${id}`);
-export const deleteAddressApi = (id) => privateAxios.delete(`/address/delete/${id}`);
+export const fetchAddressApi = async () => {
+    const response = await privateAxios.get('/address/get');
+    return response.data.result;
+}
+export const addAddressApi = async (data) => {
+    const response = await privateAxios.post('/address/add', { ...data });
+    return response.data.result;
+}
+export const updateAddressApi = async (id, data) => {
+    console.log(id, data)
+    const response = await privateAxios.put(`/address/update/${id}`, { ...data });
+    return response.data.result;
+}
+export const selecteAddressApi = async (id) => {
+    const response = await privateAxios.put(`/address/selecte/${id}`);
+    return response.data.result;
+}
+export const deleteAddressApi = async (id) => {
+    const response = await privateAxios.delete(`/address/delete/${id}`);
+    return response.data.result;
+}

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form"
-import useAuthStore from "../store/authStore";
 import { useSingup } from "../hooks/useAuth";
 import toast from "react-hot-toast";
 
@@ -15,7 +14,6 @@ const Signup = () => {
   } = useForm()
   const navigate = useNavigate()
   const password = watch('password');
-  // const { signupUser, error } = useAuthStore()
   const { mutateAsync: signupUser, error } = useSingup()
   const onSubmit = async (data) => {
     toast.promise(async () => {
