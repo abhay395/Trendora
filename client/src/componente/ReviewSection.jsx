@@ -144,15 +144,18 @@ function ReviewSection({ productId }) {
           onChange={(e) =>
             setNewReview({ ...newReview, comment: e.target.value })
           }
-          className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-black/40 outline-none"
+          disabled={!user}
+          className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-black/40 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
         ></textarea>
 
-        <label className="flex items-center gap-2 cursor-pointer text-gray-600 w-fit">
+        <label id="upload-image" className="flex items-center gap-2 cursor-pointer text-gray-600 w-fit disabled:cursor-not-allowed disabled:text-gray-400 disabled:bg-gray-100">
           <FiUploadCloud className="text-xl" />
           <span className="text-sm">Upload Image (optional)</span>
           <input
             type="file"
             accept="image/*"
+            id="upload-image"
+            disabled={!user}
             className="hidden"
             onChange={handleImageChange}
           />
@@ -178,7 +181,8 @@ function ReviewSection({ productId }) {
 
         <button
           type="submit"
-          className="bg-black text-white px-5 py-2 rounded-lg font-medium hover:bg-gray-900 transition"
+          disabled={!user}
+          className="bg-black text-white px-5 py-2 rounded-lg font-medium hover:bg-gray-900 transition disabled:bg-gray-500 disabled:text-gray-900 disabled:cursor-not-allowed"
         >
           Submit Review
         </button>

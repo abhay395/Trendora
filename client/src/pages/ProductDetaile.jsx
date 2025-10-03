@@ -9,6 +9,7 @@ import { useProductById } from "../hooks/useProducts";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { motion } from 'framer-motion'
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import { useUser } from "../hooks/useUser";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -20,6 +21,7 @@ const ProductDetail = () => {
     const [selectedImage, setSelectedImage] = useState(0);
     const [isOutOfStock, setIsOutOfStock] = useState(false);
     const [isWishlisted, setIsWishlisted] = useState(false)
+    const { data: user } = useUser()
     const selectedSizeData = productData?.sizes?.find((s) => s.size === selectedSize)
     const formatPrice = (price) => {
         return `$${(price / 100).toFixed(2)}`
@@ -28,10 +30,14 @@ const ProductDetail = () => {
         setIsOutOfStock(false);
     }, [id]);
     const addToCart = async () => {
-        if (selectedSize) {
+        if (selectedSize && user    ) {
             console.log("Adding to cart:", { productId: id, quantity, size: selectedSize });
             await addProductCart({ productId: id, quantity, size: selectedSize });
         } else {
+            if (!user) {
+                toast.error("Please login to add to cart.");
+                return;
+            }
             toast.error("Please select a size.");
         }
     };
