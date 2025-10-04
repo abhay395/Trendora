@@ -35,6 +35,9 @@ export default {
             if (!await Address.findById(addressId)) {
                 throw new ApiError(404, "Address not found")
             }
+            if (updateBody.phone && await Address.findOne({ _id: { $ne: addressId }, phone: updateBody.phone })) {
+                throw new ApiError(400, "This number already added")
+            }
             const result = await Address.findByIdAndUpdate(addressId, updateBody, { new: true });
             return result
         } catch (error) {
