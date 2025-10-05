@@ -15,10 +15,8 @@ const authenticationMiddleware = async (req, res, next) => {
     if (!token) {
       return next(new ApiError(401, "No authorized to acces"));
     }
-    console.log(token, "toekn")
     try {
       const verified = jwt.verify(token, JWT_SECRET);
-      console.log(token, "toekn")
       let user = await User.findById(verified?._id)
       if (!user) {
         return next(new ApiError(401, "No authorized to acces"));
