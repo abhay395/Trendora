@@ -17,6 +17,7 @@ export const useProducts = () =>
   useQuery({
     queryKey: ["products"],
     queryFn: () => fetchProductApi().then((res) => res.data.result.results),
+    staleTime: 1000 * 60 * 10,
   });
 export const useProductsFilterd = (filter) =>
   useQuery({
@@ -29,6 +30,7 @@ export const useProductById = (id) =>
     queryKey: ["product", id],
     queryFn: () => fetchProductByIdApi(id).then((res) => res.data.result),
     enabled: !!id, // only run if id exists
+    staleTime: 1000 * 60 * 10,
   });
 
 export const useProductReviews = (id, options = "", page) =>
@@ -41,6 +43,7 @@ export const useProductReviews = (id, options = "", page) =>
 export const useFetchProductFilters = () =>
   useQuery({
     queryKey: ["filters"],
+    staleTime: 1000 * 60 * 10,
     queryFn: () => fetchProductFiltersApi().then((res) => res.data.result),
   });
 export const useAddReview = (id) => {

@@ -9,6 +9,7 @@ export const useUser = () => {
     return useQuery({
         queryKey: ["user", "userDetail"],
         queryFn: fetchUserProfileAllDetailsApi,
+        staleTime: 1000 * 60 * 10, 
     });
 }
 export const useUserUpdate = () => {

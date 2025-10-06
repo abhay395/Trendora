@@ -22,8 +22,8 @@ function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { totalProduct } = useCartStore()
-  const { data, isLoading } = useUser();
-  const [user, setUser] = useState(null)
+  const { data: user, isLoading } = useUser();
+  // const [user, setUser] = useState(null)
   const { mutateAsync: logoutUser } = useLogout()
   const logoutHandler = async () => {
     setIsDropdown(false)
@@ -50,16 +50,16 @@ function Navbar() {
       handleSearch()
     }
   }
-  useEffect(() => {
-    if (data) {
-      setUser({
-        name: data.name,
-        image: data.image
-      })
-    } else {
-      setUser(null)
-    }
-  }, [data, isLoading])
+  // useEffect(() => {
+  //   if (data) {
+  //     setUser({
+  //       name: data.name,
+  //       image: data.image
+  //     })
+  //   } else {
+  //     setUser(null)
+  //   }
+  // }, [data])
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -70,9 +70,6 @@ function Navbar() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDropdown]);
-  useEffect(() => {
-    if (user) console.log(user)
-  }, [user])
   return (
     <div className=''>
       <nav className="bg-white border-b pb-2 border-gray-200 fixed w-full top-0 font-poppins z-50 shadow-sm">
@@ -137,7 +134,10 @@ function Navbar() {
                     onClick={toggleDropdown}
                     className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
                   >
-                    {user && user.image ? <img loading='lazy' src={`${BASEURL}/user/avatar?url=${encodeURIComponent(user.image)}`} alt="Profile" className="w-8 h-8 rounded-full" /> : <CgProfile className="text-2xl text-black" />}
+                    {user && user.image ? <img loading='lazy'
+                      // src={`${BASEURL}/user/avatar?url=${encodeURIComponent(user.image)}`}
+                      src={user.image}
+                      alt="Profile" className="w-8 h-8 rounded-full" /> : <CgProfile className="text-2xl text-black" />}
                   </button>
 
                   {/* Dropdown Menu */}
