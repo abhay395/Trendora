@@ -254,7 +254,7 @@ export default {
     },
     createUser: async (body) => {
         try {
-            if (await User.findOne({ $or: [{ email: body?.email }, { phone: body?.phone }] })) {
+            if (await User.findOne({ email: body?.email })) {
                 throw new ApiError(400, "This email is already used")
             }
             let result = new User(body);

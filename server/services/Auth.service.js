@@ -23,6 +23,9 @@ export default {
             if (!user) {
                 throw new ApiError(404, "Invalid Credentials");
             }
+            if(!user.password){
+                throw new ApiError(404, "Invalid Credentials");
+            }
             const passwordCheck = await bcrypt.compare(password, user.password)
             if (!passwordCheck) {
                 throw new ApiError(404, "Invalid Credentials");
