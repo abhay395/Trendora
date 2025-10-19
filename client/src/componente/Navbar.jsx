@@ -137,7 +137,7 @@ function Navbar() {
                     {user && user.image ? <img loading='lazy'
                       // src={`${BASEURL}/user/avatar?url=${encodeURIComponent(user.image)}`}
                       src={user.image}
-                      alt="Profile" className="w-8 h-8 rounded-full" /> : <CgProfile className="text-2xl text-black" />}
+                      alt="Profile" className="w-8 h-8 rounded-full object-cover rounded-full" /> : <CgProfile className="text-2xl text-black" />}
                   </button>
 
                   {/* Dropdown Menu */}
