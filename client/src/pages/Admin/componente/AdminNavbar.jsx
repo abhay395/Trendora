@@ -36,7 +36,7 @@ function AdminNavbar() {
           /> : <img
             src="https://ui-avatars.com/api/?name=Admin&background=f3f4f6&color=111827&size=128"
             alt="profile"
-            className="rounded-full w-10 h-10 border border-gray-300 shadow-sm"
+            className="rounded-full w-10 h-10 rounded-full object-cover border border-gray-300 shadow-sm"
           />}
         </div>
 
