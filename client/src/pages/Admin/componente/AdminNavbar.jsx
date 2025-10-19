@@ -1,9 +1,22 @@
 import React from 'react';
 import { Bell, LogOut } from 'lucide-react';
 import { useUser } from '../../../hooks/useUser';
+import { useNavigate } from 'react-router-dom'
+import { useLogout } from '../../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 function AdminNavbar() {
   const { data: user } = useUser()
+  const { mutateAsync: logoutUser } = useLogout()
+  const logoutHandler = async () => {
+    toast.promise(logoutUser(), {
+      loading: "Loading...",
+      success: "User logout successfully",
+      error: "Some thing went wrong"
+    })
+    navigate('/')
+  }
+  const navigate = useNavigate()
   return (
     <header className="bg-white shadow-sm px-6 py-3 flex justify-between items-center border-b border-gray-200">
       {/* Left side */}
@@ -32,7 +45,7 @@ function AdminNavbar() {
                 : user.image
             }
             alt="profile"
-            className="rounded-full w-10 h-10 border border-gray-300 shadow-sm"
+            className="rounded-full w-10 h-10 rounded-full object-cover border border-gray-300 shadow-sm"
           /> : <img
             src="https://ui-avatars.com/api/?name=Admin&background=f3f4f6&color=111827&size=128"
             alt="profile"
@@ -41,7 +54,7 @@ function AdminNavbar() {
         </div>
 
         {/* Logout button */}
-        <button className="text-gray-500 hover:text-red-500 transition">
+        <button onClick={() => logoutHandler()} className="text-gray-500 hover:text-red-500 transition cursor-pointer">
           <LogOut size={22} />
         </button>
       </div>
