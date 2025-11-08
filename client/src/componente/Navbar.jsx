@@ -11,6 +11,7 @@ import useCartStore from '../store/cartStore';
 import { useUser } from '../hooks/useUser';
 import { useLogout } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
+import { useCart } from '../hooks/useCart';
 
 const BASEURL = import.meta.env.VITE_API_URL;
 function Navbar() {
@@ -21,7 +22,8 @@ function Navbar() {
   const toggleDropdown = () => setIsDropdown(!isDropdown);
   const navigate = useNavigate()
   const location = useLocation()
-  const { totalProduct } = useCartStore()
+  const { data: cart = [] } = useCart()
+  console.log(cart)
   const { data: user, isLoading } = useUser();
   // const [user, setUser] = useState(null)
   const { mutateAsync: logoutUser } = useLogout()
@@ -194,9 +196,9 @@ function Navbar() {
                 onClick={() => navigate('/cart')}
               >
                 <FaCartShopping className="text-2xl text-black" />
-                {totalProduct > 0 && (
+                {cart?.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                    {totalProduct}
+                    {cart?.length}
                   </span>
                 )}
               </button>}

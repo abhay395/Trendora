@@ -32,16 +32,13 @@ import AdminUser from './pages/Admin/AdminUser'
 import AdminSetting from './pages/Admin/AdminSetting'
 import CreateUser from './pages/Admin/CreateUser'
 import UserDetails from './pages/Admin/UserDetails'
+import { useCart } from './hooks/useCart'
 
 function App() {
   const location = useLocation()
-  const { fetchCart } = useCartStore()
+  const { data: cart } = useCart();
 
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      fetchCart()
-    }
-  }, [])
+  console.log(cart)
 
   return (
     // <AnimatePresence mode="sync">

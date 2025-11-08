@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Star, Heart, ShoppingCart, Truck, Shield, RotateCcw } from "lucide-react"
 import { useParams } from "react-router-dom";
 import { MoonLoader } from "react-spinners";
-import useCartStore from "../store/cartStore";
 import toast from "react-hot-toast";
 import ReviewSection from "../componente/ReviewSection";
 import { useProductById } from "../hooks/useProducts";
@@ -10,12 +9,12 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { motion } from 'framer-motion'
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { useUser } from "../hooks/useUser";
+import { useAddProductCart } from "../hooks/useCart";
 
 const ProductDetail = () => {
     const { id } = useParams();
-    const { addProductCart } = useCartStore();
-    const [sortBy, setSortBy] = useState('createdAt:desc')
-    const { data: productData, isLoading, error } = useProductById(id)
+    const { mutateAsync: addProductCart } = useAddProductCart();
+    const { data: productData, isLoading } = useProductById(id)
     const [selectedSize, setSelectedSize] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
@@ -23,16 +22,16 @@ const ProductDetail = () => {
     const [isWishlisted, setIsWishlisted] = useState(false)
     const { data: user } = useUser()
     const selectedSizeData = productData?.sizes?.find((s) => s.size === selectedSize)
-    const formatPrice = (price) => {
-        return `$${(price / 100).toFixed(2)}`
-    }
     useEffect(() => {
         setIsOutOfStock(false);
     }, [id]);
     const addToCart = async () => {
-        if (selectedSize && user    ) {
-            console.log("Adding to cart:", { productId: id, quantity, size: selectedSize });
-            await addProductCart({ productId: id, quantity, size: selectedSize });
+        if (selectedSize && user ) {
+            let response = await addProductCart({ productId: id, quantity, size: selectedSize });
+            if (response?.message) {
+                toast.error(response?.message)
+            }
+            toast.success(response?.message || "Product added to cart")
         } else {
             if (!user) {
                 toast.error("Please login to add to cart.");

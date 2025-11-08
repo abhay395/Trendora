@@ -8,12 +8,14 @@ import { MdDiscount } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom'
 import Stepper from '../componente/Stepper';
-import useCartStore from '../store/cartStore';
 import CartEmpty from './CartEmpty';
 import { AnimatePresence, motion } from 'framer-motion'
-import toast from 'react-hot-toast';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import { useCart, useRemoveProductFromCart, useUpdateProductQuantity } from '../hooks/useCart';
+import { useSelectProduct } from '../hooks/useCart';
+import { useSelectAllProduct } from '../hooks/useCart';
+import toast from 'react-hot-toast';
 
 export default function Cart() {
   const [allSelected, setAllSelected] = useState(false);
@@ -21,47 +23,30 @@ export default function Cart() {
   const discount = 2.5;
   const navigate = useNavigate();
 
-  // function related to cart  Store 
-  const { cart, removeProductFromCart, updateProductQuantity, selectProduct, selectAllProduct } = useCartStore()
-  const removeProduct = (cartId) => {
-    removeProductFromCart(cartId);
+  const { data: cart = [] } = useCart();
+  const { mutateAsync: updateProductQuantity } = useUpdateProductQuantity();
+  const { mutateAsync: selectProduct } = useSelectProduct();
+  const { mutateAsync: selectAllProduct } = useSelectAllProduct();
+  const { mutateAsync: removeProductFromCart } = useRemoveProductFromCart();
+  const removeProduct = async (cartId) => {
+    await removeProductFromCart(cartId);
   }
-  let selectedProduct = cart?.filter((item) => item.selected)
-  //? This function handle Cart Product Quanitiy
-  const [disable, setDisable] = useState(false);
-  const updateQuanitiy = (cartId, increase = false) => {
-    let selectedCart = cart.find(item => item._id === cartId);
-    const size = selectedCart.size;
-    const sizes = selectedCart.productId.sizes;
-    let quantity = selectedCart.quantity
-    const availableQty = sizes?.[String(size).toUpperCase()];
-    if (increase) {
-      if (quantity < availableQty) {
-        quantity++
-      } else {
-        toast.error(`Avalible Qty is ${availableQty}`)
-        return;
-      }
-    } else {
-      if (quantity > 1) quantity--
-      else return
+  const selectToggle = async (cartId, selected) => {
+
+    let response = await selectProduct({ cartId, selected });
+    if (response?.message) {
+      toast.error(response?.message)
     }
-    if (disable) return;
-    setDisable(true)
-    updateProductQuantity({ cartId, quantity })
-    setTimeout(() => {
-      setDisable(false)
-    }, 600)
   }
-  const selectToggle = (cartId, selected) => {
-    selectProduct(cartId, selected)
-  }
-  const selectAllToggle = (selected) => {
+  const selectAllToggle = async (selected) => {
     setAllSelected(selected)
-    selectAllProduct(selected);
+    let response = await selectAllProduct({selected});
+    if (response?.message) {
+      toast.error(response?.message)
+    }
   }
   useEffect(() => {
-    if (selectedProduct.length == cart.length) {
+    if (cart?.filter((item) => item.selected).length == cart.length) {
       setAllSelected(true)
     } else {
       setAllSelected(false)
@@ -114,7 +99,7 @@ export default function Cart() {
                 </svg>
               </div>
             </label>
-            <span className='font-semibold text-lg  text-gray-700'>{selectedProduct.length}/{cart.length} items selected</span>
+            <span className='font-semibold text-lg  text-gray-700'>{cart?.filter((item) => item.selected).length}/{cart.length} items selected</span>
           </div>
           <div className="bg-white px-4 pt-2 rounded-xl border border-gray-200">
             <AnimatePresence>
@@ -177,9 +162,9 @@ export default function Cart() {
                   </div>
                   <RxCross2 className='absolute font-bold top-5 right-0 text-xl text-gray-500 cursor-pointer' onClick={() => removeProduct(item._id)} />
                   <div className="absolute right-0 bottom-4 flex items-center gap-2 ">
-                    <button onClick={() => updateQuanitiy(item._id, true)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
+                    <button onClick={() => updateProductQuantity({ cartId: item._id, quantity: item.quantity + 1 })} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiPlus /></button>
                     <span className='text-gray-600 font-bold'>{item.quantity}</span>
-                    <button onClick={() => updateQuanitiy(item._id, false)} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiMinus />
+                    <button onClick={() => updateProductQuantity({ cartId: item._id, quantity: item.quantity - 1 })} className="px-2 py-2 bg-gray-50 text-gray-600 rounded cursor-pointer"><TiMinus />
                     </button>
                   </div>
                 </motion.div>
@@ -223,7 +208,7 @@ export default function Cart() {
           </div>
 
           {
-            selectedProduct.length > 0 ? (<div className='space-y-4 mt-4'>
+            cart?.filter((item) => item.selected).length > 0 ? (<div className='space-y-4 mt-4'>
               <h3 className="font-semibold text-gray-700 text-[1.2rem]">Price Details</h3>
               <div className="bg-[#f5f2fe] p-4 rounded-xl ">
                 <div className="text-sm space-y-4 text-gray-500">
@@ -233,7 +218,7 @@ export default function Cart() {
                   </div>
                   <div className='space-y-3 font-medium'>
                     {
-                      selectedProduct.map((item) => {
+                      cart?.filter((item) => item.selected).map((item) => {
                         return <div key={item._id} className="flex justify-between">
                           <span>{item.quantity} X {item.productId.title.slice(0, 20)}...</span>
                           <span>₹{[...item?.productId?.sizes].find((size) => size.size == item.size).price * item.quantity}</span>
@@ -252,7 +237,7 @@ export default function Cart() {
                     <div className='border border-gray-300 my-5'></div>
                     <div className="flex justify-between text-[1rem] text-gray-700 font-semibold">
                       <span>Total Amount</span>
-                      <span>₹{(selectedProduct?.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity, 0)).toFixed(2)}</span>
+                      <span>₹{(cart?.filter((item) => item.selected)?.reduce((sum, item) => sum + [...item.productId.sizes].find((size) => size.size == item.size).price * item.quantity, 0)).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

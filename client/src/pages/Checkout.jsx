@@ -9,9 +9,10 @@ import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { ClipLoader } from 'react-spinners'
 import { checkoutProductApi, verifyPaymentApi } from '../api/orderApi';
+import { useCart } from '../hooks/useCart';
 const razorPayKey = import.meta.env.RAZORPAY_KEY_ID
 export default function Checkout() {
-    const { cart } = useCartStore()
+    const { data: cart = [] } = useCart()
     const [selectedAddress, setSelectedAdress] = useState(null);
     const [paymentMode, setPaymentMode] = useState('')
     const [Loading, setLoading] = useState(false)
@@ -34,7 +35,7 @@ export default function Checkout() {
             const response = await checkoutProductApi({ paymentMethod: paymentMode })
             // return
             if (paymentMode == "COD") {
-                const orderId = response.data.result._id
+                const orderId = response._id
                 navigate(`/payment-done/${orderId}`)
                 return;
             }

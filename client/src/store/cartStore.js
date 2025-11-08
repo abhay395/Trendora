@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import toast from "react-hot-toast";
 import { persist } from 'zustand/middleware'
 import { addProductCartApi, fetchCartApi, removeProductFromCartApi, selectAllProductApi, selectProductApi, updateProductQuantityApi } from "../api/cartApi";
 const calculateTotalPrice = (cart) => (cart.reduce((sum, item) => sum + item.totalPrice, 0))
@@ -27,8 +26,8 @@ const useCartStore = create(
                 try {
                     set({ isLoading: true, error: null })
                     let response = await fetchCartApi()
-                    let totalPrice = calculateTotalPrice(response.data.result)
-                    set({ cart: response.data.result, totalPrice, totalProduct: response.data.result.length })
+                    let totalPrice = calculateTotalPrice(response)
+                    set({ cart: response, totalPrice, totalProduct: response.length })
                     set({ isLoading: false })
                 } catch (error) {
                     set({ isLoading: false, error: { message: error?.response?.data?.message || "Cart not Fetched" } })
@@ -37,21 +36,24 @@ const useCartStore = create(
             addProductCart: async ({ productId, quantity, size }) => {
                 let check = get().cart.find((item) => item?.productId._id == productId && item.size == size)
                 if (check) {
-                    toast.error("This product is already added")
-                    return;
+                    return { message: "This product is already added" };
                 }
                 try {
                     set({ isLoading: true, error: null });
                     let body = { productId, quantity, size }
-                    toast.success("Product added to cart! ")
-                    let response = await addProductCartApi(body)
-                    let result = response.data.result;
+                    let response = await addProductCartApi(body);
+                    if (!response) {
+                        set({ isLoading: false, error: { message: "Failed to add product to cart" } })
+                        return { message: "Failed to add product to cart" };
+                    }
                     let currentCart = get().cart;
-                    let updatedCart = [...currentCart, result]
+                    let updatedCart = [...currentCart, response]
                     let totalPrice = calculateTotalPrice(updatedCart)
                     set({ isLoading: false, cart: updatedCart, totalPrice, totalProduct: get().totalProduct + 1 })
+                    return { message: "Product added to cart! " };
                 } catch (error) {
-                    set({ isLoading: false, error: { message: 'Product Not added On Cart' } })
+                    set({ isLoading: false, error: { message: error?.response?.data?.message || "Failed to add product to cart" } })
+                    return { message: error?.response?.data?.message || "Failed to add product to cart" };
                 }
             },
             updateProductQuantity: async ({ cartId, quantity }) => {
@@ -66,7 +68,7 @@ const useCartStore = create(
                     set({ cart: updatedCart });
                     await updateProductQuantityApi(cartId, { quantity })
                 } catch (error) {
-                    console.log(error)
+                    set({ isLoading: false, error: { message: error?.response?.data?.message || "Product Quantity Not updated" } })
                 }
             },
             selectProduct: async (cartId, selected) => {
@@ -75,7 +77,7 @@ const useCartStore = create(
                     set({ cart: updateCart })
                     await selectProductApi(cartId, { selected })
                 } catch (error) {
-                    console.log(error)
+                    set({ isLoading: false, error: { message: error?.response?.data?.message || "Product Not selected" } })
                 }
             },
             selectAllProduct: async (selected) => {
@@ -83,9 +85,10 @@ const useCartStore = create(
                     let updateCart = get().cart.map((item) => ({ ...item, selected }))
                     set({ cart: updateCart })
                     let response = await selectAllProductApi({ selected })
-                    console.log(response)
+                    return response;
                 } catch (error) {
-                    console.log(error)
+                    set({ isLoading: false, error: { message: error?.response?.data?.message || "Product Not selected" } })
+                    return false;
                 }
             },
             removeProductFromCart: async (cartId) => {
@@ -97,6 +100,7 @@ const useCartStore = create(
                 } catch (error) {
                     set({
                         error: { message: error?.response?.data?.message || "Failed to remove product" },
+                        isLoading: false,
                     });
                 }
             },
