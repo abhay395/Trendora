@@ -33,7 +33,7 @@ const useOrderStore = create((set, get) => ({
         try {
             set({ isLoading: true, error: null });
             let response = await fetchOrderHistoryApi();
-            set({ order: response.data.result, isLoading: false });
+            set({ order: response, isLoading: false });
         } catch (error) {
             set({ error: error.response?.data?.message, isLoading: false });
         }
