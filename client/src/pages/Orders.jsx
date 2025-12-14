@@ -16,7 +16,10 @@ const Orders = () => {
     useEffect(() => {
         fetchOrderList();
     }, [fetchOrderList]);
-
+    useEffect(()=>{
+        // document.title="Your Orders - ShopEase"
+        console.log("Orders Page", order);
+    },[order])
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
