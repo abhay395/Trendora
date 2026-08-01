@@ -1,7 +1,17 @@
 import React from 'react'
 import logo from '../assets/logo1.png'
 import { motion } from 'framer-motion'
+import axios from 'axios'
 function Contact() {
+  const [formData, setFormData] = React.useState({
+    cleint_name: '',
+    email: '',
+    post: '',
+    linkedin_post_url: '',
+  })
+  const handleSubmit = async (e) => {
+   
+  }
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -24,21 +34,21 @@ function Contact() {
         <div className="flex flex-col justify-center p-8">
           <h1 className="text-3xl font-bold text-black mb-2 text-center md:text-left">Contact Us</h1>
           <p className="text-gray-500 mb-8 text-center md:text-left">We'd love to hear from you! Fill out the form below and we'll get back to you soon.</p>
-          <form className="space-y-6">
+          <div >
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-              <input type="text" id="name" name="name" className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-black focus:border-black text-gray-900" placeholder="Your Name" />
+              <input type="text" id="name" name="name" onChange={(e) => setFormData({ ...formData, cleint_name: e.target.value })} value={formData.cleint_name} className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-black focus:border-black text-gray-900" placeholder="John Doe" />
             </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <input type="email" id="email" name="email" className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-black focus:border-black text-gray-900" placeholder="you@example.com" />
+              <input type="email" id="email" name="email" onChange={(e) => setFormData({ ...formData, email: e.target.value })} value={formData.email} className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-black focus:border-black text-gray-900" placeholder="johndoe@example.com" />
             </div>
             <div>
               <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
-              <textarea id="message" name="message" rows={4} className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-black focus:border-black text-gray-900 resize-none" placeholder="How can we help you?" />
+              <textarea id="message" name="message" rows={4} onChange={(e) => setFormData({ ...formData, post: e.target.value })} value={formData.post} className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-black focus:border-black text-gray-900" placeholder="Your message here..."></textarea>
             </div>
-            <button type="submit" className="w-full py-3 px-4 bg-black text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition">Send Message</button>
-          </form>
+            <button onClick={handleSubmit} type="submit" className="w-full py-3 px-4 bg-black text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition">Send Message</button>
+          </div>
         </div>
       </div>
     </motion.div>

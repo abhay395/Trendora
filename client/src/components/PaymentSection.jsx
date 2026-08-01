@@ -1,5 +1,5 @@
 import React from "react";
-
+import { motion } from "framer-motion";
 function PaymentSection({ paymentMode, setPaymentMode }) {
     return (
         <div className="w-full">

@@ -31,7 +31,7 @@ export default function AddressSection({ select, setSelect, title = 'Select A De
   }, [selectedAddressId])
   const onSubmit = async (data) => {
     if (editMode) {
-      console.log(editId, data)
+
       toast.promise(updateAddress({ id: editId, updateData: data }), {
         success: "Address updated",
         error: (error) => `${error?.response?.data?.message}`,

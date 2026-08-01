@@ -6,7 +6,15 @@ const publicAxios = axios.create({
     headers: {
         "Content-Type": "application/json"
     },
-    withCredentials:true
-})
+    withCredentials: true
+});
+
+publicAxios.interceptors.response.use(
+    (response) => response.data,
+    (error) => {
+        // Return normalized error object
+        return Promise.reject(error.response?.data || error.message);
+    }
+);
 
 export default publicAxios

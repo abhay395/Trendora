@@ -1,8 +1,8 @@
 import React from 'react'
-import Navbar from './componente/Navbar'
-import Footer from './componente/Footer'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import { Outlet } from 'react-router-dom'
-import ScrollToTop from './componente/ScrollToTop'
+import ScrollToTop from './components/ScrollToTop'
 import { Toaster } from 'react-hot-toast';
 
 export default function RootLayout() {

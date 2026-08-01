@@ -12,7 +12,7 @@ export default function CreateUser() {
     } = useForm();
     const { mutate, status, error: apiError } = useUserCreate()
     const onSubmit = (data) => {
-        console.log("User Data:", data);
+        ;
         mutate(data)
     };
     useEffect(() => {

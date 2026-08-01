@@ -38,7 +38,7 @@ function ReviewSection({ productId }) {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    console.log(file)
+    
     if (file) {
       setPreview([...prview, URL.createObjectURL(file)])
       setNewReview({ ...newReview, images: [...newReview.images, file] });

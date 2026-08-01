@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import ProductFilter from '../componente/ProductFilter'
-import Card from '../componente/Card'
-import SkeletonCard from '../componente/SkeletonCard'
+import ProductFilter from '../components/ProductFilter'
+import Card from '../components/Card'
+import SkeletonCard from '../components/SkeletonCard'
 import { AnimatePresence, motion } from 'framer-motion'
-import ProductNotFoundForFilter from '../componente/ProductNotFoundForFilter'
+import ProductNotFoundForFilter from '../components/ProductNotFoundForFilter'
 import { useLocation } from 'react-router-dom'
 import { useFetchProductFilters, useProductsFilterd } from '../hooks/useProducts'
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import AddressSection from '../componente/AddressSection';
-import CardForCheckout from '../componente/CardForCheckout';
-import ProductNotFound from '../componente/ProductNotFound';
-import OrderHistorySection from '../componente/OrderHistorySection';
-import UserProfileSection from '../componente/UserProfileSection';
+import AddressSection from '../components/AddressSection';
+import CardForCheckout from '../components/CardForCheckout';
+import ProductNotFound from '../components/ProductNotFound';
+import OrderHistorySection from '../components/OrderHistorySection';
+import UserProfileSection from '../components/UserProfileSection';
 import { motion } from 'framer-motion';
 import { useUser, useUserUpdate } from '../hooks/useUser';
 import toast from 'react-hot-toast';
@@ -39,7 +39,7 @@ const Profile = () => {
     }
   }, [userDetails, isLoading]);
   const onEdit = (data) => {
-    console.log(data)
+    
     const form = new FormData();
     for (let [key, value] of Object.entries(data)) {
       if (key != 'image') {

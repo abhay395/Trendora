@@ -51,7 +51,7 @@ export const useAddReview = (id) => {
   return useMutation({
     mutationFn: (form) => addProductReviewApi(form),
     onSuccess: (data) => {
-      console.log(data)
+      
       queryClient.invalidateQueries(['product', id])
       queryClient.invalidateQueries(['productReviews', id])
     }
@@ -67,7 +67,7 @@ export const useAddHelpfullInReview = (productId, sortBy, currentPage) => {
 
     onSuccess: (data) => {
       queryClient.setQueryData(["productReviews", productId, sortBy, currentPage], (old) => {
-        console.log(old, data)
+        
         if (!old) return old;
 
         return {

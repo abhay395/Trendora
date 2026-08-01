@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import AdminNavbar from './componente/AdminNavbar'
-import AdminSidebar from './componente/AdminSideBar'
+import AdminNavbar from './components/AdminNavbar'
+import AdminSidebar from './components/AdminSideBar'
 import { Toaster } from 'react-hot-toast'
 function AdminLayout() {
   return (

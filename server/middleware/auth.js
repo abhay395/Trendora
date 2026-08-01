@@ -4,7 +4,10 @@ import ApiError from "../utils/ApiError.js";
 import User from "../models/User.model.js";
 import { config } from 'dotenv'
 config()
-const JWT_SECRET = process.env.JWT_SECRET || "Your_Secret_Secret_Key";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is missing");
+}
 const authenticationMiddleware = async (req, res, next) => {
   try {
     const authorization = req.headers["authorization"] || req.headers["Authorization"];

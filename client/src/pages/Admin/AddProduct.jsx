@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import SizeInput from "../../componente/SizeInput";
+import SizeInput from "../../components/SizeInput";
 import { useAdminCategories, useCreateProduct, useUploadBulkProduct } from "../../hooks/useAdmin";
 
 function AddProduct() {
@@ -30,7 +30,7 @@ function AddProduct() {
     data.images.forEach((fileList, idx) => {
       if (fileList?.[0]) {
         form.append("images", fileList[0]);
-        console.log("Image " + idx, fileList[0]); // 👌 shows File object now
+        ; // 👌 shows File object now
       }
     });
     for (let [key, value] of Object.entries(data)) {
@@ -47,7 +47,7 @@ function AddProduct() {
   };
   const onSubmitForCsv = async (data) => {
     const form = new FormData();
-    console.log(data)
+    
     form.append('file', data.csv[0])
     bulkProductUpload(form)
   }
@@ -69,7 +69,7 @@ function AddProduct() {
     }
   }, [isSuccess, reset]);
   useEffect(() => {
-    console.log(errors)
+    
   }, [errors])
 
 
@@ -296,7 +296,7 @@ function AddProduct() {
                   name="csv"
                   rules={{ required: "Csv file is required" }}
                   render={({ field, fieldState: { error } }) => {
-                    console.log(error)
+                    
                     const fileName = field.value?.[0]?.name || "No file selected";
                     return (
                       <div className="flex flex-col items-center mb-4">

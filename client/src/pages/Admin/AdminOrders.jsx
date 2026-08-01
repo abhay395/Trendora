@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { updateAdminOrder, useAdminOrders } from "../../hooks/useAdmin";
-import Pagination from "../../componente/Pagination";
+import Pagination from "../../components/Pagination";
 import { queryGenerater } from "../../hooks/useQueryGenerater";
 import { FaChevronDown } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { downloadOrderRecordApi } from "../../api/adminApi";
-import DownloadModal from "./componente/DownloadModal";
+import DownloadModal from "./components/DownloadModal";
 import { FaDownload, FaSearch, FaSyncAlt } from "react-icons/fa";
 
 const statusColors = {
@@ -44,7 +44,7 @@ export default function AdminOrders() {
     }
   }, [ordersData]);
   useEffect(() => {
-    console.log(query)
+    
     setQuery(queryGenerater(options, filter))
   }, [options, filter])
   const handleStatusChange = (id, newStatus) => {

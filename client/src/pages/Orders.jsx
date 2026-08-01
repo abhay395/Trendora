@@ -18,7 +18,7 @@ const Orders = () => {
     }, [fetchOrderList]);
     useEffect(()=>{
         // document.title="Your Orders - ShopEase"
-        console.log("Orders Page", order);
+        ;
     },[order])
     return (
         <motion.div

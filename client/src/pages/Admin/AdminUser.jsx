@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { FaTrash, FaEdit, FaEye } from "react-icons/fa";
 import { useSoftDeleteProduct, useUserHardDelete, useUsersAdmin } from "../../hooks/useAdmin";
 import { FaSearch, FaSyncAlt, FaDownload, FaUserPlus } from "react-icons/fa";
-import Pagination from "../../componente/Pagination";
+import Pagination from "../../components/Pagination";
 import { queryGenerater } from "../../hooks/useQueryGenerater";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -31,7 +31,7 @@ export default function AdminUser() {
     setTotalPages(usersData?.totalPages || 1)
   }, [usersData])
   useEffect(() => {
-    console.log(query)
+
     setQuery(queryGenerater(options, filter))
   }, [options, filter])
   useEffect(() => {
@@ -135,7 +135,7 @@ export default function AdminUser() {
               >
                 {/* User Avatar + Name */}
                 <td className="p-3 flex items-center gap-3">
-                  { user.image ? (
+                  {user.image ? (
                     <img
                       src={user.image}
                       alt={user.name}
@@ -197,7 +197,7 @@ export default function AdminUser() {
                     <FaEye className="text-blue-500" />
                   </button>
                   <button
-                    onClick={() => console.log("Edit user", user._id)}
+                    // onClick={() => }
                     className="p-2 rounded-md border hover:bg-gray-100"
                   >
                     <FaEdit className="text-green-500" />

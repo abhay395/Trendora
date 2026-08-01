@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import Stepper from '../componente/Stepper';
+import Stepper from '../components/Stepper';
 import useCartStore from '../store/cartStore';
-import AddressSection from '../componente/AddressSection';
-import PaymentSection from '../componente/PaymentSection';
+import AddressSection from '../components/AddressSection';
+import PaymentSection from '../components/PaymentSection';
 import useOrderStore from '../store/orderStore';
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast';
@@ -46,7 +46,7 @@ export default function Checkout() {
             // const order = response.result
 
             const options = {
-                key: "rzp_test_RL8vVmMkvsQpjg",
+                key: razorPayKey,
                 amount: amount,
                 currency: currency,
                 name: "Trendora Shop",
@@ -55,7 +55,7 @@ export default function Checkout() {
                 order_id: id,
                 handler: async function (response) {
                     try {
-                        console.log(response)
+
                         setLoading(true)
                         const res = await verifyPaymentApi({
                             ...response,

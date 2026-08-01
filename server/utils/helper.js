@@ -5,7 +5,7 @@ const sendSuccessMessage = (res, status, message, result = null) => {
     res.status(status).json({ message: message, result: result, success: true })
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || "Your_Secret_Secret_Key";
+const JWT_SECRET = process.env.JWT_SECRET;
 const createToken = (user) => {
     return jwt.sign(
         { _id: user._id, email: user.email, name: user.name, role: user.role },

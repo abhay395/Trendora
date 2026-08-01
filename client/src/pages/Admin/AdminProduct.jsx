@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useAdminProducts, useDeleteProductPermanently, useSoftDeleteProduct } from "../../hooks/useAdmin";
-import SkeletonCard from "../../componente/SkeletonCard";
-import ProductCard from "./componente/ProductCard";
+import SkeletonCard from "../../components/SkeletonCard";
+import ProductCard from "./components/ProductCard";
 import { AnimatePresence, motion } from "framer-motion";
 
 function AdminProduct() {
   const navigate = useNavigate();
   const { data: productData, isLoading, error } = useAdminProducts()
-  console.log(productData, error)
+  
   const { mutate: softDeleteProduct } = useSoftDeleteProduct()
   const { mutate: deleteProductPermanently } = useDeleteProductPermanently()
 

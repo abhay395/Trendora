@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { FiUploadCloud } from "react-icons/fi";
-import SizeInput from "../../componente/SizeInput";
+import SizeInput from "../../components/SizeInput";
 import { useAdminCategories, useAdminProductById, useUpdateProduct } from '../../hooks/useAdmin';
 function EditProduct() {
   const { id } = useParams();

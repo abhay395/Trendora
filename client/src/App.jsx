@@ -21,7 +21,7 @@ import Dashbord from './pages/Admin/Dashboard'
 import useCartStore from './store/cartStore'
 import Dashboard from './pages/Admin/Dashboard'
 import PageNotFound from './pages/PageNotFound'
-import ProtectedRoute from './componente/ProtectedRoute'
+import ProtectedRoute from './components/ProtectedRoute'
 import Unauthorized from './pages/AccessDenied'
 import AdminLayout from './pages/Admin/AdminLayout'
 import AdminProduct from './pages/Admin/AdminProduct'
@@ -38,7 +38,7 @@ function App() {
   const location = useLocation()
   const { data: cart } = useCart();
 
-  console.log(cart)
+  
 
   return (
     // <AnimatePresence mode="sync">

@@ -19,57 +19,41 @@ const AnimateContent = ({ children }) => (
 );
 
 const FilterSection = ({ title, isOpen, onToggle, items, children, register }) => (
-    (title != 'Category') ? (<div className="mb-6">
+    <div className="mb-8 font-outfit">
         <h3
-            className="font-semibold text-gray-800 mb-2 cursor-pointer select-none flex items-center justify-between"
+            className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 mb-4 cursor-pointer select-none flex items-center justify-between group"
             onClick={onToggle}
         >
             {title}
-            {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            <span className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                <IoIosArrowDown />
+            </span>
         </h3>
         <AnimatePresence initial={false}>
             {isOpen && (
                 <AnimateContent>
                     {items
-                        ? items.map(item => (
-                            <label key={item} className="flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-gray-800 cursor-pointer hover:bg-gray-200 transition">
-                                <input {...register(title.toLowerCase())} type="checkbox" className="mr-2 accent-black" value={item} />
-                                {item}
-                            </label>
-                        ))
+                        ? items.map(item => {
+                            const label = typeof item === 'object' ? item.name : item;
+                            const value = typeof item === 'object' ? item._id : item;
+                            return (
+                                <label key={label} className="flex items-center px-4 py-2 rounded-2xl glass border-white/50 text-[10px] font-bold uppercase tracking-widest text-gray-600 cursor-pointer hover:bg-white/40 transition-all shadow-sm">
+                                    <input {...register(title.toLowerCase())} type="checkbox" className="mr-3 w-3 h-3 accent-black" value={value} />
+                                    {label}
+                                </label>
+                            );
+                        })
                         : children}
                 </AnimateContent>
             )}
         </AnimatePresence>
-    </div>) : (<div className="mb-6">
-        <h3
-            className="font-semibold text-gray-800 mb-2 cursor-pointer select-none flex items-center justify-between"
-            onClick={onToggle}
-        >
-            {title}
-            {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-        </h3>
-        <AnimatePresence initial={false}>
-            {isOpen && (
-                <AnimateContent>
-                    {items
-                        ? items.map(item => (
-                            <label key={item.name} className="flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-gray-800 cursor-pointer hover:bg-gray-200 transition">
-                                <input {...register(title.toLowerCase())} type="checkbox" className="mr-2 accent-black" value={item._id} />
-                                {item.name}
-                            </label>
-                        ))
-                        : children}
-                </AnimateContent>
-            )}
-        </AnimatePresence>
-    </div>)
+    </div>
 );
 
 const initialState = {
     toggles: {
-        gender: false,
-        category: false,
+        gender: true,
+        category: true,
         size: false,
         rating: false,
     },
@@ -162,24 +146,18 @@ const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery
         );
     };
     return (
-        <div>
+        <div className="font-outfit pb-20">
             {/* Sort Dropdown */}
-            <div className="absolute right-4 top-4">
-                <label
-                    htmlFor="sort-select"
-                    className="sr-only"
-                >
-                    Sort products
-                </label>
-                <div className="relative">
+            <div className="absolute right-6 top-6 z-10">
+                <div className="relative group">
                     <select
                         id="sort-select"
                         value={state.sortBy}
                         onChange={(e) => onSortChange(e.target.value)}
-                        className="bg-white text-gray-800 border border-gray-300 rounded-xl pl-4 pr-10 py-2.5 shadow-md 
-                 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 
-                 text-sm font-medium transition-all duration-200 appearance-none cursor-pointer 
-                 hover:border-gray-400 hover:shadow-lg"
+                        className="glass border-white/40 text-black rounded-2xl pl-6 pr-12 py-3 shadow-glass 
+                                 focus:outline-none focus:ring-0 focus:bg-white/50
+                                 text-[10px] font-black uppercase tracking-widest transition-all duration-300 appearance-none cursor-pointer 
+                                 hover:shadow-xl"
                     >
                         <option value="price:asc">Price: Low → High</option>
                         <option value="price:desc">Price: High → Low</option>
@@ -188,23 +166,22 @@ const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery
                     </select>
 
                     {/* Custom dropdown arrow */}
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                        <FaChevronDown />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-black transition-colors">
+                        <FaChevronDown size={14} />
                     </span>
                 </div>
             </div>
 
 
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full md:w-72 p-6 pt-3 bg-white border h-full border-gray-200">
-                <h2 className="text-2xl font-bold mb-10 text-gray-900 tracking-tight">Filters</h2>
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full md:w-80 p-8 bg-white/50 backdrop-blur-sm border-r border-gray-100 min-h-screen">
+                <h2 className="text-3xl font-black mb-12 text-black tracking-tighter uppercase">Filters</h2>
 
                 <FilterSection
                     title="Gender"
                     isOpen={state.toggles.gender}
                     onToggle={() => dispatch({ type: 'TOGGLE', payload: 'gender' })}
                     register={register}
-                    // items={genders}
-                    items={["Men", "Women"]} //? Change later
+                    items={["Men", "Women"]}
                 />
 
                 <FilterSection
@@ -223,19 +200,21 @@ const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery
                     items={sizes}
                 />
 
-                <div className="mb-6">
-                    <h3 className="font-semibold text-gray-800 mb-2">Price Range</h3>
-                    <div className="flex items-center gap-2">
+                <div className="mb-10">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 mb-6">Price Range</h3>
+                    <div className="flex items-center gap-4">
                         <input
                             type="number"
                             {...register("minPrice")}
-                            className="w-20 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                            placeholder="Min"
+                            className="w-full glass border-white/40 px-4 py-3 rounded-xl text-xs font-bold focus:outline-none focus:ring-0 focus:bg-white/50 transition-all"
                         />
-                        <span className="text-gray-500">-</span>
+                        <div className="w-4 h-[1px] bg-gray-200"></div>
                         <input
                             type="number"
                             {...register("maxPrice")}
-                            className="w-20 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                            placeholder="Max"
+                            className="w-full glass border-white/40 px-4 py-3 rounded-xl text-xs font-bold focus:outline-none focus:ring-0 focus:bg-white/50 transition-all"
                         />
                     </div>
                 </div>
@@ -245,39 +224,41 @@ const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery
                     isOpen={state.toggles.rating}
                     onToggle={() => dispatch({ type: 'TOGGLE', payload: 'rating' })}
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-4">
                         {ratings.map(r => (
-                            <label key={r} className="flex items-center text-gray-800 cursor-pointer hover:text-black">
+                            <label key={r} className="flex items-center text-gray-400 cursor-pointer hover:text-black transition-colors group">
                                 <input
                                     type="radio"
                                     {...register("rating")}
                                     value={r}
-                                    className="mr-2 accent-black cursor-pointer w-4 h-4"
+                                    className="mr-3 accent-black cursor-pointer w-4 h-4"
                                 />
-                                <span className="flex items-center">
-                                    {[...Array(r)].map((_, i) => <FaStar key={i} />)}
-                                    <span className="text-gray-500 font-semibold ml-1 text-xs">&amp; up</span>
+                                <span className="flex items-center gap-1">
+                                    {[...Array(r)].map((_, i) => <FaStar key={i} className="text-luxe-gold shadow-sm" size={12} />)}
+                                    <span className="text-[10px] uppercase font-black tracking-widest ml-2">&amp; up</span>
                                 </span>
                             </label>
                         ))}
                     </div>
                 </FilterSection>
 
-                <button type="submit" className="w-full mt-2 cursor-pointer bg-black hover:bg-gray-900 text-white py-2 rounded-xl text-base font-semibold shadow-md transition">
-                    Apply Filters
-                </button>
-
-                {hasActiveFilters() && (
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            resetHandler();
-                        }}
-                        className="bg-white cursor-pointer text-lg gap-x-1 mt-4 flex justify-center items-center text-black py-2 w-full rounded-xl font-semibold border-gray-700 border"
-                    >
-                        <RiResetLeftFill /> Reset
+                <div className="flex flex-col gap-3 mt-10">
+                    <button type="submit" className="w-full cursor-pointer bg-black text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-gray-800 transition-all active:scale-[0.98]">
+                        Apply Selection
                     </button>
-                )}
+
+                    {hasActiveFilters() && (
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                resetHandler();
+                            }}
+                            className="cursor-pointer text-[10px] font-black uppercase tracking-[0.2em] gap-x-2 py-4 flex justify-center items-center text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                            <RiResetLeftFill size={14} /> Clear All
+                        </button>
+                    )}
+                </div>
             </form>
         </div>
     );

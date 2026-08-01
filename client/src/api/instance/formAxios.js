@@ -9,11 +9,18 @@ const formAxios = axios.create({
 })
 
 formAxios.interceptors.request.use((config) => {
-    let token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`
+        config.headers['Authorization'] = `Bearer ${token}`;
     }
-    return config
-})
+    return config;
+});
+
+formAxios.interceptors.response.use(
+    (response) => response.data,
+    (error) => {
+        return Promise.reject(error.response?.data || error.message);
+    }
+);
 
 export default formAxios

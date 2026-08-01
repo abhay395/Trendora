@@ -7,7 +7,7 @@ import { CheckCircle2, Package, Truck, Home, Clock } from "lucide-react";
  *  currentStep: number (0-based index of current step)
  */
 export default function OrderProgressBar({ currentStep }) {
-  console.log(currentStep)
+  
   // Define steps with icons
   const steps = [
     { key: "confirmed", title: "Confirmed", icon: <Clock className="w-5 h-5" /> },

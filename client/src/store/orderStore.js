@@ -14,7 +14,7 @@ const useOrderStore = create((set, get) => ({
             let response = await checkoutProductApi({ paymentMethod })
             return response.data.result;
         } catch (error) {
-            console.log(error)
+            
             set({
                 error: error.response?.data?.message, isLoading: false
             })

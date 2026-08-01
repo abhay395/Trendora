@@ -7,7 +7,7 @@ import { TiMinus, TiPlus } from "react-icons/ti";
 import { MdDiscount } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom'
-import Stepper from '../componente/Stepper';
+import Stepper from '../components/Stepper';
 import CartEmpty from './CartEmpty';
 import { AnimatePresence, motion } from 'framer-motion'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -40,7 +40,7 @@ export default function Cart() {
   }
   const selectAllToggle = async (selected) => {
     setAllSelected(selected)
-    let response = await selectAllProduct({selected});
+    let response = await selectAllProduct({ selected });
     if (response?.message) {
       toast.error(response?.message)
     }
