@@ -1,23 +1,33 @@
-import React, { useEffect, useState } from 'react';
 
+import React, { useEffect, useState } from 'react';
 import AddressSection from '../components/AddressSection';
 import CardForCheckout from '../components/CardForCheckout';
-import ProductNotFound from '../components/ProductNotFound';
 import OrderHistorySection from '../components/OrderHistorySection';
 import UserProfileSection from '../components/UserProfileSection';
 import { motion } from 'framer-motion';
 import { useUser, useUserUpdate } from '../hooks/useUser';
 import toast from 'react-hot-toast';
 
-// Skeleton Loader Component
 const Skeleton = ({ className }) => (
-  <div className={`animate-pulse bg-gray-300 rounded-md ${className}`} />
+  <div className={`animate-pulse bg-gray-100 ${className}`} />
+);
+
+const SectionWrapper = ({ title, children }) => (
+  <div className="border border-gray-200 bg-white mb-6">
+    {title && (
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-black">{title}</h2>
+      </div>
+    )}
+    <div className="p-6">
+      {children}
+    </div>
+  </div>
 );
 
 const Profile = () => {
   const { data: userDetails, isLoading } = useUser();
   const { mutateAsync: updateUserProfile, status } = useUserUpdate();
-  // const isLoading = true
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [cart, setCart] = useState([]);
@@ -38,108 +48,76 @@ const Profile = () => {
       setSelectedAdress(userDetails.addresses?.find((item) => item.selected)?._id || null);
     }
   }, [userDetails, isLoading]);
+
   const onEdit = (data) => {
-    
     const form = new FormData();
     for (let [key, value] of Object.entries(data)) {
-      if (key != 'image') {
-        form.append(key, value)
-      }
+      if (key != 'image') form.append(key, value);
     }
-    // updateUserProfile(form);
     toast.promise(updateUserProfile(form), {
       loading: 'Updating profile...',
-      success: 'Profile updated successfully! 🎉',
-      error: 'Error updating profile ❌',
+      success: 'Profile updated successfully!',
+      error: 'Error updating profile',
     });
   };
+
   return (
     <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2 } },
-      }}
-      className="max-w-5xl mx-auto px-4 py-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-5xl mx-auto px-4 py-10 mt-16 font-outfit"
     >
-      <motion.h1
-        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-        className="text-3xl font-bold text-gray-900 mb-6"
-      >
-        👤 Your Profile
-      </motion.h1>
+      <div className="mb-8 pb-6 border-b border-gray-200">
+        <h1 className="text-3xl font-black text-black tracking-tighter uppercase">Your Profile</h1>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mt-1">
+          Manage your account, orders & addresses
+        </p>
+      </div>
 
-      {/* 1. Basic Profile Info */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
+      <SectionWrapper title="Account Info">
         <UserProfileSection user={user} onEdit={onEdit} isLoading={isLoading} status={status} />
-      </motion.div>
+      </SectionWrapper>
 
-      {/* 2. Order Information */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
+      <SectionWrapper title="Order History">
         <OrderHistorySection orders={orders} isLoading={isLoading} />
-      </motion.div>
+      </SectionWrapper>
 
-      {/* 3. 🚚 Address Book */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}>
+      <SectionWrapper title="Delivery Address">
         {isLoading ? (
-          <div className="w-full px-5 py-6 rounded-xl border border-gray-200 space-y-1">
-            <p className="font-semibold text-xl text-gray-900 mb-5">Delivery Address</p>
+          <div className="space-y-3">
+            <Skeleton className="h-16 w-full" />
             <Skeleton className="h-16 w-full" />
           </div>
         ) : (
-          <AddressSection select={selectedAddress} setSelect={setSelectedAdress} title={"Delivery Address"} />
+          <AddressSection select={selectedAddress} setSelect={setSelectedAdress} title={""} />
         )}
-      </motion.div>
+      </SectionWrapper>
 
-      {/* 4. 🛒 Cart Overview */}
-      <motion.div
-        variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-      >
-        <section className="my-8 bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            🛒 Your Cart
-          </h2>
-
-          <div>
-            {isLoading ? (
-              <ul className="space-y-3">
-                {[...Array(3)].map((_, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start py-4 pl-4 gap-4 w-full relative"
-                  >
-                    {/* Skeleton for image */}
-                    <Skeleton className="h-28 w-[15rem] rounded-lg" />
-
-                    {/* Skeleton for content */}
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-5 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                      <div className="flex justify-between items-center pt-6">
-                        <Skeleton className="h-5 w-20" />
-                        <Skeleton className="h-5 w-16" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </ul>
-            ) : (
-              <ul className="space-y-3">
-                {cart.slice(0, 3).map((item, idx) => (
-                  <CardForCheckout
-                    key={item._id}
-                    item={item}
-                    index={idx}
-                    length={cart.length}
-                  />
-                ))}
-              </ul>
-            )}
+      <SectionWrapper title="Cart Overview">
+        {isLoading ? (
+          <div className="space-y-4">
+            {[...Array(3)].map((_, idx) => (
+              <div key={idx} className="flex items-start gap-4">
+                <Skeleton className="h-24 w-40" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
-      </motion.div>
-
+        ) : cart.length === 0 ? (
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Your cart is empty.</p>
+        ) : (
+          <ul className="space-y-3">
+            {cart.slice(0, 3).map((item, idx) => (
+              <CardForCheckout key={item._id} item={item} index={idx} length={cart.length} />
+            ))}
+          </ul>
+        )}
+      </SectionWrapper>
     </motion.div>
   );
 };

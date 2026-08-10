@@ -22,7 +22,6 @@ const Signup = () => {
       navigate('/');
     } catch (err) {
       if (err.errors && Array.isArray(err.errors)) {
-        // Map server-side validation errors to form fields
         err.errors.forEach((errorObj) => {
           const field = Object.keys(errorObj)[0];
           const message = Object.values(errorObj)[0];
@@ -36,107 +35,118 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white/50 backdrop-blur-3xl flex items-center justify-center px-8 py-20 font-outfit">
-        {/* Abstract Background Decoration */}
-        <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-            <div className="absolute top-[10%] left-[10%] w-[40rem] h-[40rem] bg-indigo-100/30 rounded-full blur-[120px] animate-pulse"></div>
-            <div className="absolute bottom-[10%] right-[10%] w-[30rem] h-[30rem] bg-amber-50/40 rounded-full blur-[100px]"></div>
-        </div>
+    <div className="min-h-screen bg-white flex items-center justify-center px-8 py-20 font-outfit">
 
-      <div className="max-w-md w-full glass border-white/40 p-10 rounded-[2.5rem] shadow-glass">
+      <div className="max-w-md w-full border border-gray-200 p-10 bg-white">
+
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-black text-black tracking-tighter uppercase mb-3">Join Trendora.</h2>
+          <h1 className="text-3xl font-black text-black tracking-tighter uppercase mb-2">Join Trendora.</h1>
           <p className="text-[10px] uppercase font-black tracking-[0.2em] text-gray-400">Create your account to start shopping</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+
           <div className="space-y-2">
-            <label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 ml-1">
+            <label htmlFor="signup-name" className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-900">
               Full Name
             </label>
             <input
-              id="name"
+              id="signup-name"
               name="name"
               type="text"
-              placeholder="JOHN DOE"
-              className="w-full glass border-white/50 px-5 py-4 text-xs font-bold uppercase tracking-widest focus:ring-0 focus:border-black focus:bg-white/60 transition-all rounded-2xl placeholder:text-gray-300"
+              placeholder="John Doe"
+              className="w-full bg-white border border-gray-200 px-4 py-3.5 text-xs font-bold tracking-wide focus:outline-none focus:border-black transition-colors placeholder:text-gray-300 placeholder:font-normal placeholder:tracking-normal"
               {...register("name", { required: "Name is required" })}
             />
-            {errors?.name ? <p className="font-black text-[9px] uppercase tracking-widest text-red-500 mt-2 ml-1">{errors?.name.message}</p> : null}
+            {errors?.name && (
+              <p className="font-black text-[9px] uppercase tracking-widest text-red-500">{errors.name.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 ml-1">
+            <label htmlFor="signup-email" className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-900">
               Email
             </label>
             <input
+              id="signup-email"
               name="email"
               type="email"
-              placeholder="YOU@EXAMPLE.COM"
-              className="w-full glass border-white/50 px-5 py-4 text-xs font-bold uppercase tracking-widest focus:ring-0 focus:border-black focus:bg-white/60 transition-all rounded-2xl placeholder:text-gray-300"
+              placeholder="you@example.com"
+              className="w-full bg-white border border-gray-200 px-4 py-3.5 text-xs font-bold tracking-wide focus:outline-none focus:border-black transition-colors placeholder:text-gray-300 placeholder:font-normal placeholder:tracking-normal"
               {...register("email", {
-                required: "Email is required", pattern: {
+                required: "Email is required",
+                pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i,
                   message: "Enter a valid email"
                 }
               })}
             />
-            {errors?.email ? <p className="font-black text-[9px] uppercase tracking-widest text-red-500 mt-2 ml-1">{errors?.email.message}</p> : null}
+            {errors?.email && (
+              <p className="font-black text-[9px] uppercase tracking-widest text-red-500">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 ml-1">
+            <label htmlFor="signup-password" className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-900">
               Password
             </label>
             <input
-              id="password"
+              id="signup-password"
               name="password"
               type="password"
               placeholder="••••••••"
-              className="w-full glass border-white/50 px-5 py-4 text-xs font-bold focus:ring-0 focus:border-black focus:bg-white/60 transition-all rounded-2xl placeholder:text-gray-300"
+              className="w-full bg-white border border-gray-200 px-4 py-3.5 text-xs font-bold focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
               {...register("password", {
                 required: "Password is required",
                 pattern: {
-                  message: "Use 8+ characters with an uppercase letter, lowercase letter, number, and symbol",
+                  message: "Use 8+ characters with uppercase, lowercase, number & symbol",
                   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/
                 }
               })}
             />
-            {errors?.password ? <p className="font-black text-[9px] uppercase tracking-widest text-red-500 mt-2 ml-1">{errors?.password.message}</p> : null}
+            {errors?.password && (
+              <p className="font-black text-[9px] uppercase tracking-widest text-red-500">{errors.password.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 ml-1">
+            <label htmlFor="signup-confirmPassword" className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-900">
               Confirm Password
             </label>
             <input
-              id="confirmPassword"
+              id="signup-confirmPassword"
               name="confirmPassword"
               type="password"
               placeholder="••••••••"
-              className="w-full glass border-white/50 px-5 py-4 text-xs font-bold focus:ring-0 focus:border-black focus:bg-white/60 transition-all rounded-2xl placeholder:text-gray-300"
-              {...register("confirmPassword", { required: "Please confirm your password", validate: (value) => value == password || "Passwords do not match" })}
+              className="w-full bg-white border border-gray-200 px-4 py-3.5 text-xs font-bold focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) => value == password || "Passwords do not match"
+              })}
             />
-            {errors?.confirmPassword ? <p className="font-black text-[9px] uppercase tracking-widest text-red-500 mt-2 ml-1">{errors?.confirmPassword.message}</p> : null}
+            {errors?.confirmPassword && (
+              <p className="font-black text-[9px] uppercase tracking-widest text-red-500">{errors.confirmPassword.message}</p>
+            )}
           </div>
 
           <button
             type="submit"
-            className="w-full py-5 bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-gray-800 transition-all shadow-xl active:scale-[0.98] mt-4"
+            className="w-full py-4 bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-800 transition-colors active:scale-[0.98] mt-2"
           >
-            Sign Up
+            Create Account
           </button>
         </form>
 
-        <div className="mt-10 text-center">
+        <div className="mt-8 pt-8 border-t border-gray-100 text-center">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
             Already have an account?{" "}
-            <Link to={'/login'} className="text-black font-black hover:text-indigo-600 transition-colors ml-1 underline decoration-2 underline-offset-4">
+            <Link to="/login" className="text-black font-black hover:underline decoration-2 underline-offset-4 transition-all ml-1">
               Log In
             </Link>
           </p>
         </div>
       </div>
+
     </div>
   );
 };

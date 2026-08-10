@@ -1,5 +1,5 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import React, { useEffect, useReducer } from 'react';
+import { IoIosArrowDown } from "react-icons/io";
 import { FaChevronDown, FaStar } from "react-icons/fa6";
 import { AnimatePresence, motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
@@ -12,20 +12,19 @@ const AnimateContent = ({ children }) => (
         exit={{ height: 0, opacity: 0 }}
         transition={{ duration: 0.25, ease: "easeInOut" }}
         style={{ overflow: "hidden" }}
-        className='overflow-hidden'
     >
-        <div className='flex flex-wrap gap-2'>{children}</div>
+        <div className='flex flex-wrap gap-2 pt-1'>{children}</div>
     </motion.div>
 );
 
 const FilterSection = ({ title, isOpen, onToggle, items, children, register }) => (
-    <div className="mb-8 font-outfit">
+    <div className="mb-6 font-outfit border-b border-gray-100 pb-6">
         <h3
-            className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 mb-4 cursor-pointer select-none flex items-center justify-between group"
+            className="text-[10px] font-black uppercase tracking-[0.2em] text-black mb-4 cursor-pointer select-none flex items-center justify-between"
             onClick={onToggle}
         >
             {title}
-            <span className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+            <span className={`transition-transform duration-300 text-gray-400 ${isOpen ? 'rotate-180' : ''}`}>
                 <IoIosArrowDown />
             </span>
         </h3>
@@ -37,8 +36,16 @@ const FilterSection = ({ title, isOpen, onToggle, items, children, register }) =
                             const label = typeof item === 'object' ? item.name : item;
                             const value = typeof item === 'object' ? item._id : item;
                             return (
-                                <label key={label} className="flex items-center px-4 py-2 rounded-2xl glass border-white/50 text-[10px] font-bold uppercase tracking-widest text-gray-600 cursor-pointer hover:bg-white/40 transition-all shadow-sm">
-                                    <input {...register(title.toLowerCase())} type="checkbox" className="mr-3 w-3 h-3 accent-black" value={value} />
+                                <label
+                                    key={label}
+                                    className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 text-[9px] font-black uppercase tracking-widest text-gray-500 cursor-pointer hover:border-black hover:text-black transition-all duration-200"
+                                >
+                                    <input
+                                        {...register(title.toLowerCase())}
+                                        type="checkbox"
+                                        className="w-3 h-3 accent-black"
+                                        value={value}
+                                    />
                                     {label}
                                 </label>
                             );
@@ -109,32 +116,33 @@ const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery
     const onSubmit = (data) => {
         dispatch({ type: 'SET_QUERY', payload: data });
         const newQuery = buildQuery(data, state.sortBy);
-        if (newQuery == query || newQuery.split('=').length <= 2) return
-        setQuery(newQuery)
+        if (newQuery == query || newQuery.split('=').length <= 2) return;
+        setQuery(newQuery);
     };
 
     const onSortChange = (value) => {
         dispatch({ type: 'SET_SORT', payload: value });
         const query = buildQuery(state.queryData, value);
-        setQuery(query)
+        setQuery(query);
     };
 
     const resetHandler = () => {
         dispatch({ type: 'RESET' });
-        setQuery('')
+        setQuery('');
         reset({
             minPrice: priceStats?.minPrice || 0,
             maxPrice: priceStats?.maxPrice || 6000,
         });
     };
 
-    // Update price range when priceStats change
     useEffect(() => {
         setValue('minPrice', priceStats?.minPrice || 0);
         setValue('maxPrice', priceStats?.maxPrice || 6000);
     }, [priceStats]);
+
     const ratings = [4, 3, 2, 1];
     const watchedFields = watch();
+
     const hasActiveFilters = () => {
         return (
             (watchedFields.gender && watchedFields.gender.length > 0) ||
@@ -145,36 +153,53 @@ const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery
             (watchedFields.maxPrice && watchedFields.maxPrice !== priceStats?.maxPrice)
         );
     };
+
     return (
         <div className="font-outfit pb-20">
             {/* Sort Dropdown */}
             <div className="absolute right-6 top-6 z-10">
-                <div className="relative group">
+                <div className="relative">
                     <select
                         id="sort-select"
                         value={state.sortBy}
                         onChange={(e) => onSortChange(e.target.value)}
-                        className="glass border-white/40 text-black rounded-2xl pl-6 pr-12 py-3 shadow-glass 
-                                 focus:outline-none focus:ring-0 focus:bg-white/50
-                                 text-[10px] font-black uppercase tracking-widest transition-all duration-300 appearance-none cursor-pointer 
-                                 hover:shadow-xl"
+                        className="bg-white border border-gray-300 text-black rounded-none pl-4 pr-10 py-3
+                                 focus:outline-none focus:border-black
+                                 text-[9px] font-black uppercase tracking-widest transition-all duration-200 appearance-none cursor-pointer
+                                 hover:border-black"
                     >
                         <option value="price:asc">Price: Low → High</option>
                         <option value="price:desc">Price: High → Low</option>
                         <option value="rating:asc">Rating: Low → High</option>
                         <option value="rating:desc">Rating: High → Low</option>
                     </select>
-
-                    {/* Custom dropdown arrow */}
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-black transition-colors">
-                        <FaChevronDown size={14} />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                        <FaChevronDown size={10} />
                     </span>
                 </div>
             </div>
 
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full md:w-72 p-8 bg-white border-r border-gray-200 min-h-screen">
 
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full md:w-80 p-8 bg-white/50 backdrop-blur-sm border-r border-gray-100 min-h-screen">
-                <h2 className="text-3xl font-black mb-12 text-black tracking-tighter uppercase">Filters</h2>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-10">
+                    <h2 className="text-2xl font-black text-black tracking-tighter uppercase">Filters</h2>
+
+                    {/* Always-visible Reset Button */}
+                    <button
+                        type="button"
+                        onClick={resetHandler}
+                        className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest transition-all duration-200 cursor-pointer
+                            ${hasActiveFilters()
+                                ? 'text-black border border-black px-3 py-1.5 hover:bg-black hover:text-white'
+                                : 'text-gray-300 border border-gray-200 px-3 py-1.5 cursor-not-allowed'
+                            }`}
+                        disabled={!hasActiveFilters()}
+                    >
+                        <RiResetLeftFill size={11} />
+                        Reset
+                    </button>
+                </div>
 
                 <FilterSection
                     title="Gender"
@@ -200,64 +225,58 @@ const ProductFilter = ({ sizes, categories, genders, priceStats, query, setQuery
                     items={sizes}
                 />
 
-                <div className="mb-10">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 mb-6">Price Range</h3>
-                    <div className="flex items-center gap-4">
+                {/* Price Range */}
+                <div className="mb-6 border-b border-gray-100 pb-6">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-black mb-4">Price Range</h3>
+                    <div className="flex items-center gap-3">
                         <input
                             type="number"
                             {...register("minPrice")}
                             placeholder="Min"
-                            className="w-full glass border-white/40 px-4 py-3 rounded-xl text-xs font-bold focus:outline-none focus:ring-0 focus:bg-white/50 transition-all"
+                            className="w-full bg-white border border-gray-200 px-3 py-2.5 text-xs font-bold focus:outline-none focus:border-black transition-colors"
                         />
-                        <div className="w-4 h-[1px] bg-gray-200"></div>
+                        <div className="w-4 h-[1px] bg-gray-300 shrink-0"></div>
                         <input
                             type="number"
                             {...register("maxPrice")}
                             placeholder="Max"
-                            className="w-full glass border-white/40 px-4 py-3 rounded-xl text-xs font-bold focus:outline-none focus:ring-0 focus:bg-white/50 transition-all"
+                            className="w-full bg-white border border-gray-200 px-3 py-2.5 text-xs font-bold focus:outline-none focus:border-black transition-colors"
                         />
                     </div>
                 </div>
 
+                {/* Rating */}
                 <FilterSection
                     title="Rating"
                     isOpen={state.toggles.rating}
                     onToggle={() => dispatch({ type: 'TOGGLE', payload: 'rating' })}
                 >
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3 pt-1">
                         {ratings.map(r => (
                             <label key={r} className="flex items-center text-gray-400 cursor-pointer hover:text-black transition-colors group">
                                 <input
                                     type="radio"
                                     {...register("rating")}
                                     value={r}
-                                    className="mr-3 accent-black cursor-pointer w-4 h-4"
+                                    className="mr-3 accent-black cursor-pointer w-3.5 h-3.5"
                                 />
                                 <span className="flex items-center gap-1">
-                                    {[...Array(r)].map((_, i) => <FaStar key={i} className="text-luxe-gold shadow-sm" size={12} />)}
-                                    <span className="text-[10px] uppercase font-black tracking-widest ml-2">&amp; up</span>
+                                    {[...Array(r)].map((_, i) => <FaStar key={i} className="text-luxe-gold" size={11} />)}
+                                    <span className="text-[9px] uppercase font-black tracking-widest ml-1.5 group-hover:text-black transition-colors">& up</span>
                                 </span>
                             </label>
                         ))}
                     </div>
                 </FilterSection>
 
-                <div className="flex flex-col gap-3 mt-10">
-                    <button type="submit" className="w-full cursor-pointer bg-black text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-gray-800 transition-all active:scale-[0.98]">
-                        Apply Selection
+                {/* Apply Button */}
+                <div className="mt-8">
+                    <button
+                        type="submit"
+                        className="w-full cursor-pointer bg-black text-white py-3.5 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-gray-800 transition-colors active:scale-[0.98] border border-black"
+                    >
+                        Apply Filters
                     </button>
-
-                    {hasActiveFilters() && (
-                        <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                resetHandler();
-                            }}
-                            className="cursor-pointer text-[10px] font-black uppercase tracking-[0.2em] gap-x-2 py-4 flex justify-center items-center text-gray-400 hover:text-red-500 transition-colors"
-                        >
-                            <RiResetLeftFill size={14} /> Clear All
-                        </button>
-                    )}
                 </div>
             </form>
         </div>
