@@ -102,20 +102,9 @@ const ProductDetail = () => {
 
     return (
         <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-black selection:text-white">
-            
-            {/* Optional Header (If not handled by Layout) */}
-            <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                     <Link to="/" className="text-xl font-bold tracking-tighter">STORE.</Link>
-                     <div className="flex items-center gap-4 text-gray-600">
-                        <Heart className="w-5 h-5 cursor-pointer hover:text-black transition-colors" />
-                        <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-black transition-colors" />
-                     </div>
-                </div>
-            </header>
 
             {/* Breadcrumbs */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-6">
                 <nav className="flex items-center text-sm text-gray-500 overflow-x-auto whitespace-nowrap pb-2">
                     <Link to="/" className="hover:text-black transition-colors">Home</Link>
                     <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />
@@ -176,7 +165,7 @@ const ProductDetail = () => {
                                         </span>
                                     )}
                                     {!isOutOfStock && (
-                                        <span className="bg-white/90 backdrop-blur text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
+                                        <span className="bg-white border border-gray-200 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                                             In Stock
                                         </span>
                                     )}
@@ -197,7 +186,7 @@ const ProductDetail = () => {
                                             {productData.title}
                                         </h1>
                                         <div className="flex items-center gap-2">
-                                            <div className="flex text-yellow-500">
+                                            <div className="flex text-black">
                                                 {[...Array(5)].map((_, i) => (
                                                     <Star 
                                                         key={i} 
@@ -243,10 +232,10 @@ const ProductDetail = () => {
                                                         if (isAvailable) setSelectedSize(item.size);
                                                     }}
                                                     disabled={!isAvailable}
-                                                    className={`py-2.5 text-sm font-medium rounded-md border transition-all duration-200 ${
+                                                    className={`py-2.5 text-sm font-medium rounded-md border transition-colors duration-200 ${
                                                         selectedSize === item.size
-                                                            ? "border-black bg-black text-white shadow-md transform scale-105"
-                                                            : isAvailable 
+                                                            ? "border-black bg-black text-white"
+                                                            : isAvailable
                                                                 ? "border-gray-200 bg-white text-gray-900 hover:border-black"
                                                                 : "border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed decoration-slice line-through"
                                                     }`}
@@ -287,7 +276,7 @@ const ProductDetail = () => {
                                         whileTap={{ scale: 0.98 }}
                                         onClick={addToCart}
                                         disabled={isOutOfStock || !selectedSize}
-                                        className="flex-1 h-12 bg-black text-white rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                                        className="flex-1 h-12 bg-black text-white rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                                     >
                                         <ShoppingCart size={18} />
                                         {isOutOfStock ? "Out of Stock" : "Add to Cart"}

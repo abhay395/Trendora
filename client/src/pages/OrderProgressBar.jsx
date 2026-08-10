@@ -19,14 +19,14 @@ export default function OrderProgressBar({ currentStep }) {
   return (
     <div className="flex items-center justify-between w-full max-w-3xl mx-auto p-6">
       {steps.map((step, index) => (
-        <div key={step.key} className="flex flex-col items-center relative">
+        <div key={step.key} className="flex flex-col items-center relative flex-1">
           {/* Circle with icon */}
           <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center text-white 
-              ${index <= currentStep ? "bg-green-600" : "bg-gray-300"}`}
+            className={`w-10 h-10 rounded-full flex items-center justify-center border-2
+              ${index <= currentStep ? "bg-black border-black text-white" : "bg-white border-gray-300 text-gray-400"}`}
           >
             {index < currentStep ? (
-              <CheckCircle2 className="w-6 h-6 text-white" />
+              <CheckCircle2 className="w-6 h-6" />
             ) : (
               step.icon
             )}
@@ -34,8 +34,8 @@ export default function OrderProgressBar({ currentStep }) {
 
           {/* Label */}
           <div
-            className={`mt-2 text-center text-sm font-medium 
-              ${index <= currentStep ? "text-green-700" : "text-gray-500"}`}
+            className={`mt-2 text-center text-[10px] font-black uppercase tracking-widest
+              ${index <= currentStep ? "text-black" : "text-gray-400"}`}
           >
             {step.title}
           </div>
@@ -43,8 +43,8 @@ export default function OrderProgressBar({ currentStep }) {
           {/* Connector line */}
           {index < steps.length - 1 && (
             <div
-              className={`absolute left-full top-5 -translate-y-1/2 h-0.5 w-full 
-                ${index < currentStep ? "bg-green-600" : "bg-gray-300"}`}
+              className={`absolute left-1/2 top-5 -translate-y-1/2 h-0.5 w-full -z-10
+                ${index < currentStep ? "bg-black" : "bg-gray-300"}`}
             />
           )}
         </div>

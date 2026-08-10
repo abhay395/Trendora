@@ -53,50 +53,39 @@ function Home() {
     <div className="min-h-screen bg-white selection:bg-black selection:text-white overflow-hidden">
       
       {/* --- Hero Section --- */}
-      <section className="relative w-full pt-28 pb-20 md:pt-40 md:pb-32 overflow-hidden bg-white">
-        
-        {/* Abstract Background Decoration - Mesh Gradient Style */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-            <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-indigo-50/50 rounded-full blur-[120px]"></div>
-            <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-slate-50/80 rounded-full blur-[100px]"></div>
-        </div>
-
+      <section className="relative w-full pt-28 pb-20 md:pt-23 md:pb-32 bg-white">
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16 flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
-          
+
           {/* Left Content */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col items-start max-w-2xl"
           >
-            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full glass border-white/40 mb-8 shadow-sm">
-              <Sparkles size={14} className="text-luxe-gold" />
-              <span className="text-[10px] font-black tracking-[0.2em] uppercase text-gray-800">New Collection 2024</span>
+            <div className="flex items-center gap-2 px-4 py-1.5 border border-gray-300 mb-8">
+              <span className="text-[10px] font-black tracking-[0.2em] uppercase text-black">New Collection 2024</span>
             </div>
 
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-black leading-[0.95] mb-8 tracking-tighter">
               Wear Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-black via-gray-700 to-gray-500">
-                True Identity.
-              </span>
+              True Identity.
             </h1>
 
             <p className="text-lg md:text-xl text-gray-500 mb-10 leading-relaxed max-w-lg font-medium">
-              Premium custom tees designed to express your unique style. 
+              Premium custom tees designed to express your unique style.
               Quality cotton, precision printing, and fits that feel tailored just for you.
             </p>
 
             <div className="flex flex-wrap gap-6">
               <Link to="/products">
-                <button className="group relative px-10 py-5 bg-black text-white rounded-full font-bold shadow-2xl hover:bg-gray-800 transition-all duration-500 flex items-center gap-4 overflow-hidden">
-                  <span className="relative z-10">Explore Shop</span>
-                  <MoveRight size={20} className="relative z-10 group-hover:translate-x-2 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                <button className="group px-10 py-5 bg-black text-white font-bold hover:bg-gray-800 transition-colors duration-300 flex items-center gap-4">
+                  <span>Explore Shop</span>
+                  <MoveRight size={20} className="group-hover:translate-x-2 transition-transform duration-300" />
                 </button>
               </Link>
             </div>
-            
+
             <div className="mt-14 flex items-center gap-10 text-[10px] font-black uppercase tracking-widest text-gray-400">
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
@@ -110,26 +99,24 @@ function Home() {
           </motion.div>
 
           {/* Right Image */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
-            <motion.div
-               className="relative z-10 animate-float"
-            >
+            <div className="relative z-10">
                 <LazyLoadImage
                   alt="Modern T-Shirt Model"
                   src="https://res.cloudinary.com/dhcszkydc/image/upload/v1756402078/pbws8l78ssf0ldaa2z4c.png"
-                  className="w-full max-w-[450px] lg:max-w-[550px] h-auto object-cover rounded-[3rem] shadow-premium border-[12px] border-white/50 backdrop-blur-sm"
+                  className="w-full max-w-[450px] lg:max-w-[550px] h-auto object-cover border border-gray-200"
                   effect="blur"
                   visibleByDefault
                 />
-                
+
                 {/* Float Badge */}
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 glass border-white/60 px-8 py-4 rounded-3xl shadow-xl flex items-center gap-4 whitespace-nowrap">
-                   <div className="bg-black p-2.5 rounded-2xl shadow-lg">
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-white border border-gray-200 px-8 py-4 flex items-center gap-4 whitespace-nowrap">
+                   <div className="bg-black p-2.5">
                        <TrendingUp size={20} className="text-white"/>
                    </div>
                    <div>
@@ -137,10 +124,7 @@ function Home() {
                        <p className="text-sm font-bold text-black">100% Organic Cotton</p>
                    </div>
                 </div>
-            </motion.div>
-            
-            {/* Background Blob behind image */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-gradient-to-tr from-indigo-50/40 to-transparent rounded-full blur-[80px] -z-10"></div>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -154,7 +138,7 @@ function Home() {
             </h2>
             <p className="text-gray-500 mt-2 text-lg">Newest additions to elevate your wardrobe.</p>
           </div>
-          <Link to="/products" className="text-sm font-semibold border-b border-black pb-0.5 hover:text-gray-600 hover:border-gray-600 transition-colors">
+          <Link to="/products" className="text-sm font-semibold border-b border-gray-300 pb-0.5 hover:text-gray-600 hover:border-gray-600 transition-colors">
             View All Products
           </Link>
         </div>

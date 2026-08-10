@@ -81,13 +81,13 @@ function Navbar() {
   };
 
   return (
-    <nav className="glass fixed w-full top-0 font-outfit z-50 border-b border-white/20 shadow-glass">
+    <nav className="bg-white fixed w-full top-0 font-outfit z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 gap-8">
-          
+
           {/* 1. Logo */}
           <Link to="/" className="flex-shrink-0 group">
-            <span className="text-2xl font-black tracking-tighter text-black group-hover:text-indigo-600 transition-colors duration-500">
+            <span className="text-2xl font-black tracking-tighter text-black">
               TRENDORA.
             </span>
           </Link>
@@ -99,7 +99,7 @@ function Navbar() {
             <NavLink to="/contact">Contact</NavLink>
           </div>
 
-          {/* 3. Search Bar (Desktop) - Premium Glass Style */}
+          {/* 3. Search Bar (Desktop) */}
           <div className="hidden md:flex flex-1 max-w-sm">
             <div className="relative w-full group">
                 <input
@@ -108,9 +108,9 @@ function Navbar() {
                     onChange={e => setSearchTerm(e.target.value)}
                     onKeyDown={enterHandler}
                     placeholder="Search drops..."
-                    className="w-full glass border-white/40 text-black text-xs font-bold uppercase tracking-widest rounded-2xl py-3 pl-5 pr-12 focus:ring-0 focus:border-white/60 focus:bg-white/40 transition-all placeholder:text-gray-400"
+                    className="w-full bg-white border border-gray-300 text-black text-xs font-bold uppercase tracking-widest rounded-none py-3 pl-5 pr-12 focus:ring-0 focus:border-black transition-colors placeholder:text-gray-400"
                 />
-                <button 
+                <button
                     onClick={handleSearch}
                     className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-black transition-colors"
                 >
@@ -153,25 +153,25 @@ function Navbar() {
 
                 {/* Dropdown */}
                 {isDropdown && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-xl border border-gray-100 py-1 z-50 animate-in fade-in zoom-in-95 duration-100">
-                    <div className="px-4 py-3 border-b border-gray-100 mb-1">
-                        <p className="text-sm font-medium text-gray-900 truncate">{user.name || 'User'}</p>
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 py-1 z-50">
+                    <div className="px-4 py-3 border-b border-gray-200 mb-1">
+                        <p className="text-sm font-medium text-black truncate">{user.name || 'User'}</p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
-                    
-                    <Link to="/profile" onClick={() => setIsDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+
+                    <Link to="/profile" onClick={() => setIsDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       <User size={16} className="mr-3" /> Profile
                     </Link>
-                    <Link to="/orders" onClick={() => setIsDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <Link to="/orders" onClick={() => setIsDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       <Package size={16} className="mr-3" /> Orders
                     </Link>
-                    <Link to="/settings" onClick={() => setIsDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <Link to="/settings" onClick={() => setIsDropdown(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       <Settings size={16} className="mr-3" /> Settings
                     </Link>
-                    
-                    <div className="border-t border-gray-100 my-1"></div>
-                    
-                    <button onClick={logoutHandler} className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+
+                    <div className="border-t border-gray-200 my-1"></div>
+
+                    <button onClick={logoutHandler} className="flex w-full items-center px-4 py-2 text-sm text-black hover:bg-gray-100">
                       <LogOut size={16} className="mr-3" /> Logout
                     </button>
                   </div>
@@ -179,7 +179,7 @@ function Navbar() {
               </div>
             ) : (
               <button
-                className="text-sm font-medium text-white bg-black px-5 py-2 rounded-md hover:bg-gray-800 transition-colors"
+                className="text-sm font-medium text-white bg-black px-5 py-2 hover:bg-gray-800 transition-colors"
                 onClick={() => navigate('/login')}
               >
                 Sign In
@@ -199,9 +199,9 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 absolute w-full left-0 shadow-lg">
+        <div className="md:hidden bg-white border-t border-gray-200 absolute w-full left-0">
           <div className="px-4 py-4 space-y-4">
-            
+
             {/* Mobile Search */}
             <div className="relative">
                 <input
@@ -210,7 +210,7 @@ function Navbar() {
                     onChange={e => setSearchTerm(e.target.value)}
                     onKeyDown={enterHandler}
                     placeholder="Search products..."
-                    className="w-full bg-gray-100 text-gray-900 text-sm rounded-md border-none py-2.5 pl-4 pr-10"
+                    className="w-full bg-white text-black text-sm border border-gray-300 focus:border-black py-2.5 pl-4 pr-10"
                 />
                  <button onClick={handleSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
                     <Search size={18} />
@@ -218,9 +218,9 @@ function Navbar() {
             </div>
 
             <div className="space-y-1">
-                <Link to="/" onClick={toggleMenu} className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md">Home</Link>
-                <Link to="/products" onClick={toggleMenu} className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md">Products</Link>
-                <Link to="/contact" onClick={toggleMenu} className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md">Contact</Link>
+                <Link to="/" onClick={toggleMenu} className="block px-3 py-2 text-base font-medium text-black hover:bg-gray-100">Home</Link>
+                <Link to="/products" onClick={toggleMenu} className="block px-3 py-2 text-base font-medium text-black hover:bg-gray-100">Products</Link>
+                <Link to="/contact" onClick={toggleMenu} className="block px-3 py-2 text-base font-medium text-black hover:bg-gray-100">Contact</Link>
             </div>
           </div>
         </div>

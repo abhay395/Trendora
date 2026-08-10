@@ -17,35 +17,35 @@ function Card({ product, index }) {
       className="h-full"
     >
       <Link to={`/product/${product._id}`}>
-        <div className="group relative bg-white rounded-[2rem] shadow-premium overflow-hidden transition-all duration-500 hover:-translate-y-2 cursor-pointer border border-gray-100/50">
+        <div className="group relative bg-white overflow-hidden transition-colors duration-300 cursor-pointer border border-gray-200 hover:border-black">
 
           {/* Image Container */}
-          <div className="relative aspect-[4/5] overflow-hidden">
+          <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
             <img
               src={product?.images?.[0]?.url}
               alt={product?.title}
-              className="w-full h-full object-top object-cover transform transition duration-1000 ease-out group-hover:scale-110"
+              className="w-full h-full object-top object-cover transform transition duration-700 ease-out group-hover:scale-105"
               loading='lazy'
             />
 
-            {/* Glass Overlay for Stock */}
+            {/* Overlay for Stock */}
             {isOutOfStock && (
-              <div className="absolute inset-0 glass-dark flex items-center justify-center text-white font-black text-xs uppercase tracking-[0.2em]">
+              <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-white font-black text-xs uppercase tracking-[0.2em]">
                 Out of Stock
               </div>
             )}
 
-            {/* Luxe New Badge */}
+            {/* New Badge */}
             {product?.isNew && !isOutOfStock && (
-              <span className="absolute top-5 left-5 glass border-white/50 text-black text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm">
+              <span className="absolute top-5 left-5 bg-white border border-gray-200 text-black text-[9px] font-black uppercase tracking-widest px-4 py-1.5">
                 New Arrival
               </span>
             )}
 
             {/* Quick View Button */}
             {!isOutOfStock && (
-              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-8 px-6">
-                <button className="w-full glass border-white/40 text-black py-3 rounded-2xl font-bold text-xs uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8 px-6">
+                <button className="w-full bg-white border border-gray-200 text-black py-3 font-bold text-xs uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                   Quick View
                 </button>
               </div>
@@ -59,10 +59,10 @@ function Card({ product, index }) {
                 <span className="text-lg font-black text-black ml-4">₹{product.sizes[0].price}</span>
             </div>
 
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-black text-luxe-gold flex items-center gap-1 uppercase tracking-wider">
-                        <FaStar size={10} /> 
+                    <span className="text-[10px] font-black text-black flex items-center gap-1 uppercase tracking-wider">
+                        <FaStar size={10} />
                         {product?.rating?.average || 0}
                     </span>
                     <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
@@ -71,7 +71,7 @@ function Card({ product, index }) {
                 </div>
                 <div className="flex -space-x-2">
                      {product.sizes.filter(item => item.quantity > 0).slice(0, 3).map((item, i) => (
-                         <div key={i} className="w-6 h-6 rounded-full glass border-white/60 flex items-center justify-center text-[8px] font-black uppercase text-gray-600 shadow-sm ring-2 ring-white">
+                         <div key={i} className="w-6 h-6 rounded-full bg-white border border-gray-300 flex items-center justify-center text-[8px] font-black uppercase text-gray-600 ring-2 ring-white">
                              {item.size}
                          </div>
                      ))}

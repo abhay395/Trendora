@@ -12,7 +12,7 @@ const useOrderStore = create((set, get) => ({
         try {
             set({ isLoading: true, error: null })
             let response = await checkoutProductApi({ paymentMethod })
-            return response.data.result;
+            return response;
         } catch (error) {
             
             set({
@@ -42,8 +42,8 @@ const useOrderStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             let response = await fetchOrderById(orderId);
-            set({ selectedOrder: response.data.result, isLoading: false });
-            return response.data.result
+            set({ selectedOrder: response, isLoading: false });
+            return response
         } catch (error) {
             set({ error: error.response?.data?.message, isLoading: false });
         }

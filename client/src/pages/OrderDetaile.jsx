@@ -10,8 +10,16 @@ import useOrderStore from "../store/orderStore";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MoonLoader } from "react-spinners";
-import OrderTracking from "./OrderProgressBar";
 import OrderProgressBar from "./OrderProgressBar";
+
+const STATUS_META = {
+    confirmed: { label: "Confirmed", dot: "bg-gray-400" },
+    packed: { label: "Packed", dot: "bg-gray-400" },
+    shipped: { label: "Shipped", dot: "bg-black" },
+    out_for_delivery: { label: "Out For Delivery", dot: "bg-black" },
+    delivered: { label: "Delivered", dot: "bg-black" },
+    cancelled: { label: "Cancelled", dot: "bg-red-600" },
+};
 
 const OrderDetaile = () => {
     const [order, setOrder] = useState(null);
@@ -46,96 +54,99 @@ const OrderDetaile = () => {
         (sum, i) => sum + i.price * i.quantity,
         0
     );
+    const statusMeta = STATUS_META[order?.status] || { label: order?.status, dot: "bg-gray-400" };
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-5xl mx-auto bg-white shadow rounded-2xl p-8 mt-22 my-20"
+            className="max-w-5xl mx-auto bg-white border border-gray-200 p-8 mt-28 mb-20"
         >
             {/* Header */}
-            <div className="flex justify-between items-center border-b border-gray-400 pb-5 mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    <FaShoppingBag className="text-primary" /> Order # {order?._id.slice(-8)}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-5 mb-6">
+                <h1 className="text-2xl font-black text-black flex items-center gap-2">
+                    <FaShoppingBag /> Order #{order?._id.slice(-8).toUpperCase()}
                 </h1>
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Status Badge */}
-                    <span
-                        className={`px-4 py-1 rounded-full text-sm font-semibold capitalize shadow-sm ${order?.status === "Delivered"
-                            ? "bg-green-100 text-green-700"
-                            : order?.status === "Shipped"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-yellow-100 text-yellow-700"
-                            }`}
-                    >
-                        {order?.status}
+                    <span className="inline-flex items-center gap-2 px-3 py-1 border border-gray-300 text-[10px] font-black uppercase tracking-widest">
+                        <span className={`w-1.5 h-1.5 rounded-full ${statusMeta.dot}`}></span>
+                        {statusMeta.label}
                     </span>
 
                     {/* Estimated Delivery Date */}
-                    <div className="flex items-center gap-2 bg-amber-50 px-3 py-1 rounded-full shadow-sm">
-                        <FaCalendarAlt className="text-yellow-600 text-sm" />
-                        <span className="text-sm font-medium text-yellow-700">
-                            {order?.estimateDeliveryDate
-                                ? formatDate(order?.estimateDeliveryDate)
-                                : "N/A"}
+                    <div className="flex items-center gap-2 border border-gray-200 px-3 py-1">
+                        <FaCalendarAlt className="text-gray-500 text-sm" />
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-600">
+                            Est. {order?.estimateDeliveryDate ? formatDate(order?.estimateDeliveryDate) : "N/A"}
                         </span>
                     </div>
                 </div>
             </div>
 
             {/* Order Info */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg">
-                    <FaBox className="text-gray-700 text-xl" />
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 border border-gray-200 divide-x divide-y sm:divide-y-0 divide-gray-200 mb-8">
+                <div className="flex items-start gap-3 p-4">
+                    <FaBox className="text-gray-500 text-xl" />
                     <div>
-                        <p className="font-medium text-gray-900">Items</p>
-                        <p className="text-gray-600">{order?.items?.length || 0} products</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Items</p>
+                        <p className="text-black font-bold">{order?.items?.length || 0} products</p>
                     </div>
                 </div>
-                <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg">
-                    <FaTruck className="text-gray-700 text-xl" />
+                <div className="flex items-start gap-3 p-4">
+                    <FaTruck className="text-gray-500 text-xl" />
                     <div>
-                        <p className="font-medium text-gray-900">Shipping</p>
-                        <p className="text-gray-600">
-                            {order?.address?.street + " " + order?.address?.city + " " + order?.address?.state || "No address provided"}
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Shipping To</p>
+                        <p className="text-black font-bold">
+                            {order?.address ? `${order.address.city}, ${order.address.state}` : "No address provided"}
                         </p>
                     </div>
                 </div>
-                <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg">
-                    <FaCreditCard className="text-gray-700 text-xl" />
+                <div className="flex items-start gap-3 p-4">
+                    <FaCreditCard className="text-gray-500 text-xl" />
                     <div>
-                        <p className="font-medium text-gray-900">Payment</p>
-                        <p className="text-gray-600">{order?.paymentMethod || "Cash"}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Payment</p>
+                        <p className="text-black font-bold">{order?.paymentMethod || "Cash"}</p>
+                        <p className={`text-[10px] font-black uppercase tracking-wide mt-0.5 ${order?.paymentStatus === "paid" ? "text-black" : "text-gray-400"}`}>
+                            {order?.paymentStatus}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-3 p-4">
+                    <FaCalendarAlt className="text-gray-500 text-xl" />
+                    <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total</p>
+                        <p className="text-black font-bold">₹{totalAmount}</p>
                     </div>
                 </div>
             </div>
 
             {/* Items */}
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Items</h2>
-            <div className="space-y-4">
+            <h2 className="text-lg font-black text-black mb-4 uppercase tracking-tight">Order Items</h2>
+            <div className="border border-gray-200 divide-y divide-gray-200">
                 {order?.items?.map((item, index) => (
                     <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="flex justify-between items-center bg-gray-50 p-4 rounded-lg hover:shadow-md transition"
+                        className="flex justify-between items-center p-4"
                     >
                         <div className="flex items-center gap-4">
                             <img
                                 src={item.image}
-                                alt={item.name}
-                                className="w-16 h-16 rounded-lg object-cover"
+                                alt={item.title}
+                                className="w-16 h-16 object-cover border border-gray-200"
                             />
                             <div>
-                                <p className="font-medium text-gray-900">{item.name}</p>
+                                <p className="font-bold text-black">{item.title}</p>
                                 <p className="text-gray-500 text-sm">
-                                    Qty: {item.quantity} × ₹{item.price}
+                                    Size: {item.size} · Qty: {item.quantity} × ₹{item.price}
                                 </p>
                             </div>
                         </div>
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-bold text-black">
                             ₹{item.quantity * item.price}
                         </p>
                     </motion.div>
@@ -143,7 +154,7 @@ const OrderDetaile = () => {
             </div>
 
             {/* Summary */}
-            <div className="mt-8 border-t border-gray-400 pt-4 flex justify-between text-lg font-semibold text-gray-900">
+            <div className="mt-6 border-t border-gray-300 pt-4 flex justify-between text-lg font-black text-black">
                 <span>Total</span>
                 <span>₹{totalAmount}</span>
             </div>
@@ -151,21 +162,20 @@ const OrderDetaile = () => {
             {/* Dates */}
             <div className="mt-8 grid sm:grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center gap-2 text-gray-600">
-                    <FaCalendarAlt className="text-gray-700" />
+                    <FaCalendarAlt className="text-gray-500" />
                     <span>Ordered on {formatDate(order?.createdAt)}</span>
                 </div>
                 {order?.deliveredAt && (
                     <div className="flex items-center gap-2 text-gray-600">
-                        <FaCalendarAlt className="text-gray-700" />
+                        <FaCalendarAlt className="text-gray-500" />
                         <span>Delivered on {formatDate(order?.deliveredAt)}</span>
                     </div>
                 )}
             </div>
             {/* Order Tracking Section */}
-            <div className="mt-10">
+            <div className="mt-10 border-t border-gray-200 pt-6">
                 <OrderProgressBar
                     currentStep={["confirmed", "packed", "shipped", "out_for_delivery", "delivered"].indexOf(order?.status)}
-                // steps={["Confirmed", "Packed", "Shipped", "Out for Delivery", "Delivered"]}
                 />
             </div>
         </motion.div>

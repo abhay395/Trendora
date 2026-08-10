@@ -12,7 +12,6 @@ import Cart from './pages/Cart'
 import Signup from './pages/Signup'
 import Logout from './pages/Logout'
 import ProductDetaile from './pages/ProductDetaile'
-import Checkout from './pages/Checkout'
 import PaymentSuccess from './pages/PaymentSuccess'
 import Profile from './pages/Profile'
 import Orders from './pages/Orders'
@@ -58,7 +57,6 @@ function App() {
         <Route path="orders" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><Orders /></ProtectedRoute>} />
         <Route path="order/:id" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><OrderDetaile /></ProtectedRoute>} />
       </Route>
-      <Route path="checkout" element={<ProtectedRoute allowedRole={['user', 'admin', 'superadmin']} ><Checkout /></ProtectedRoute>} />
       <Route path="*" element={<PageNotFound />} />
       {/* Admin Routes - Separate from main layout */}
       <Route path="/unauthorized" element={<Unauthorized />} />
